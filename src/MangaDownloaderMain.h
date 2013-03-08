@@ -1,0 +1,240 @@
+#ifndef MANGADOWNLOADERMAIN_H
+#define MANGADOWNLOADERMAIN_H
+
+//(*Headers(MangaDownloaderFrame)
+#include <wx/bmpbuttn.h>
+#include <wx/combobox.h>
+#include <wx/checkbox.h>
+#include <wx/sizer.h>
+#include <wx/listctrl.h>
+#include <wx/menu.h>
+#include <wx/dirdlg.h>
+#include <wx/statusbr.h>
+#include <wx/statline.h>
+#include <wx/frame.h>
+#include <wx/stattext.h>
+#include <wx/textctrl.h>
+//*)
+
+//#include <wx/icon.h>
+#include <wx/imaglist.h>
+#include <wx/mstream.h>
+#include <wx/timer.h>
+#include <wx/image.h>
+
+#include "resource.h"
+#include "MangaConnectorCollection.h"
+
+/*
+
+wxStandardPaths::GetExecutablePath
+Return the directory and the filename for the current executable
+Win7: .\HakuNeko\Hakuneko.exe
+Unix: /usr/local/bin/hakuneko
+
+wxStandardPaths::GetDataDir()
+Return the location of the applications global, i.e. not user-specific, data files
+Win7: .\HakuNeko
+Unix: /usr/local/share/hakuneko
+
+wxStandardPaths::GetConfigDir()
+Return the directory containing the system config files
+// Win7: C:\ProgramData\HakuNeko
+// Unix: /etc
+
+wxStandardPaths::GetLocalDataDir()
+Return the location for application data files which are host-specific and can't, or shouldn't, be shared with the other machines
+// Win7: .\HakuNeko
+// Unix: /etc/hakuneko
+
+wxStandardPaths::GetUserConfigDir()
+Return the directory for the user config files
+Win7: C:\User\UserName\AppData\Roaming
+Unix: /home/username
+
+wxStandardPaths::GetUserDataDir()
+Return the directory for the user-dependent application data files
+Win7: C:\User\UserName\AppData\Roaming\HakuNeko
+Unix: /home/username/.hakuneko
+
+wxStandardPaths::GetUserLocalDataDir()
+Return the directory for user data files which shouldn't be shared with the other machines
+Win7: C:\User\UserName\AppData\Local\HakuNeko
+Unix: /home/username/.hakuneko
+
+*/
+
+#ifdef PORTABLE
+    #ifdef __LINUX__
+        #define GUI_CONFIGURATION_FILE (wxStandardPaths::Get().GetExecutablePath().BeforeLast('/') + wxT("/gui.conf"))
+    #endif
+    #ifdef __WINDOWS__
+        #define GUI_CONFIGURATION_FILE (wxStandardPaths::Get().GetExecutablePath().BeforeLast('\\') + wxT("\\gui.conf"))
+    #endif
+#else
+    #ifdef __LINUX__
+        #define GUI_CONFIGURATION_FILE (wxStandardPaths::Get().GetUserDataDir() + wxT("/gui.conf"))
+    #endif
+    #ifdef __WINDOWS__
+        #define GUI_CONFIGURATION_FILE (wxStandardPaths::Get().GetUserConfigDir() + wxT("\\.hakuneko\\gui.conf"))
+    #endif
+#endif
+
+enum ResourceImage
+{
+	BTN_BROWSE_NORM,
+	BTN_BROWSE_HOVER,
+	BTN_BROWSE_DISABLE,
+
+	BTN_SYNC_NORM,
+	BTN_SYNC_HOVER,
+	BTN_SYNC_DISABLE,
+
+	BTN_BOOK_NORM,
+	BTN_BOOK_HOVER,
+	BTN_BOOK_DISABLE,
+
+	BTN_BOOKDEL_NORM,
+	BTN_BOOKDEL_HOVER,
+	BTN_BOOKDEL_DISABLE,
+
+	BTN_DOWN_NORM,
+	BTN_DOWN_HOVER,
+	BTN_DOWN_DISABLE,
+
+	BTN_ABORT_NORM,
+	BTN_ABORT_HOVER,
+	BTN_ABORT_DISABLE,
+
+	CHECK_ENABLED,
+	CHECK_DISABLED,
+
+	APP_ICO
+};
+
+class MangaDownloaderFrame: public wxFrame
+{
+    public:
+
+        MangaDownloaderFrame(wxWindow* parent,wxWindowID id = -1);
+        virtual ~MangaDownloaderFrame();
+
+    private:
+
+        //(*Handlers(MangaDownloaderFrame)
+        void OnChoiceSourceSelect(wxCommandEvent& event);
+        void OnButtonUpdateClick(wxCommandEvent& event);
+        void OnCheckBoxChaptersClick(wxCommandEvent& event);
+        void OnButtonBrowseClick(wxCommandEvent& event);
+        void OnButtonDownloadClick(wxCommandEvent& event);
+        void OnButtonAbortClick(wxCommandEvent& event);
+        void OnListCtrlMangasItemSelect(wxListEvent& event);
+        void OnClose(wxCloseEvent& event);
+        void OnSearchPattern(wxCommandEvent& event);
+        void OnBitmapButtonBookmarkClick(wxCommandEvent& event);
+        void OnListCtrlChaptersItemSelect(wxListEvent& event);
+        void OnResize(wxSizeEvent& event);
+        void OnCheckBoxShowJobListClick(wxCommandEvent& event);
+        void OnListCtrlJobsItemActivated(wxListEvent& event);
+        void OnListCtrlJobsItemRClick(wxListEvent& event);
+        void OnListCtrlMangasItemDeselect(wxListEvent& event);
+        //*)
+        void OnMenuJobContextClick(wxCommandEvent& event);
+
+		// load a bitmap from generated resource into an enumerated bitmap array
+		void LoadImageResource(RCDATA RCImage, wxBitmapType Type, ResourceImage ImageLabel);
+		// load the resources from the generated resources.h(& .cpp)
+		void LoadResources();
+		// load and apply gui settings from configuration file
+        void LoadConfiguration();
+        // save gui settings to configuration file
+        void SaveConfiguration();
+        // change bookmark button depending on search value in bookmarks or not
+        void UpdateBookmarkButton();
+        // load manga list from the local file and filter by the given pattern
+        void LoadMangaList(wxString Pattern = wxT(""));
+        // change the color of all manga list items depending on their directory existence
+        void ColorifyMangaList();
+        // load the chapter list for the selected manga
+        void LoadChapterList();
+        // change the color of all chapter list items depending on their directory existence
+        void ColorifyChapterList();
+        // get the checked state of a chapter in the chapter list
+        bool GetChapterCheckedState(long ChapterIndex);
+        // set the checked state of a chapter in the chapter list
+        void SetChapterCheckedState(long ChapterIndex, bool State, bool UpdateJobList);
+        void EnableControls(bool DisableAbortButton = false);
+        void EnableListCtrl(wxListCtrl* ListCtrl);
+        void DisableControls(bool EnableAbortButton = false);
+        void DisableListCtrl(wxListCtrl* ListCtrl);
+
+		// FUNCTIONS FOR SELFTEST
+        long Random(long Min, long Max);
+        public: void ErrorDetectionTest();
+
+        //(*Identifiers(MangaDownloaderFrame)
+        static const long ID_STATICLINE1;
+        static const long ID_STATICTEXT5;
+        static const long ID_TEXTCTRL2;
+        static const long ID_BITMAPBUTTON3;
+        static const long ID_STATICTEXT1;
+        static const long ID_COMBOBOX2;
+        static const long ID_BITMAPBUTTON1;
+        static const long ID_STATICTEXT2;
+        static const long ID_COMBOBOX1;
+        static const long ID_BITMAPBUTTON2;
+        static const long ID_STATICLINE2;
+        static const long ID_STATICTEXT3;
+        static const long ID_CHECKBOX1;
+        static const long ID_LISTCTRL1;
+        static const long ID_LISTCTRL2;
+        static const long ID_CHECKBOX2;
+        static const long ID_LISTCTRL3;
+        static const long ID_STATICLINE3;
+        static const long ID_BITMAPBUTTON6;
+        static const long ID_BITMAPBUTTON5;
+        static const long ID_STATUSBAR1;
+        //*)
+        static const long ID_JOBMENUITEM_REMOVEALL;
+        static const long ID_JOBMENUITEM_REMOVESELECTED;
+
+        //(*Declarations(MangaDownloaderFrame)
+        wxCheckBox* CheckBoxChapters;
+        wxCheckBox* CheckBoxShowJobList;
+        wxTextCtrl* TextCtrlDirectoryBase;
+        wxStaticLine* StaticLine2;
+        wxListCtrl* ListCtrlJobs;
+        wxStaticText* StaticTextBaseDirectory;
+        wxStaticText* StaticTextSearch;
+        wxBitmapButton* BitmapButtonAbort;
+        wxStaticText* StaticTextMangaList;
+        wxStaticLine* StaticLine1;
+        wxFlexGridSizer* FlexGridSizerLists;
+        wxListCtrl* ListCtrlMangas;
+        wxBitmapButton* BitmapButtonBrowse;
+        wxComboBox* ComboBoxSource;
+        wxStaticText* StaticTextSource;
+        wxStaticLine* StaticLine3;
+        wxBitmapButton* BitmapButtonUpdate;
+        wxListCtrl* ListCtrlChapters;
+        wxMenu MenuJobContext;
+        wxBitmapButton* BitmapButtonBookmark;
+        wxStatusBar* StatusBar;
+        wxBitmapButton* BitmapButtonDownload;
+        wxDirDialog* DirDialogBrowse;
+        wxComboBox* ComboBoxSearchPattern;
+        //*)
+
+		private: wxFileName ConfigurationFile;
+        private: wxBitmap* ResourceImages;
+        private: MangaConnectorCollection MCC;
+        private: wxArrayMCEntry CurrentMangaList;
+        private: wxArrayMCEntry CurrentChapterList;
+        private: bool AbortDownload;
+        private: bool StartupSync;
+        private: bool TypingSearch;
+
+        DECLARE_EVENT_TABLE()
+};
+
+#endif // MANGADOWNLOADERMAIN_H
