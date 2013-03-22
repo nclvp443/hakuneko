@@ -32,7 +32,5 @@ CFLAGS="
 	"
 
 LD="g++"
-LDFLAGS="
-	-s
-	$(wx-config --static=yes --debug=no --libs)
-	"
+LDFLAGS="-s"
+LDLIBS="$(wx-config --static=yes --debug=no --libs)"
