@@ -26,6 +26,7 @@ BINFILE="$DISTROOT/usr/bin/$PKGNAME"
 
 CC="g++"
 CFLAGS="
+	-c
 	-Wall
 	-O2
 	$(wx-config --static=yes --debug=no --cflags)
