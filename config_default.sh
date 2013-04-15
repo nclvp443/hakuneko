@@ -4,8 +4,8 @@ PKGNAME="hakuneko"
 PKGVERSION="1.0.2"
 PKGSECTION="net"
 PKGAUTHOR="Ronny Wegener <wegener.ronny@gmail.com>"
-PKGHOMEAGE="http://hakuneko.googlecode.com"
-PKGDEPENDS="ffmpeg, libc6 (>=0.1.2-3), libgtk2.0-0 (>=1.2.3-4)"
+PKGHOMEPAGE="http://hakuneko.googlecode.com"
+PKGDEPENDS=""
 PKGDESCRIPTION="A GTK based Manga Downloader
  HakuNeko allows you to download manga images from
  some selected online manga reader websites
@@ -20,17 +20,22 @@ PKGDESCRIPTION="A GTK based Manga Downloader
 
 SRCPATTERN="*.cpp"
 SRCDIR="src"
+RCPATTERN=""
+RCDIR=""
 OBJDIR="obj"
 DISTROOT="dist/linux"
-BINFILE="$DISTROOT/usr/bin/$PKGNAME"
+BINFILE="$DISTROOT/bin/$PKGNAME"
 
 CC="g++"
 CFLAGS="
-	-c
-	-Wall
-	-O2
-	$(wx-config --static=yes --debug=no --cflags)
-	"
+    -c
+    -Wall
+    -O2
+    $(wx-config --static=yes --debug=no --cflags)
+    "
+
+RC=""
+RCFLAGS=""
 
 LD="g++"
 LDFLAGS="-s"

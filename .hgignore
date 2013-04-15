@@ -7,8 +7,9 @@ syntax: glob
 config-debug.sh
 make-*
 makefile
+Makefile
 *.bat
 bin/*
 obj/*
-dist/linux/usr/bin/*
-dist/winnt/hakuneko/HakuNeko*
+dist/linux/bin/*
+dist/winnt/bin/*

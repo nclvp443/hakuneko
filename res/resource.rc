@@ -1,5 +1,5 @@
 // application icon
-AAA ICON "../rc/app.ico"
+AAA ICON "app.ico"
 
 // native visual-style of controls (x86-win32 manifest)
 // embed this file to use ComCtl32.dll version 6
