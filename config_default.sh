@@ -1,7 +1,7 @@
 #! /bin/sh
 
 PKGNAME="hakuneko"
-PKGVERSION="1.0.2"
+PKGVERSION="1.0.3"
 PKGSECTION="net"
 PKGAUTHOR="Ronny Wegener <wegener.ronny@gmail.com>"
 PKGHOMEPAGE="http://hakuneko.googlecode.com"
