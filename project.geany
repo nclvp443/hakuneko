@@ -23,9 +23,9 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=2
+current_page=1
 FILE_NAME_0=221;C++;0;16;1;1;0;.%2Fsrc%2Fapp.cpp;0;4
-FILE_NAME_1=25853;C++;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaDownloaderMain.cpp;0;4
+FILE_NAME_1=28974;C++;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaDownloaderMain.cpp;0;4
 FILE_NAME_2=449;C++;0;16;1;1;0;.%2Fsrc%2FMangaConnectorCollection.cpp;0;4
 
 [VTE]
@@ -33,23 +33,23 @@ last_dir=/home/ronny/Documents/development/hakuneko
 
 [build-menu]
 NF_00_LB=Make All
-NF_00_CM=make BUILD=debug
+NF_00_CM=make
 NF_00_WD=%p
 NF_01_LB=Make Custom
-NF_01_CM=make BUILD=debug 
+NF_01_CM=make
 NF_01_WD=%p
 NF_02_LB=Make Object
-NF_02_CM=make %d/%f.o BUILD=debug
+NF_02_CM=make %d/%f.o
 NF_02_WD=%p
 NF_03_LB=Make Clean
-NF_03_CM=make clean BUILD=debug
+NF_03_CM=make clean
 NF_03_WD=
 EX_00_LB=_Execute
-EX_00_CM=%p/bin/hakuneko-dbg
-EX_00_WD=%p/bin
+EX_00_CM=%p/dist/linux/bin/hakuneko
+EX_00_WD=%p/dist/linux/bin
 filetypes=C++;C;
 C++FT_00_LB=_Compile
-C++FT_00_CM=make %d/%f.o BUILD=debug
+C++FT_00_CM=make %d/%f.o
 C++FT_00_WD=%p
 CFT_00_LB=_Compile
 CFT_00_CM=make %d/%e.cpp.o
@@ -61,14 +61,11 @@ CFT_02_LB=Clean
 CFT_02_CM=make clean
 CFT_02_WD=%p
 C++FT_01_LB=_Build All
-C++FT_01_CM=make BUILD=debug
+C++FT_01_CM=make
 C++FT_01_WD=%p
 C++FT_02_LB=Clean
-C++FT_02_CM=make clean BUILD=debug
+C++FT_02_CM=make clean
 C++FT_02_WD=%p
-EX_01_LB=Execute Debug
-EX_01_CM=%p/dist/linux/usr/bin/hakuneko
-EX_01_WD=%p/dist/linux/usr/bin
 
 [gproject]
 source_patterns=*.c;*.C;*.cpp;*.cxx;*.c++;*.cc;

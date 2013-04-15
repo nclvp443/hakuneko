@@ -596,7 +596,7 @@ void MangaDownloaderFrame::ColorifyChapterList()
 		ListCtrlChapters->Freeze();
 		for(long i=0; i<(long)CurrentChapterList.GetCount(); i++)
 		{
-			if(wxDirExists(baseDirectory.GetPathWithSep() + CurrentChapterList[i]->SafeLabel))
+			if(wxDirExists(baseDirectory.GetPathWithSep() + CurrentChapterList[i]->SafeLabel) && !wxDir::FindFirst(baseDirectory.GetPathWithSep() + CurrentChapterList[i]->SafeLabel, wxEmptyString, wxDIR_FILES).IsEmpty())
 			{
 				ListCtrlChapters->SetItemTextColour(i, wxColor(0, 150, 250));
 			}
