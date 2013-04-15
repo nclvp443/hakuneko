@@ -623,7 +623,7 @@ wxString MangaConnector::GetHtmlContent(wxString Url, bool UseGzip)
     }
 
     // set timeout
-    webResponse.SetTimeout(8);
+    webResponse.SetTimeout(10);
 
     //webResponse.SetHeader(wxT("Host"), host);
     //webResponse.SetHeader(wxT("Referer"), ReferrerURL);
@@ -707,7 +707,7 @@ wxString MangaConnector::GetHtmlContentF(wxString UrlFormat, int First, int Last
     }
 
     // set timeout
-    webResponse.SetTimeout(8);
+    webResponse.SetTimeout(10);
 
     //webResponse.SetHeader(wxT("Host"), host);
     //webResponse.SetHeader(wxT("Referer"), ReferrerURL);
@@ -796,7 +796,7 @@ bool MangaConnector::SaveHtmlImage(wxString SourceImageURL, wxFileName TargetIma
     }
 
     // set timeout
-    webResponse.SetTimeout(8);
+    webResponse.SetTimeout(10);
 
     //webResponse.SetHeader(wxT("Host"), host);
     webResponse.SetHeader(wxT("Referer"), ReferrerURL);
