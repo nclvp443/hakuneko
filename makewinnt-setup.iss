@@ -1,21 +1,21 @@
 [Setup]
-AppName=HakuNeko
-AppVerName=HakuNeko
-AppVersion=1.0.2
-VersionInfoVersion=1.0.2
+AppName=hakuneko
+AppVerName=hakuneko
+AppVersion=1.0.3
+VersionInfoVersion=1.0.3
 AppPublisher=Ronny Wegener
 AppPublisherURL=http://hakuneko.googlecode.com
-SetupIconFile=rc\app.ico
-UninstallDisplayIcon={app}\HakuNeko.exe
+SetupIconFile=res\app.ico
+UninstallDisplayIcon={app}\hakuneko.exe
 DisableWelcomePage=yes
-DefaultDirName={pf}\HakuNeko
-;DefaultGroupName=HakuNeko
+DefaultDirName={pf}\hakuneko
+;DefaultGroupName=hakuneko
 DisableProgramGroupPage=yes
 DisableReadyPage=yes
 ; refresh windows explorer to update associated icons
 ;ChangesAssociations=yes
 OutputDir=.
-OutputBaseFilename=dist\winnt\HakuNeko_Setup
+OutputBaseFilename=hakuneko_1.0.3_i386_msw-setup
 ;WizardImageFile=compiler:wizmodernimage.bmp
 ;WizardSmallImageFile=compiler:wizmodernsmallimage.bmp
 
@@ -26,16 +26,16 @@ Name: shortcuts\startmenu; Description: "Startmenu Programs"; GroupDescription: 
 Name: shortcuts\quicklaunch; Description: "Quick Launch"; GroupDescription: "Create Shortcuts:"; Flags: unchecked
 
 [Files]
-Source: dist\winnt\hakuneko\HakuNeko.exe; DestDir: {app}
-;Source: dist\winnt\hakuneko\gui.conf; DestDir: {userappdata}\.hakuneko
-;Source: dist\winnt\hakuneko\connectors\*.*; DestDir: {commonappdata}\HakuNeko
+Source: dist\msw\bin\hakuneko.exe; DestDir: {app}
+;Source: dist\msw\bin\gui.conf; DestDir: {userappdata}\hakuneko
+;Source: dist\msw\bin\connectors\*.*; DestDir: {commonappdata}\hakuneko
 
 [UninstallDelete]
-;Name: {app}; Type: filesandordirs
-Name: {userappdata}\.hakuneko; Type: filesandordirs
-Name: {commonappdata}\connectors\*.*; Type: filesandordirs
+Name: {app}; Type: filesandordirs
+Name: {userappdata}\hakuneko; Type: filesandordirs
+Name: {commonappdata}\hakuneko; Type: filesandordirs
 
 [Icons]
-Name: "{commondesktop}\HakuNeko"; Filename: "{app}\HakuNeko.exe"; Tasks: shortcuts\desktop
-Name: "{commonstartmenu}\HakuNeko"; Filename: "{app}\HakuNeko.exe"; Tasks: shortcuts\startmenu
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\HakuNeko"; Filename: "{app}\HakuNeko.exe"; Tasks: shortcuts\quicklaunch
+Name: "{commondesktop}\hakuneko"; Filename: "{app}\hakuneko.exe"; Tasks: shortcuts\desktop
+Name: "{commonstartmenu}\hakuneko"; Filename: "{app}\hakuneko.exe"; Tasks: shortcuts\startmenu
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\hakuneko"; Filename: "{app}\hakuneko.exe"; Tasks: shortcuts\quicklaunch

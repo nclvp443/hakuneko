@@ -76,40 +76,40 @@ Unix: /home/username/.hakuneko
         #define GUI_CONFIGURATION_FILE (wxStandardPaths::Get().GetUserDataDir() + wxT("/gui.conf"))
     #endif
     #ifdef __WINDOWS__
-        #define GUI_CONFIGURATION_FILE (wxStandardPaths::Get().GetUserConfigDir() + wxT("\\.hakuneko\\gui.conf"))
+        #define GUI_CONFIGURATION_FILE (wxStandardPaths::Get().GetUserDataDir() + wxT("\\gui.conf"))
     #endif
 #endif
 
 enum ResourceImage
 {
-	BTN_BROWSE_NORM,
-	BTN_BROWSE_HOVER,
-	BTN_BROWSE_DISABLE,
+    BTN_BROWSE_NORM,
+    BTN_BROWSE_HOVER,
+    BTN_BROWSE_DISABLE,
 
-	BTN_SYNC_NORM,
-	BTN_SYNC_HOVER,
-	BTN_SYNC_DISABLE,
+    BTN_SYNC_NORM,
+    BTN_SYNC_HOVER,
+    BTN_SYNC_DISABLE,
 
-	BTN_BOOK_NORM,
-	BTN_BOOK_HOVER,
-	BTN_BOOK_DISABLE,
+    BTN_BOOK_NORM,
+    BTN_BOOK_HOVER,
+    BTN_BOOK_DISABLE,
 
-	BTN_BOOKDEL_NORM,
-	BTN_BOOKDEL_HOVER,
-	BTN_BOOKDEL_DISABLE,
+    BTN_BOOKDEL_NORM,
+    BTN_BOOKDEL_HOVER,
+    BTN_BOOKDEL_DISABLE,
 
-	BTN_DOWN_NORM,
-	BTN_DOWN_HOVER,
-	BTN_DOWN_DISABLE,
+    BTN_DOWN_NORM,
+    BTN_DOWN_HOVER,
+    BTN_DOWN_DISABLE,
 
-	BTN_ABORT_NORM,
-	BTN_ABORT_HOVER,
-	BTN_ABORT_DISABLE,
+    BTN_ABORT_NORM,
+    BTN_ABORT_HOVER,
+    BTN_ABORT_DISABLE,
 
-	CHECK_ENABLED,
-	CHECK_DISABLED,
+    CHECK_ENABLED,
+    CHECK_DISABLED,
 
-	APP_ICO
+    APP_ICO
 };
 
 class MangaDownloaderFrame: public wxFrame
@@ -141,11 +141,11 @@ class MangaDownloaderFrame: public wxFrame
         //*)
         void OnMenuJobContextClick(wxCommandEvent& event);
 
-		// load a bitmap from generated resource into an enumerated bitmap array
-		void LoadImageResource(RCDATA RCImage, wxBitmapType Type, ResourceImage ImageLabel);
-		// load the resources from the generated resources.h(& .cpp)
-		void LoadResources();
-		// load and apply gui settings from configuration file
+        // load a bitmap from generated resource into an enumerated bitmap array
+        void LoadImageResource(RCDATA RCImage, wxBitmapType Type, ResourceImage ImageLabel);
+        // load the resources from the generated resources.h(& .cpp)
+        void LoadResources();
+        // load and apply gui settings from configuration file
         void LoadConfiguration();
         // save gui settings to configuration file
         void SaveConfiguration();
@@ -168,7 +168,7 @@ class MangaDownloaderFrame: public wxFrame
         void DisableControls(bool EnableAbortButton = false);
         void DisableListCtrl(wxListCtrl* ListCtrl);
 
-		// FUNCTIONS FOR SELFTEST
+        // FUNCTIONS FOR SELFTEST
         long Random(long Min, long Max);
         public: void ErrorDetectionTest();
 
@@ -225,7 +225,7 @@ class MangaDownloaderFrame: public wxFrame
         wxComboBox* ComboBoxSearchPattern;
         //*)
 
-		private: wxFileName ConfigurationFile;
+        private: wxFileName ConfigurationFile;
         private: wxBitmap* ResourceImages;
         private: MangaConnectorCollection MCC;
         private: wxArrayMCEntry CurrentMangaList;
