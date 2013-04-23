@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/bash
 
 PKGNAME="hakuneko"
 PKGVERSION="1.0.3"
@@ -31,7 +31,7 @@ CFLAGS="
     -c
     -Wall
     -O2
-    $(wx-config --static=yes --debug=no --cflags)
+    $(wx-config --static=no --debug=no --cflags)
     "
 
 RC=""
@@ -39,4 +39,4 @@ RCFLAGS=""
 
 LD="g++"
 LDFLAGS="-s"
-LDLIBS="$(wx-config --static=yes --debug=no --libs)"
+LDLIBS="$(wx-config --static=no --debug=no --libs)"

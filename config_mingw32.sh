@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/bash
 
 # import setings from config-default
 . ./config_default.sh

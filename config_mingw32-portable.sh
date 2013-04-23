@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/bash
 
 # import setings from config-default
 . ./config_mingw32.sh
