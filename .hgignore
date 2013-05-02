@@ -1,0 +1,15 @@
+syntax: glob
+*.o
+*.depend
+*.res
+*.deb
+*.tar.gz
+config-debug.sh
+make-*
+makefile
+Makefile
+*.bat
+bin/*
+obj/*
+dist/linux/bin/*
+dist/winnt/bin/*
