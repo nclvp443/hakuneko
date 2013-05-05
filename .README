@@ -1,0 +1,51 @@
+#############
+### LINUX ###
+#############
+
+    --------------------------------------------
+    - requirements to build hakuneko on debian -
+    --------------------------------------------
+    + bash
+    + build-essentials (gcc, g++, make, lib*,...)
+    + libwxgtk2.8-dev
+    + libwxbase2.8-dev
+
+    ----------------------------
+    - build & install hakuneko -
+    ----------------------------
+    # open a terminal
+    # change into hakuneko directory
+    # run the following commands as root user
+    ./configure --prefix=/usr
+    make
+    make install
+
+    # remove hakuneko
+    # run the following command as root user
+    make uninstall
+
+    # NOTE: create a source package for redistribution
+    # make tgz
+    # NOTE: create a debian package for redistribution
+    # make deb
+
+#############
+### WINNT ###
+#############
+
+    ---------------------------------------------
+    - Requirements to compile HakuNeko on win32 -
+    ---------------------------------------------
+    + MinGW32 (GCC >= 4.5)
+
+    ----------------------
+    - Compiling HakuNeko -
+    ----------------------
+    # open a command prompt (cmd)
+    # change into hakuneko directory
+    # run the following commands
+    ./configure --config-mingw32
+    # or
+    ./configure --config-mingw32-portable
+    make
+    # binaries can than be found in hakuneko/dist/msw/...
