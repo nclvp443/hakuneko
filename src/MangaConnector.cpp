@@ -636,6 +636,7 @@ wxString MangaConnector::GetHtmlContent(wxString Url, bool UseGzip)
 
     if(webResponse.Connect(host, port))
     {
+        size_t bytesRead = 0;
         wxInputStream *httpStream = webResponse.GetInputStream(wxT("/") + Url.AfterFirst(L'/'));
         wxStringOutputStream strStream(&content);
 
@@ -652,28 +653,13 @@ wxString MangaConnector::GetHtmlContent(wxString Url, bool UseGzip)
                 {
                     wxZlibInputStream httpGzipStream(httpStream);
                     httpGzipStream.Read(strStream);
-/*
-wxTextFile f;
-if(!f.Create(wxT("/home/ronny/Desktop/log.txt")))
-{
-    f.Open(wxT("/home/ronny/Desktop/log.txt"));
-    f.Clear();
-}
-f.AddLine(content);
-f.Write();
-f.Close();
-*/
-/*
-// debug compressed size...
-httpStream->Read(strStream);
-long debug_size_compressed = httpStream->LastRead();
-int debug_break = 0;
-*/
+                    bytesRead += httpGzipStream.LastRead();
                 }
                 else
                 {
                     //wxStringOutputStream strStream(NULL);
                     httpStream->Read(strStream);
+                    bytesRead += httpStream->LastRead();
                     //content = strStream.GetString();
                 }
             }
@@ -684,7 +670,17 @@ int debug_break = 0;
             //httpStream->Close();
             wxDELETE(httpStream);
         }
+
         webResponse.Close();
+
+        // FIXME: illegal character in stream cuts wxString
+        // validate page with http://validator.w3.org
+        /*
+        if(content.Length() < bytesRead*95/100) // 5% variance for utf8 multibyte characters
+        {
+            wxMessageBox(wxT("The requested webpage contains errors.\nThis might be caused by an invalid utf8 character.\n\nURL: ") + Url);// + wxString::Format(wxT("\n\nBytes fetched: [%lu] of [%lu]"), (unsigned long)content.Length(), (unsigned long)bytesRead), wxT("Connection Error"));
+        }
+        */
     }
 
     return content;
@@ -723,6 +719,7 @@ wxString MangaConnector::GetHtmlContentF(wxString UrlFormat, int First, int Last
     if(webResponse.Connect(host, port))
     {
         size_t pageSize;
+        size_t bytesRead = 0;
         wxInputStream *httpStream = NULL;
         wxZlibInputStream *httpGzipStream = NULL;
         wxStringOutputStream strStream(&content);
@@ -746,6 +743,7 @@ wxString MangaConnector::GetHtmlContentF(wxString UrlFormat, int First, int Last
                     // NOTE: data will be appended to strStream(&content)
                     httpGzipStream->Read(strStream);
                     pageSize = httpGzipStream->LastRead();
+                    bytesRead += pageSize;
                     wxDELETE(httpGzipStream);
                 }
                 else
@@ -755,6 +753,7 @@ wxString MangaConnector::GetHtmlContentF(wxString UrlFormat, int First, int Last
                     httpStream->Read(strStream);
                     //content = strStream.GetString();
                     pageSize = httpStream->LastRead();
+                    bytesRead += pageSize;
                 }
 
                 if(AbortSize > 0 && pageSize < AbortSize)
@@ -773,14 +772,24 @@ wxString MangaConnector::GetHtmlContentF(wxString UrlFormat, int First, int Last
                 wxDELETE(httpStream);
             }
         }
-        
+
         // delete streams in case of break
         if(!UseGzip && httpStream)
         {
             //httpStream->Close();
             wxDELETE(httpStream);
         }
+
         webResponse.Close();
+
+        // FIXME: illegal character in stream cuts wxString
+        // validate page with http://validator.w3.org
+        /*
+        if(content.Length() < bytesRead*95/100) // 5% variance for utf8 multibyte characters
+        {
+            wxMessageBox(wxT("The requested webpage contains errors.\nThis might be caused by an invalid utf8 character.\n\nURL: ") + UrlFormat);// + wxString::Format(wxT("\n\nBytes fetched: [%lu] of [%lu]"), (unsigned long)content.Length(), (unsigned long)bytesRead), wxT("Connection Error"));
+        }
+        */
     }
 
     return content;
