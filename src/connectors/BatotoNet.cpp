@@ -38,7 +38,8 @@ void BatotoNet::UpdateMangaList()
     wxString mangaLink;
     wxString mangaLabel;
 
-    wxString content = GetHtmlContentF(baseURL + wxT("/search_ajax?p=%i"), 1, 500, 1, 600, true);
+    //wxString content = GetHtmlContentF(baseURL + wxT("/comic/_/sp/?per_page=1000&st=%i"), 0, 1000, 1000, 31200, true);
+    wxString content = GetHtmlContentF(baseURL + wxT("/comic/_/comics/?per_page=1000&st=%i"), 0, 3000/*15000*/, 1000, 31200, true);
 
     // only update local list, if connection successful...
     if(!content.IsEmpty())
@@ -51,15 +52,15 @@ void BatotoNet::UpdateMangaList()
             //content = content.Mid(indexStart, indexEnd-indexStart);
             //indexEnd = 0;
 
-            // Example Entry: <strong><a href="http://www.batoto.net/comic/_/zettai-kareshi-r3650"><img src="http://www.batoto.net/forums/public/style_images/master/book.png" alt="Status"/> Zettai Kareshi</a></strong>
-            while((indexStart = content.find(wxT("<a href=\""), indexEnd)) > -1)
+            // Example Entry: <a href='http://www.batoto.net/comic/_/sp/xandria-r8964'>Xandria</a>
+            while((indexStart = content.find(wxT("__topic"), indexEnd)) > -1)
             {
-                indexStart += 9;
-                indexEnd = content.find(wxT("\""), indexStart); // "\">"
+                indexStart += 7;
+                indexStart = content.find(wxT("<a"), indexStart) + 9; // "<a href='"
+                indexEnd = content.find(wxT("'"), indexStart); // "'>"
                 mangaLink = content.Mid(indexStart, indexEnd-indexStart);
 
-                indexEnd += 2;
-                indexStart = content.find(wxT(">"), indexEnd) + 2; // "\"/> "
+                indexStart = indexEnd + 2;
                 indexEnd = content.find(wxT("<"), indexStart); // "</a>"
                 mangaLabel = content.Mid(indexStart, indexEnd-indexStart);
 
