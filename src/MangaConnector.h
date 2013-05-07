@@ -94,7 +94,7 @@ class MangaConnector
 	// read content from a http:// file into a string, use gzip transfer for speed improvements (server must support gzip)
     protected: wxString GetHtmlContent(wxString Url, bool UseGzip = false);
     // read content from multiple http:// files containing an incrementable integer (url must contain %i) and a minimum size of each page as abort condition, use gzip transfer for speed improvements (server must support gzip)
-    protected: wxString GetHtmlContentF(wxString UrlFormat, int First, int Last, size_t AbortSize = 0, bool UseGzip = false);
+    protected: wxString GetHtmlContentF(wxString UrlFormat, int First, int Last, int Increment, size_t AbortSize = 0, bool UseGzip = false);
     // store an image from a website to a file
     protected: bool SaveHtmlImage(wxString SourceImageURL, wxFileName TargetImageFile, wxString ReferrerURL);
     // store the content from the index list of the website to the local configuraion file

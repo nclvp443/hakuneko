@@ -38,7 +38,7 @@ void BatotoNet::UpdateMangaList()
     wxString mangaLink;
     wxString mangaLabel;
 
-    wxString content = GetHtmlContentF(baseURL + wxT("/search_ajax?p=%i"), 1, 500, 600, true);
+    wxString content = GetHtmlContentF(baseURL + wxT("/search_ajax?p=%i"), 1, 500, 1, 600, true);
 
 	// only update local list, if connection successful...
 	if(!content.IsEmpty())

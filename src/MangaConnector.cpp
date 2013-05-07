@@ -690,7 +690,7 @@ int debug_break = 0;
     return content;
 }
 
-wxString MangaConnector::GetHtmlContentF(wxString UrlFormat, int First, int Last, size_t AbortSize, bool UseGzip)
+wxString MangaConnector::GetHtmlContentF(wxString UrlFormat, int First, int Last, int Increment, size_t AbortSize, bool UseGzip)
 {
     UrlFormat = HtmlEscapeUrl(UrlFormat);
 	UrlFormat.Replace(wxT("http://"), wxT(""));
@@ -727,7 +727,7 @@ wxString MangaConnector::GetHtmlContentF(wxString UrlFormat, int First, int Last
         wxZlibInputStream *httpGzipStream;
         wxStringOutputStream strStream(&content);
 
-        for(int i=First; i<=Last; i++)
+        for(int i=First; i<=Last; i+=Increment)
         {
             httpStream = webResponse.GetInputStream(wxString::Format(Site, i));
             httpGzipStream = new wxZlibInputStream(httpStream);
