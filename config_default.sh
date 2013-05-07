@@ -6,7 +6,7 @@ PKGSECTION="net"
 PKGAUTHOR="Ronny Wegener <wegener.ronny@gmail.com>"
 PKGHOMEPAGE="http://hakuneko.googlecode.com"
 PKGDEPENDS=""
-PKGDESCRIPTION="A GTK based Manga Downloader
+PKGDESCRIPTION="Manga Downloader based on wxGTK
  HakuNeko allows you to download manga images from
  some selected online manga reader websites
  .

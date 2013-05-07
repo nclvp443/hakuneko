@@ -179,9 +179,6 @@ MangaDownloaderFrame::MangaDownloaderFrame(wxWindow* parent,wxWindowID id)
     MenuJobContext.Append(ID_JOBMENUITEM_REMOVESELECTED, wxT("Remove Selected"));
     MenuJobContext.Append(ID_JOBMENUITEM_REMOVEALL, wxT("Remove All Jobs"));
     MenuJobContext.Connect(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MangaDownloaderFrame::OnMenuJobContextClick, NULL, this);
-    FlexGridSizerContainer->Fit(this);
-    FlexGridSizerContainer->SetSizeHints(this);
-    Center();
 
     Connect(ID_BITMAPBUTTON3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&MangaDownloaderFrame::OnButtonBrowseClick);
     Connect(ID_COMBOBOX2,wxEVT_COMMAND_COMBOBOX_SELECTED,(wxObjectEventFunction)&MangaDownloaderFrame::OnChoiceSourceSelect);
@@ -208,7 +205,11 @@ MangaDownloaderFrame::MangaDownloaderFrame(wxWindow* parent,wxWindowID id)
     LoadResources();
     ConfigurationFile.Assign(GUI_CONFIGURATION_FILE);
     // LoadConfiguration() may show the window immediately, so call it last...
+    // it also may change initial minwidth of comboboxes
     LoadConfiguration();
+    //FlexGridSizerContainer->Fit(this); // will be done by SetSizeHints()
+    FlexGridSizerContainer->SetSizeHints(this); // fit window minwidth, in case combobox->minwidth increased by LoadConfiguration()
+    Center();
 }
 
 MangaDownloaderFrame::~MangaDownloaderFrame()
@@ -714,6 +715,9 @@ void MangaDownloaderFrame::OnBitmapButtonBookmarkClick(wxCommandEvent& event)
             ComboBoxSearchPattern->Append(bookmarks);
             ComboBoxSearchPattern->SetValue(pattern);
         //}
+        
+        GetSizer()->SetSizeHints(this); // fit window minwidth, in case combobox->minwidth increased
+        Center();
     }
 
     UpdateBookmarkButton();
