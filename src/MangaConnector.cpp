@@ -723,14 +723,12 @@ wxString MangaConnector::GetHtmlContentF(wxString UrlFormat, int First, int Last
     if(webResponse.Connect(host, port))
     {
         size_t pageSize;
-        wxInputStream *httpStream;
-        wxZlibInputStream *httpGzipStream;
+        wxInputStream *httpStream = NULL;
+        wxZlibInputStream *httpGzipStream = NULL;
         wxStringOutputStream strStream(&content);
 
         for(int i=First; i<=Last; i+=Increment)
         {
-            httpStream = webResponse.GetInputStream(wxString::Format(Site, i));
-            httpGzipStream = new wxZlibInputStream(httpStream);
             // host in header got resetted by GetInputStream(), restore to original!
             webResponse.SetHeader(wxT("Host"), host);
             if(UseGzip)
@@ -738,14 +736,17 @@ wxString MangaConnector::GetHtmlContentF(wxString UrlFormat, int First, int Last
                 // encoding in header got resetted by GetInputStream(), restore to original!
                 webResponse.SetHeader(wxT("Accept-Encoding"), wxT("gzip"));
             }
+            httpStream = webResponse.GetInputStream(wxString::Format(Site, i));
 
             if(webResponse.GetError() == wxPROTO_NOERR && httpStream)
             {
                 if(UseGzip)
                 {
+					httpGzipStream = new wxZlibInputStream(httpStream);
                     // NOTE: data will be appended to strStream(&content)
                     httpGzipStream->Read(strStream);
                     pageSize = httpGzipStream->LastRead();
+                    wxDELETE(httpGzipStream);
                 }
                 else
                 {
@@ -761,18 +762,24 @@ wxString MangaConnector::GetHtmlContentF(wxString UrlFormat, int First, int Last
                     break;
                 }
             }
-
-            if(UseGzip)
-            {
-                //httpGzipStream->Close();
-                wxDELETE(httpGzipStream);
-            }
             else
             {
+				break; // break when page is 404 (or this will lead to gzip header error when trying to read...)
+			}
+
+            if(!UseGzip)
+			{
                 //httpStream->Close();
                 wxDELETE(httpStream);
             }
         }
+        
+        // delete streams in case of break
+        if(!UseGzip && httpStream)
+        {
+			//httpStream->Close();
+            wxDELETE(httpStream);
+		}
         webResponse.Close();
     }
 
