@@ -38,8 +38,8 @@ void BatotoNet::UpdateMangaList()
     wxString mangaLink;
     wxString mangaLabel;
 
-    //wxString content = GetHtmlContentF(baseURL + wxT("/comic/_/sp/?per_page=1000&st=%i"), 0, 1000, 1000, 31200, true);
-    wxString content = GetHtmlContentF(baseURL + wxT("/comic/_/comics/?per_page=1000&st=%i"), 0, 3000/*15000*/, 1000, 31200, true);
+    wxString content = GetHtmlContentF(baseURL + wxT("/comic/_/comics/?per_page=1000&st=%i"), 0, 15000, 1000, 31200, true);
+    content += GetHtmlContentF(baseURL + wxT("/comic/_/sp/?per_page=1000&st=%i"), 0, 1000, 1000, 31200, true);
 
     // only update local list, if connection successful...
     if(!content.IsEmpty())

@@ -1,5 +1,62 @@
 #include "MangaConnector.h"
 
+/*
+0x00000000 - 0x0000007F | 0bbbbbbb
+0x00000080 - 0x000007FF | 110bbbbb 10bbbbbb
+0x00000800 - 0x0000FFFF | 1110bbbb 10bbbbbb 10bbbbbb
+0x00010000 - 0x001FFFFF | 11110bbb 10bbbbbb 10bbbbbb 10bbbbbb
+0x00200000 - 0x03FFFFFF | 111110bb 10bbbbbb 10bbbbbb 10bbbbbb 10bbbbbb
+0x04000000 - 0x7FFFFFFF | 1111110b 10bbbbbb 10bbbbbb 10bbbbbb 10bbbbbb 10bbbbbb
+*/
+void fix_utf8(unsigned char* buffer, size_t bytes)
+{
+    bool valid = true;
+    int utf8_appended_bytes = 0;
+    int i = 0;
+
+    while(i<(int)bytes)
+    {
+        valid = true;
+
+        if    (!(buffer[i] & 0x80))         { utf8_appended_bytes = 0; } // starts with 0 -> 1 byte
+        else if((buffer[i] & 0xc0) == 0x80) { utf8_appended_bytes = 0; valid = false; } // starts with 10 -> invalid
+        else if((buffer[i] & 0xe0) == 0xc0) { utf8_appended_bytes = 1; } // starts with 110 -> 2 bytes
+        else if((buffer[i] & 0xf0) == 0xe0) { utf8_appended_bytes = 2; } // starts with 1110 -> 3 bytes
+        else if((buffer[i] & 0xf8) == 0xf0) { utf8_appended_bytes = 3; } // starts with 11110 -> 4 bytes
+        else if((buffer[i] & 0xfc) == 0xf8) { utf8_appended_bytes = 4; } // starts with 111110 -> 5 bytes
+        else if((buffer[i] & 0xfe) == 0xfc) { utf8_appended_bytes = 5; } // starts with 1111110 -> 6 bytes
+
+        if(i+utf8_appended_bytes < (int)bytes)
+        {
+            // check the appended bytes
+            for(int n=0; n<utf8_appended_bytes; n++)
+            {
+                // starts not with 10 -> invalid
+                if((buffer[i+1+n] & 0xc0) != 0x80)
+                {
+                    valid = false;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            valid = false;
+        }
+
+        if(!valid)
+        {
+            // replace all characters from i to i+utf8_appended_bytes
+            for(int n=0; n<1+utf8_appended_bytes; n++)
+            {
+                buffer[i+n] = '?';
+            }
+        }
+
+        i += 1+utf8_appended_bytes;
+    }
+}
+
 MCEntry::MCEntry()
 {
     //
@@ -636,9 +693,9 @@ wxString MangaConnector::GetHtmlContent(wxString Url, bool UseGzip)
 
     if(webResponse.Connect(host, port))
     {
-        size_t bytesRead = 0;
+        //size_t bytesRead = 0;
         wxInputStream *httpStream = webResponse.GetInputStream(wxT("/") + Url.AfterFirst(L'/'));
-        wxStringOutputStream strStream(&content);
+        //wxStringOutputStream strStream(&content);
 
         if(webResponse.GetError() == wxPROTO_NOERR && httpStream)
         {
@@ -649,38 +706,90 @@ wxString MangaConnector::GetHtmlContent(wxString Url, bool UseGzip)
             }
             else
             {
-                if(UseGzip)
-                {
-                    wxZlibInputStream httpGzipStream(httpStream);
-                    httpGzipStream.Read(strStream);
-                    bytesRead += httpGzipStream.LastRead();
-                }
-                else
-                {
-                    //wxStringOutputStream strStream(NULL);
-                    httpStream->Read(strStream);
-                    bytesRead += httpStream->LastRead();
-                    //content = strStream.GetString();
-                }
+                // reading stream using string buffer (utf8)
+                //{
+                    /*
+                    if(UseGzip)
+                    {
+                        wxZlibInputStream httpGzipStream(httpStream);
+                        httpGzipStream.Read(strStream);
+                        bytesRead += httpGzipStream.LastRead();
+                    }
+                    else
+                    {
+                        //wxStringOutputStream strStream(NULL);
+                        httpStream->Read(strStream);
+                        bytesRead += httpStream->LastRead();
+                        //content = strStream.GetString();
+                    }
+                    */
+                //}
+
+                // reading stream using char* buffer (char/utf8/...)
+                //{
+                    size_t bytes_read;
+                    size_t bytes = httpStream->GetSize();
+                    // if filesize is unknown or greater 25KB read in chunks
+                    if(bytes <= 0 || bytes > 25600)
+                    {
+                        bytes = 25600; // 25 KB chunks
+                    }
+                    unsigned char* buffer = new wxByte[bytes];
+
+                    if(UseGzip)
+                    {
+                        wxZlibInputStream httpGzipStream(httpStream);
+                        while(!httpGzipStream.Eof())
+                        {
+                            httpGzipStream.Read(buffer, bytes);
+                            bytes_read = httpGzipStream.LastRead();
+                            if(bytes_read > 0)
+                            {
+                                // From8Bit -> ignores invalid character errors, but characters are used as Ascii
+                                // FromUTF8 -> uses utf8 characters, but invalid utf8 character will end string
+                                fix_utf8(buffer, bytes_read);
+                                content += wxString::FromUTF8((const char*)buffer, bytes_read);
+                                //content += wxString::From8BitData((const char*)buffer, bytes_read);
+                            }
+                            else
+                            {
+                                break; // maybe an error on read
+                            }
+                        }
+                    }
+                    else
+                    {
+                        while(!httpStream->Eof())
+                        {
+                            httpStream->Read(buffer, bytes);
+                            bytes_read = httpStream->LastRead();
+                            if(bytes_read > 0)
+                            {
+                                // From8Bit -> ignores invalid character errors, but characters are used as Ascii
+                                // FromUTF8 -> uses utf8 characters, but invalid utf8 character will end string
+                                fix_utf8(buffer, bytes_read);
+                                content += wxString::FromUTF8((const char*)buffer, bytes_read);
+                                //content += wxString::From8BitData((const char*)buffer, bytes_read);
+                            }
+                            else
+                            {
+                                break; // maybe an error on read
+                            }
+                        }
+                    }
+
+                    wxDELETEA(buffer);
+                //}
             }
         }
 
-        if(!UseGzip)
+        if(!UseGzip && httpStream)
         {
             //httpStream->Close();
             wxDELETE(httpStream);
         }
 
         webResponse.Close();
-
-        // FIXME: illegal character in stream cuts wxString
-        // validate page with http://validator.w3.org
-        /*
-        if(content.Length() < bytesRead*95/100) // 5% variance for utf8 multibyte characters
-        {
-            wxMessageBox(wxT("The requested webpage contains errors.\nThis might be caused by an invalid utf8 character.\n\nURL: ") + Url);// + wxString::Format(wxT("\n\nBytes fetched: [%lu] of [%lu]"), (unsigned long)content.Length(), (unsigned long)bytesRead), wxT("Connection Error"));
-        }
-        */
     }
 
     return content;
@@ -719,10 +828,10 @@ wxString MangaConnector::GetHtmlContentF(wxString UrlFormat, int First, int Last
     if(webResponse.Connect(host, port))
     {
         size_t pageSize;
-        size_t bytesRead = 0;
+        //size_t bytesRead = 0;
         wxInputStream *httpStream = NULL;
-        wxZlibInputStream *httpGzipStream = NULL;
-        wxStringOutputStream strStream(&content);
+        //wxZlibInputStream *httpGzipStream = NULL;
+        //wxStringOutputStream strStream(&content);
 
         for(int i=First; i<=Last; i+=Increment)
         {
@@ -737,24 +846,88 @@ wxString MangaConnector::GetHtmlContentF(wxString UrlFormat, int First, int Last
 
             if(webResponse.GetError() == wxPROTO_NOERR && httpStream)
             {
-                if(UseGzip)
-                {
-                    httpGzipStream = new wxZlibInputStream(httpStream);
-                    // NOTE: data will be appended to strStream(&content)
-                    httpGzipStream->Read(strStream);
-                    pageSize = httpGzipStream->LastRead();
-                    bytesRead += pageSize;
-                    wxDELETE(httpGzipStream);
-                }
-                else
-                {
-                    // NOTE: data will be appended to strStream(&content)
-                    //wxStringOutputStream strStream(NULL);
-                    httpStream->Read(strStream);
-                    //content = strStream.GetString();
-                    pageSize = httpStream->LastRead();
-                    bytesRead += pageSize;
-                }
+                // reading stream using string buffer (utf8)
+                //{
+                    /*
+                    if(UseGzip)
+                    {
+                        httpGzipStream = new wxZlibInputStream(httpStream);
+                        // NOTE: data will be appended to strStream(&content)
+                        httpGzipStream->Read(strStream);
+                        pageSize = httpGzipStream->LastRead();
+                        bytesRead += pageSize;
+                        wxDELETE(httpGzipStream);
+                    }
+                    else
+                    {
+                        // NOTE: data will be appended to strStream(&content)
+                        //wxStringOutputStream strStream(NULL);
+                        httpStream->Read(strStream);
+                        //content = strStream.GetString();
+                        pageSize = httpStream->LastRead();
+                        bytesRead += pageSize;
+                    }
+                    */
+                //}
+
+                // reading stream using char* buffer (char/utf8/...)
+                //{
+                    pageSize = 0;
+                    size_t bytes_read;
+                    size_t bytes = httpStream->GetSize();
+                    // if filesize is unknown or greater 25KB read in chunks
+                    if(bytes <= 0 || bytes > 25600)
+                    {
+                        bytes = 25600; // 25 KB chunks
+                    }
+                    unsigned char* buffer = new wxByte[bytes];
+
+                    if(UseGzip)
+                    {
+                        wxZlibInputStream httpGzipStream(httpStream);
+                        while(!httpGzipStream.Eof())
+                        {
+                            httpGzipStream.Read(buffer, bytes);
+                            bytes_read = httpGzipStream.LastRead();
+                            pageSize += bytes_read;
+                            if(bytes_read > 0)
+                            {
+                                // From8Bit -> ignores invalid character errors, but characters are used as Ascii
+                                // FromUTF8 -> uses utf8 characters, but invalid utf8 character will end string
+                                fix_utf8(buffer, bytes_read);
+                                content += wxString::FromUTF8((const char*)buffer, bytes_read);
+                                //content += wxString::From8BitData((const char*)buffer, bytes_read);
+                            }
+                            else
+                            {
+                                break; // maybe an error on read
+                            }
+                        }
+                    }
+                    else
+                    {
+                        while(!httpStream->Eof())
+                        {
+                            httpStream->Read(buffer, bytes);
+                            bytes_read = httpStream->LastRead();
+                            pageSize += bytes_read;
+                            if(bytes_read > 0)
+                            {
+                                // From8Bit -> ignores invalid character errors, but characters are used as Ascii
+                                // FromUTF8 -> uses utf8 characters, but invalid utf8 character will end string
+                                fix_utf8(buffer, bytes_read);
+                                content += wxString::FromUTF8((const char*)buffer, bytes_read);
+                                //content += wxString::From8BitData((const char*)buffer, bytes_read);
+                            }
+                            else
+                            {
+                                break; // maybe an error on read
+                            }
+                        }
+                    }
+
+                    wxDELETEA(buffer);
+                //}
 
                 if(AbortSize > 0 && pageSize < AbortSize)
                 {
@@ -773,7 +946,6 @@ wxString MangaConnector::GetHtmlContentF(wxString UrlFormat, int First, int Last
             }
         }
 
-        // delete streams in case of break
         if(!UseGzip && httpStream)
         {
             //httpStream->Close();
@@ -781,15 +953,6 @@ wxString MangaConnector::GetHtmlContentF(wxString UrlFormat, int First, int Last
         }
 
         webResponse.Close();
-
-        // FIXME: illegal character in stream cuts wxString
-        // validate page with http://validator.w3.org
-        /*
-        if(content.Length() < bytesRead*95/100) // 5% variance for utf8 multibyte characters
-        {
-            wxMessageBox(wxT("The requested webpage contains errors.\nThis might be caused by an invalid utf8 character.\n\nURL: ") + UrlFormat);// + wxString::Format(wxT("\n\nBytes fetched: [%lu] of [%lu]"), (unsigned long)content.Length(), (unsigned long)bytesRead), wxT("Connection Error"));
-        }
-        */
     }
 
     return content;
