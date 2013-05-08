@@ -183,7 +183,7 @@ wxArrayString BatotoNet::GetPageLinks(wxString ChapterLink)
 {
     wxArrayString pageLinks;
 
-    wxString content = GetHtmlContent(ChapterLink, true);
+    wxString content = GetHtmlContent(ChapterLink + wxT("/?supress_webtoon=t"), true);
 
     int indexStart = content.find(wxT("<select name=\"page_select\"")) + 26;
     int indexEnd = content.find(wxT("</select>"), indexStart);
@@ -198,7 +198,7 @@ wxArrayString BatotoNet::GetPageLinks(wxString ChapterLink)
         {
             indexStart += 15;
             indexEnd = content.find(wxT("\""), indexStart); // "\""
-            pageLinks.Add(content.Mid(indexStart, indexEnd-indexStart));
+            pageLinks.Add(content.Mid(indexStart, indexEnd-indexStart) + wxT("?supress_webtoon=t"));
 
             //wxYield();
         }
