@@ -498,7 +498,7 @@ write_makefile_dependency_resolver()
     $ECHO_ESC "    PATTERN_04 = )" >> $MAKEFILE
     $ECHO_ESC "    PATTERN_05 = (%)" >> $MAKEFILE
     $ECHO_ESC "    PATTERN_06 = =" >> $MAKEFILE
-    $ECHO_ESC "    PATTERN_07 = (>=" >> $MAKEFILE
+    $ECHO_ESC "    PATTERN_07 = (>= " >> $MAKEFILE
     $ECHO_ESC "" >> $MAKEFILE
     $ECHO_ESC "    # generate a list of required packages for the binary file" >> $MAKEFILE
     $ECHO_ESC "    BIN_PKG_DEPS = \$(sort \$(shell dpkg -S \$(filter /%, \$(shell ldd \$(BINFILE) 2> /dev/null)) 2> /dev/null | sed -e 's|:.*||g'))" >> $MAKEFILE

@@ -1,0 +1,31 @@
+hakuneko 1.0.4
+
+ * disabled automatic chapter loading while typing (performance impact)
+ * changed batoto connector manga list synchronization (speed ~4x faster)
+ * fixed processing of manga lists from webpages with invalid utf8 characters
+
+hakuneko 1.0.3
+
+ * auto select chapters when manga search pattern exactly matches manga name
+ * highlight chapters only when at least 1 valid file is inside the directory
+ * increased timeouts from 8 - 10 seconds
+
+hakuneko 1.0.2
+
+ * automatic chapter loading when search pattern matches manga
+ * label (bookmark click)
+ * fixed: mangahere image download for windows
+ * fixed: chapter parsing for mangafox
+
+hakuneko 1.0
+
+ * support for linux
+ * revised GUI layout
+ * added some connectors
+ * joblist for managing downloads
+ * smart search with bookmarking feature
+ * color highlighting of exisitng manga/chapter directories
+
+hakuneko 0.5:
+
+ * initial release
