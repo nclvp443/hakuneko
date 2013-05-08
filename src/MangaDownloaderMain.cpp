@@ -499,20 +499,27 @@ void MangaDownloaderFrame::LoadMangaList(wxString Pattern)
         ColorifyMangaList();
 
         // select chapters from exactly matching manga
-        for(size_t i=0; i<CurrentMangaList.GetCount(); i++)
+        /*
+        if(CurrentMangaList.GetCount() < 20) // for performance reasons: only crawl list when < 20 items
         {
-            if(CurrentMangaList[i]->Label.Lower().IsSameAs(Pattern))
+            for(size_t i=0; i<CurrentMangaList.GetCount(); i++)
             {
-                ListCtrlMangas->SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-                ListCtrlMangas->EnsureVisible(i);
-                // TODO: set focus back to control before selecting manga
-                // move this part to OnSearch() ?
-                ComboBoxSearchPattern->SetFocus();
-                ComboBoxSearchPattern->SetSelection(Pattern.Len()+8, Pattern.Len()+8);
-                break;
+                if(CurrentMangaList[i]->Label.Lower().IsSameAs(Pattern))
+                {
+                    // TODO: improve live search (only load chapter ist when no key preseed between 1~2 seconds?)
+                    ComboBoxSearchPattern->Disable();
+                    ListCtrlMangas->SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+                    ListCtrlMangas->EnsureVisible(i);
+                    // TODO: set focus back to control before selecting manga
+                    // move this part to OnSearch() ?
+                    ComboBoxSearchPattern->Enable();
+                    ComboBoxSearchPattern->SetFocus();
+                    ComboBoxSearchPattern->SetSelection(Pattern.Len()+4, Pattern.Len()+4);
+                    break;
+                }
             }
         }
-
+        */
         ListCtrlMangas->Thaw();
     }
 }
@@ -652,10 +659,10 @@ void MangaDownloaderFrame::OnChoiceSourceSelect(wxCommandEvent& event)
 
 void MangaDownloaderFrame::OnButtonUpdateClick(wxCommandEvent& event)
 {
-    if(wxMessageBox(wxT("Tis operation may take 5~10 minutes!\n\nUpdate now?"), wxT("Hint"), wxYES_NO) == wxYES)
+    if(wxMessageBox(wxT("Tis operation may take 1~5 minutes!\n\nUpdate now?"), wxT("Hint"), wxYES_NO) == wxYES)
     {
         wxBeginBusyCursor();
-        StatusBar->SetStatusText(wxT("Synchronizing local mangalists with internet..."));
+        StatusBar->SetStatusText(wxT("Synchronizing local manga lists with internet..."));
         wxLongLong start = wxGetLocalTimeMillis();
 
         DisableControls();
@@ -715,7 +722,7 @@ void MangaDownloaderFrame::OnBitmapButtonBookmarkClick(wxCommandEvent& event)
             ComboBoxSearchPattern->Append(bookmarks);
             ComboBoxSearchPattern->SetValue(pattern);
         //}
-        
+
         GetSizer()->SetSizeHints(this); // fit window minwidth, in case combobox->minwidth increased
         Center();
     }
