@@ -44,7 +44,7 @@ class MCEntry
     public: MCEntry(wxString Name, wxString Url);
     public: virtual ~MCEntry();
 
-	private: static wxString invalidFileCharacters;
+    private: static wxString invalidFileCharacters;
     public: wxString SafeLabel;
     public: wxString Label;
     public: wxString Link;
@@ -91,7 +91,7 @@ class MangaConnector
     public: wxString GetLabel();
     // loads all manga titles / links from configuration file
     protected: void LoadLocalMangaList();
-	// read content from a http:// file into a string, use gzip transfer for speed improvements (server must support gzip)
+    // read content from a http:// file into a string, use gzip transfer for speed improvements (server must support gzip)
     protected: wxString GetHtmlContent(wxString Url, bool UseGzip = false);
     // read content from multiple http:// files containing an incrementable integer (url must contain %i) and a minimum size of each page as abort condition, use gzip transfer for speed improvements (server must support gzip)
     protected: wxString GetHtmlContentF(wxString UrlFormat, int First, int Last, int Increment, size_t AbortSize = 0, bool UseGzip = false);
@@ -113,9 +113,9 @@ class MangaConnector
     public: static unsigned long GenerateJobID(MCEntry* ChapterEntry);
     // add a job to the joblist
     public: bool AddJob(MCJob Job);
-	// remove a job from the joblist
+    // remove a job from the joblist
     public: void RemoveJob(unsigned long JobID);
-	// clear all jobs from the joblist
+    // clear all jobs from the joblist
     public: void RemoveAllJobs();
     // check if a job already exists in the joblist
     public: bool ContainsJob(unsigned long JobID);

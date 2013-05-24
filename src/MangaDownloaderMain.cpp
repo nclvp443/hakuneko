@@ -203,7 +203,7 @@ MangaDownloaderFrame::MangaDownloaderFrame(wxWindow* parent,wxWindowID id)
     StartupSync = false;
     TypingSearch = true;
     LoadResources();
-    ConfigurationFile.Assign(GUI_CONFIGURATION_FILE);
+    InitConfigurationFile();
     // LoadConfiguration() may show the window immediately, so call it last...
     // it also may change initial minwidth of comboboxes
     LoadConfiguration();
@@ -291,6 +291,62 @@ void MangaDownloaderFrame::LoadResources()
     LoadImageResource(RESOURCES::TICK_PNG, wxBITMAP_TYPE_PNG, CHECK_ENABLED);
     checkIcons->Add(ResourceImages[CHECK_ENABLED]);
     ListCtrlChapters->SetImageList(checkIcons, wxIMAGE_LIST_SMALL);
+}
+
+void MangaDownloaderFrame::InitConfigurationFile()
+{
+    /*
+    wxStandardPaths::GetExecutablePath
+    Return the directory and the filename for the current executable
+    Win7: .\HakuNeko\Hakuneko.exe
+    Unix: /usr/local/bin/hakuneko
+
+    wxStandardPaths::GetDataDir()
+    Return the location of the applications global, i.e. not user-specific, data files
+    Win7: .\HakuNeko
+    Unix: /usr/local/share/hakuneko
+
+    wxStandardPaths::GetConfigDir()
+    Return the directory containing the system config files
+    // Win7: C:\ProgramData\HakuNeko
+    // Unix: /etc
+
+    wxStandardPaths::GetLocalDataDir()
+    Return the location for application data files which are host-specific and can't, or shouldn't, be shared with the other machines
+    // Win7: .\HakuNeko
+    // Unix: /etc/hakuneko
+
+    wxStandardPaths::GetUserConfigDir()
+    Return the directory for the user config files
+    Win7: C:\User\UserName\AppData\Roaming
+    Unix: /home/username
+
+    wxStandardPaths::GetUserDataDir()
+    Return the directory for the user-dependent application data files
+    Win7: C:\User\UserName\AppData\Roaming\HakuNeko
+    Unix: /home/username/.hakuneko
+
+    wxStandardPaths::GetUserLocalDataDir()
+    Return the directory for user data files which shouldn't be shared with the other machines
+    Win7: C:\User\UserName\AppData\Local\HakuNeko
+    Unix: /home/username/.hakuneko
+    */
+
+    #ifdef PORTABLE
+        #ifdef __LINUX__
+            ConfigurationFile.Assign(wxStandardPaths::Get().GetExecutablePath().BeforeLast('/') + wxT("/gui.conf"));
+        #endif
+        #ifdef __WINDOWS__
+            ConfigurationFile.Assign(wxStandardPaths::Get().GetExecutablePath().BeforeLast('\\') + wxT("\\gui.conf"));
+        #endif
+    #else
+        #ifdef __LINUX__
+            ConfigurationFile.Assign(wxStandardPaths::Get().GetUserDataDir() + wxT("/gui.conf"));
+        #endif
+        #ifdef __WINDOWS__
+            ConfigurationFile.Assign(wxStandardPaths::Get().GetUserDataDir() + wxT("\\gui.conf"));
+        #endif
+    #endif
 }
 
 void MangaDownloaderFrame::LoadConfiguration()
