@@ -135,8 +135,14 @@ wxString MangaConnector::GetConfigurationPath()
         #endif
     #else
         #ifdef __LINUX__
-            // TODO: make path XDG compliant
-            return wxStandardPaths::Get().GetUserDataDir();
+            // TODO: get XDG_CONFIG_HOME from environment
+            wxString EnvironmentFilePath;
+            wxGetEnv(wxT("XDG_CONFIG_HOME"), &EnvironmentFilePath);
+            if(EnvironmentFilePath.IsEmpty())
+            {
+                return wxStandardPaths::Get().GetUserConfigDir() + wxT("/.config/hakuneko");
+            }
+            return EnvironmentFilePath + wxT("/hakuneko");
         #endif
         #ifdef __WINDOWS__
             return wxStandardPaths::Get().GetConfigDir();

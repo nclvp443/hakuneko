@@ -341,8 +341,28 @@ void MangaDownloaderFrame::InitConfigurationFile()
         #endif
     #else
         #ifdef __LINUX__
-            // TODO: make path XDG compliant
-            ConfigurationFile.Assign(wxStandardPaths::Get().GetUserDataDir() + wxT("/gui.conf"));
+            // TODO: get XDG_CONFIG_HOME from environment
+            wxString EnvironmentFilePath;
+            wxGetEnv(wxT("XDG_CONFIG_HOME"), &EnvironmentFilePath);
+            if(EnvironmentFilePath.IsEmpty())
+            {
+                EnvironmentFilePath = wxStandardPaths::Get().GetUserConfigDir() + wxT("/.config/hakuneko/gui.conf");
+            }
+            else
+            {
+                EnvironmentFilePath +=  wxT("/hakuneko/gui.conf");
+            }
+            ConfigurationFile.Assign(EnvironmentFilePath);
+            // test if a non XDG compliant configuration exists (hakuneko < 1.0.5)
+            wxString DeprecatedPath = wxStandardPaths::Get().GetUserDataDir();
+            if(wxDirExists(DeprecatedPath))
+            {
+                // check if deprecated configuration path is different from current
+                if(!DeprecatedPath.IsSameAs(ConfigurationFile.GetPath()))
+                {
+                    wxMessageBox(wxT("Hakuneko has detected a deprecated configuration directory that will no longer be used in:\n\n") + wxStandardPaths::Get().GetUserDataDir() + wxT("\n\nThe new configuration directory is located in:\n\n") + ConfigurationFile.GetPath() + wxT("\n\nYou can move your deprecated files into the new configuration directory and/or delete the old configuration directory."));
+                }
+            }
         #endif
         #ifdef __WINDOWS__
             ConfigurationFile.Assign(wxStandardPaths::Get().GetUserDataDir() + wxT("\\gui.conf"));
