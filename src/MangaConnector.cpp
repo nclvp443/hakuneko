@@ -124,6 +124,26 @@ MangaConnector::~MangaConnector()
     //
 }
 
+wxString MangaConnector::GetConfigurationPath()
+{
+    #ifdef PORTABLE
+        #ifdef __LINUX__
+            return wxStandardPaths::Get().GetExecutablePath().BeforeLast('/') + wxT("/connectors");
+        #endif
+        #ifdef __WINDOWS__
+            return wxStandardPaths::Get().GetLocalDataDir() + wxT("\\connectors");
+        #endif
+    #else
+        #ifdef __LINUX__
+            // TODO: make path XDG compliant
+            return wxStandardPaths::Get().GetUserDataDir();
+        #endif
+        #ifdef __WINDOWS__
+            return wxStandardPaths::Get().GetConfigDir();
+        #endif
+    #endif
+}
+
 unsigned long MangaConnector::CheckSum(wxString Value)
 {
     // FNV-1a algorithm

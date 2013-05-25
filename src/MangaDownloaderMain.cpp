@@ -341,6 +341,7 @@ void MangaDownloaderFrame::InitConfigurationFile()
         #endif
     #else
         #ifdef __LINUX__
+            // TODO: make path XDG compliant
             ConfigurationFile.Assign(wxStandardPaths::Get().GetUserDataDir() + wxT("/gui.conf"));
         #endif
         #ifdef __WINDOWS__

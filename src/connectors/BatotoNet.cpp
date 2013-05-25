@@ -7,7 +7,7 @@ BatotoNet::BatotoNet()
     label = wxT("Batoto");
     baseURL = wxT("http://www.batoto.net");
     referrerURL = wxT("http://www.batoto.net");
-    mangaListFile.Assign(CONNECTOR_CONFIGURATION_PATH, wxT("batoto"), wxT("list"));
+    mangaListFile.Assign(GetConfigurationPath(), wxT("batoto"), wxT("list"));
     LoadLocalMangaList();
 }
 

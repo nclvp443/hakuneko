@@ -15,23 +15,6 @@
 #include <wx/sstream.h>
 #include <wx/zstream.h>
 
-#ifdef PORTABLE
-    #ifdef __LINUX__
-        #define CONNECTOR_CONFIGURATION_PATH (wxStandardPaths::Get().GetExecutablePath().BeforeLast('/') + wxT("/connectors"))
-    #endif
-    #ifdef __WINDOWS__
-        #define CONNECTOR_CONFIGURATION_PATH (wxStandardPaths::Get().GetLocalDataDir() + wxT("\\connectors"))
-    #endif
-#else
-    #ifdef __LINUX__
-        //#define CONNECTOR_CONFIGURATION_PATH (wxStandardPaths::Get().GetLocalDataDir())
-        #define CONNECTOR_CONFIGURATION_PATH (wxStandardPaths::Get().GetUserDataDir())
-    #endif
-    #ifdef __WINDOWS__
-        #define CONNECTOR_CONFIGURATION_PATH (wxStandardPaths::Get().GetConfigDir())
-    #endif
-#endif
-
 enum MANGA_LIST_TYPE
 {
     MANGA_LIST_TYPE_LINKS,
@@ -77,6 +60,8 @@ class MangaConnector
     public: MangaConnector();
     public: virtual ~MangaConnector();
 
+    // get the path where the configuration files of the connectors will be stored
+    protected: static wxString GetConfigurationPath();
     // create a unique id for a string (max. 4100 characters in string to create 32Bit integer)
     protected: static unsigned long CheckSum(wxString Value);
     // fills the htmlEntities & invalidChars hashmap with values

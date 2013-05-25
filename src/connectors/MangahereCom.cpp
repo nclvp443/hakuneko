@@ -5,7 +5,7 @@ MangahereCom::MangahereCom()
     label = wxT("MangaHere");
     baseURL = wxT("http://www.mangahere.com");
     referrerURL = wxT("http://www.mangahere.com");
-    mangaListFile.Assign(CONNECTOR_CONFIGURATION_PATH, wxT("mangahere"), wxT("list"));
+    mangaListFile.Assign(GetConfigurationPath(), wxT("mangahere"), wxT("list"));
     LoadLocalMangaList();
 }
 

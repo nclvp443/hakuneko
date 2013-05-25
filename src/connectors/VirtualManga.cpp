@@ -5,7 +5,7 @@ VirtualManga::VirtualManga()
     label = wxT("VirtualManga");
     baseURL = wxT("http://virtualmanga.null");
     referrerURL = wxT("http://virtualmanga.null");
-    mangaListFile.Assign(CONNECTOR_CONFIGURATION_PATH, wxT("virtualmanga"), wxT("list"));
+    mangaListFile.Assign(GetConfigurationPath(), wxT("virtualmanga"), wxT("list"));
     LoadLocalMangaList();
 }
 
@@ -18,13 +18,13 @@ void VirtualManga::UpdateMangaList()
 {
     wxTextFile f;
 /*
-	if(!mangaListFile.IsDirWritable())
-	{
-		wxMessageBox(wxT("Access denied!\nConfiguration directory: ") + mangaListFile.GetPath());
-		return;
-	}
+    if(!mangaListFile.IsDirWritable())
+    {
+        wxMessageBox(wxT("Access denied!\nConfiguration directory: ") + mangaListFile.GetPath());
+        return;
+    }
 */
-	mangaListFile.Mkdir(0755, wxPATH_MKDIR_FULL);
+    mangaListFile.Mkdir(0755, wxPATH_MKDIR_FULL);
 
     // create file, or open if already exists
     if(!f.Create(mangaListFile.GetFullPath()))
@@ -74,16 +74,16 @@ wxString VirtualManga::GetImageLink(wxString PageLink)
 {
     wxString content = GetHtmlContent(wxT("http://www.goodfon.com/catalog/anime/rand/"));
 
-	int indexStart = content.find(wxT("tabl_td")) + 7;
-	indexStart = content.find(wxT("<img src=\""), indexStart) + 10;
-	int indexEnd = content.find(wxT("\""), indexStart);
+    int indexStart = content.find(wxT("tabl_td")) + 7;
+    indexStart = content.find(wxT("<img src=\""), indexStart) + 10;
+    int indexEnd = content.find(wxT("\""), indexStart);
 
-	if(indexStart > 9 && indexEnd >= -1)
-	{
-		return content.Mid(indexStart, indexEnd-indexStart);
-	}
-	else
-	{
-		return PageLink.BeforeLast('.') + wxT(".jpg");
-	}
+    if(indexStart > 9 && indexEnd >= -1)
+    {
+        return content.Mid(indexStart, indexEnd-indexStart);
+    }
+    else
+    {
+        return PageLink.BeforeLast('.') + wxT(".jpg");
+    }
 }

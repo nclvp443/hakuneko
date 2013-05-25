@@ -5,7 +5,7 @@ MeinmangaCom::MeinmangaCom()
     label = wxT("MeinManga");
     baseURL = wxT("http://meinmanga.com");
     referrerURL = wxT("http://meinmanga.com");
-    mangaListFile.Assign(CONNECTOR_CONFIGURATION_PATH, wxT("meinmanga"), wxT("list"));
+    mangaListFile.Assign(GetConfigurationPath(), wxT("meinmanga"), wxT("list"));
     LoadLocalMangaList();
 }
 
@@ -18,13 +18,13 @@ void MeinmangaCom::UpdateMangaList()
 {
     wxTextFile f;
 /*
-	if(!mangaListFile.IsDirWritable())
-	{
-		wxMessageBox(wxT("Access denied!\nConfiguration directory: ") + mangaListFile.GetPath());
-		return;
-	}
+    if(!mangaListFile.IsDirWritable())
+    {
+        wxMessageBox(wxT("Access denied!\nConfiguration directory: ") + mangaListFile.GetPath());
+        return;
+    }
 */
-	mangaListFile.Mkdir(0755, wxPATH_MKDIR_FULL);
+    mangaListFile.Mkdir(0755, wxPATH_MKDIR_FULL);
 
     // create file, or open if already exists
     if(!f.Create(mangaListFile.GetFullPath()))
@@ -36,48 +36,48 @@ void MeinmangaCom::UpdateMangaList()
     wxString mangaLink;
     wxString mangaLabel;
 
-	wxString content = GetHtmlContent(baseURL + wxT("/directory/all/"), false);
+    wxString content = GetHtmlContent(baseURL + wxT("/directory/all/"), false);
 
-	// only update local list, if connection successful...
-	if(!content.IsEmpty())
-	{
-		int indexStart = content.find(wxT("<th>Serienname</th>")) + 19;
-		int indexEnd = content.rfind(wxT("</table>"));
+    // only update local list, if connection successful...
+    if(!content.IsEmpty())
+    {
+        int indexStart = content.find(wxT("<th>Serienname</th>")) + 19;
+        int indexEnd = content.rfind(wxT("</table>"));
 
-		if(indexStart > 18 && indexEnd >= -1)
-		{
-			content = content.Mid(indexStart, indexEnd-indexStart);
-			indexEnd = 0;
+        if(indexStart > 18 && indexEnd >= -1)
+        {
+            content = content.Mid(indexStart, indexEnd-indexStart);
+            indexEnd = 0;
 
-			// Example Entry: <a href="/manga">Label</a>
-			while((indexStart = content.find(wxT("<tr>"), indexEnd)) > -1)
-			{
-				indexStart += 4;
-				indexStart = content.find(wxT("<a href=\""), indexStart) + 9; // "\">"
-				indexEnd = content.find(wxT("\""), indexStart); // "\">"
-				mangaLink = content.Mid(indexStart, indexEnd-indexStart);
+            // Example Entry: <a href="/manga">Label</a>
+            while((indexStart = content.find(wxT("<tr>"), indexEnd)) > -1)
+            {
+                indexStart += 4;
+                indexStart = content.find(wxT("<a href=\""), indexStart) + 9; // "\">"
+                indexEnd = content.find(wxT("\""), indexStart); // "\">"
+                mangaLink = content.Mid(indexStart, indexEnd-indexStart);
 
-				indexStart = indexEnd + 2;
-				indexEnd = content.find(wxT("<"), indexStart); // "</a>"
-				mangaLabel = content.Mid(indexStart, indexEnd-indexStart);
+                indexStart = indexEnd + 2;
+                indexEnd = content.find(wxT("<"), indexStart); // "</a>"
+                mangaLabel = content.Mid(indexStart, indexEnd-indexStart);
 
                 if(!mangaLabel.IsEmpty())
                 {
                     f.AddLine(HtmlUnescapeString(mangaLabel) + wxT("\t") + mangaLink);
                 }
 
-				//wxYield();
-			}
-		}
+                //wxYield();
+            }
+        }
 
-		f.Write();
-		f.Close();
-		LoadLocalMangaList();
-	}
-	else
-	{
-		f.Close();
-	}
+        f.Write();
+        f.Close();
+        LoadLocalMangaList();
+    }
+    else
+    {
+        f.Close();
+    }
 }
 
 wxArrayMCEntry MeinmangaCom::GetChapterList(MCEntry* MangaEntry)
@@ -94,5 +94,5 @@ wxArrayString MeinmangaCom::GetPageLinks(wxString ChapterLink)
 
 wxString MeinmangaCom::GetImageLink(wxString PageLink)
 {
-	return wxT("");
+    return wxT("");
 }
