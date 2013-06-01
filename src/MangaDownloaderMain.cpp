@@ -341,7 +341,6 @@ void MangaDownloaderFrame::InitConfigurationFile()
         #endif
     #else
         #ifdef __LINUX__
-            // TODO: get XDG_CONFIG_HOME from environment
             wxString EnvironmentFilePath;
             wxGetEnv(wxT("XDG_CONFIG_HOME"), &EnvironmentFilePath);
             if(EnvironmentFilePath.IsEmpty())
