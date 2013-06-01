@@ -343,6 +343,7 @@ void MangaDownloaderFrame::InitConfigurationFile()
         #ifdef __LINUX__
             wxString EnvironmentFilePath;
             wxGetEnv(wxT("XDG_CONFIG_HOME"), &EnvironmentFilePath);
+            EnvironmentFilePath = EnvironmentFilePath.BeforeFirst(':');
             if(EnvironmentFilePath.IsEmpty())
             {
                 EnvironmentFilePath = wxStandardPaths::Get().GetUserConfigDir() + wxT("/.config/hakuneko/gui.conf");

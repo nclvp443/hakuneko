@@ -1,3 +1,8 @@
+hakuneko 1.0.5
+
+ * fixed mangahere image download
+ * changed configuration path for XDG compliance (from ~/.hakuneko to $XDG_CONFIG_HOME or ~/.config/hakuneko)
+
 hakuneko 1.0.4
 
  * disabled automatic chapter loading while typing (performance impact)

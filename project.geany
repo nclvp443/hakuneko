@@ -25,9 +25,10 @@ long_line_column=72
 [files]
 current_page=1
 FILE_NAME_0=592;C;0;16;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaDownloaderMain.h;0;4
-FILE_NAME_1=21568;C++;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaDownloaderMain.cpp;0;4
+FILE_NAME_1=21682;C++;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaDownloaderMain.cpp;0;4
 FILE_NAME_2=1564;C;0;16;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaConnector.h;0;4
-FILE_NAME_3=3947;C++;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaConnector.cpp;0;4
+FILE_NAME_3=4061;C++;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaConnector.cpp;0;4
+FILE_NAME_4=121;None;0;16;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2FCHANGELOG;0;4
 
 [VTE]
 last_dir=/home/ronny/Documents/development/hakuneko
