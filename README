@@ -15,14 +15,15 @@
     ----------------------------
     # open a terminal
     # change into hakuneko directory
-    # run the following commands as root user
+    # run configure (with --prefix=DIR if you want to install in a directory other than /usr/local)
     ./configure --prefix=/usr
     make
-    make install
+    # run as root or installation will fail
+    sudo make install
 
     # remove hakuneko
-    # run the following command as root user
-    make uninstall
+    # run as root or uninstallation will fail
+    sudo make uninstall
 
     # NOTE: create a source package for redistribution
     make tgz
@@ -32,7 +33,7 @@
 
     # NOTE: create a debian binary package for redistribution
     # (configure with prefix /usr to prevent lintian errors)
-    # (use sudo for correct ownership of files)
+    # (run as root for correct ownership of files)
     ./configure --prefix=/usr
     sudo make deb
 
