@@ -25,9 +25,16 @@
     make uninstall
 
     # NOTE: create a source package for redistribution
-    # make tgz
-    # NOTE: create a debian package for redistribution
-    # make deb
+    make tgz
+
+    # NOTE: create a debian source package for redistribution
+    make dsc
+
+    # NOTE: create a debian binary package for redistribution
+    # (configure with prefix /usr to prevent lintian errors)
+    # (use sudo for correct ownership of files)
+    ./configure --prefix=/usr
+    sudo make deb
 
 #############
 ### WINNT ###
