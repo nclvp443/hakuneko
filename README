@@ -29,7 +29,9 @@
     make tgz
 
     # NOTE: create a debian source package for redistribution
-    make dsc
+    make dgz # creates only the source archive
+    make dsc # creates the source archive and the source description
+    make chg # creates the source archive, the source description and the changes file (required when uploading to official debian mirrors)
 
     # NOTE: create a debian binary package for redistribution
     # (configure with prefix /usr to prevent lintian errors)
