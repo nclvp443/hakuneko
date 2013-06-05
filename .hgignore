@@ -12,5 +12,6 @@ Makefile
 *.bat
 bin/*
 obj/*
+debian/*
 dist/linux/bin/*
 dist/winnt/bin/*
