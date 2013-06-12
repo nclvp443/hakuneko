@@ -1,8 +1,8 @@
 [Setup]
 AppName=hakuneko
 AppVerName=hakuneko
-AppVersion=1.0.3
-VersionInfoVersion=1.0.3
+AppVersion=1.0.5
+VersionInfoVersion=1.0.5
 AppPublisher=Ronny Wegener
 AppPublisherURL=http://hakuneko.googlecode.com
 SetupIconFile=res\app.ico
@@ -15,7 +15,7 @@ DisableReadyPage=yes
 ; refresh windows explorer to update associated icons
 ;ChangesAssociations=yes
 OutputDir=.
-OutputBaseFilename=hakuneko_1.0.3_i386_msw-setup
+OutputBaseFilename=hakuneko_1.0.5_i386_msw-setup
 ;WizardImageFile=compiler:wizmodernimage.bmp
 ;WizardSmallImageFile=compiler:wizmodernsmallimage.bmp
 
