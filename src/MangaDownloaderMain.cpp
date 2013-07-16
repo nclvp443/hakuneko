@@ -202,6 +202,7 @@ MangaDownloaderFrame::MangaDownloaderFrame(wxWindow* parent,wxWindowID id)
 
     StartupSync = false;
     TypingSearch = true;
+    CompressChapters = false;
     LoadResources();
     InitConfigurationFile();
     // LoadConfiguration() may show the window immediately, so call it last...
@@ -449,6 +450,18 @@ void MangaDownloaderFrame::LoadConfiguration()
             }
         }
 
+        if(line.StartsWith(wxT("compresschapters=")))
+        {
+            if(line.AfterFirst(L'=').IsSameAs(wxT("true")))
+            {
+                CompressChapters = true;
+            }
+            else
+            {
+                CompressChapters = false;
+            }
+        }
+
         if(line.StartsWith(wxT("filter=")))
         {
             ComboBoxSearchPattern->SetValue(line.AfterFirst(L'='));
@@ -534,6 +547,14 @@ void MangaDownloaderFrame::SaveConfiguration()
     else
     {
         f.AddLine(wxT("typingsearch=false"));
+    }
+    if(CompressChapters)
+    {
+        f.AddLine(wxT("compresschapters=true"));
+    }
+    else
+    {
+        f.AddLine(wxT("compresschapters=false"));
     }
     f.AddLine(wxT("filter=") + ComboBoxSearchPattern->GetValue());
     for(unsigned int i=0; i<ComboBoxSearchPattern->GetCount(); i++)
@@ -1016,7 +1037,7 @@ void MangaDownloaderFrame::OnButtonDownloadClick(wxCommandEvent& event)
     {
         DisableControls(true);
 
-        MCC.DownloadJobs(baseDirectory, StatusBar, &AbortDownload);
+        MCC.DownloadJobs(baseDirectory, StatusBar, &AbortDownload, CompressChapters);
 
         wxArrayJobID completed = MCC.GetCompletedJobIDs();
         if(completed.GetCount() > 0 && wxMessageBox(wxT("Remove completed jobs from download list?"), wxT("Operation Complete"), wxYES_NO) == wxYES)

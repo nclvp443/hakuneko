@@ -180,6 +180,7 @@ class MangaDownloaderFrame: public wxFrame
         private: bool AbortDownload;
         private: bool StartupSync;
         private: bool TypingSearch;
+        private: bool CompressChapters;
 
         DECLARE_EVENT_TABLE()
 };

@@ -114,8 +114,8 @@ class MangaConnector
     public: wxArrayJobID GetCompletedJobIDs();
     // set the Downloaded Completed Value for a job
     public: void SetJobDownloadCompleted(unsigned long JobID, bool Value);
-    // downloads all chapters from the joblist to the base directory, when ArchiveMode is true -> .cbz instead of images
-    public: wxArrayString DownloadJobs(wxFileName BaseDirectory, wxStatusBar* StatusBar, bool* Abort, bool ArchiveMode=false);
+    // downloads all chapters from the joblist to the base directory, when CompressChapters is true -> .cbz instead of images
+    public: wxArrayString DownloadJobs(wxFileName BaseDirectory, wxStatusBar* StatusBar, bool* Abort, bool CompressChapters = false);
 
     protected: wxString label;
     protected: wxString baseURL;

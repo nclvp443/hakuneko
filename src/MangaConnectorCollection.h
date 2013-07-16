@@ -42,7 +42,7 @@ class MangaConnectorCollection
     public: size_t GetJobCount();
     public: wxArrayJobID GetCompletedJobIDs();
     public: void SetJobDownloadCompleted(unsigned long JobID, bool Value);
-    public: void DownloadJobs(wxFileName BaseDirectory, wxStatusBar* StatusBar, bool* Abort);
+    public: void DownloadJobs(wxFileName BaseDirectory, wxStatusBar* StatusBar, bool* Abort, bool CompressChapters = false);
 };
 
 #endif // MANGACONNECTORCONNECTION_H

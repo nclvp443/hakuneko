@@ -1163,15 +1163,14 @@ void MangaConnector::SetJobDownloadCompleted(unsigned long JobID, bool Value)
     }
 }
 
-wxArrayString MangaConnector::DownloadJobs(wxFileName BaseDirectory, wxStatusBar* StatusBar, bool* Abort, bool ArchiveMode)
+wxArrayString MangaConnector::DownloadJobs(wxFileName BaseDirectory, wxStatusBar* StatusBar, bool* Abort, bool CompressChapters)
 {
     wxArrayString errorLog;
     wxArrayString pageLinks;
     wxString sourceImageLink;
     wxFileName targetImageFile;
     wxFileName targetArchiveFile;
-// TODO: remove this debug entry
-//ArchiveMode =true;
+
     // loop through all chapters of joblist
     unsigned int j=0;
     bool noError;
@@ -1189,7 +1188,7 @@ wxArrayString MangaConnector::DownloadJobs(wxFileName BaseDirectory, wxStatusBar
             targetImageFile.AppendDir(it->second.ChapterSafeLabel);
             targetArchiveFile.Assign(targetImageFile.GetPath() + wxT(".cbz"));
 
-            if(ArchiveMode)
+            if(CompressChapters)
             {
                 if(!targetArchiveFile.Mkdir(0755, wxPATH_MKDIR_FULL))
                 {
@@ -1209,7 +1208,7 @@ wxArrayString MangaConnector::DownloadJobs(wxFileName BaseDirectory, wxStatusBar
             wxFileOutputStream archiveFileStream(targetArchiveFile.GetFullPath()); // overwrite existing archive file
             wxZipOutputStream archiveCompressionStream(archiveFileStream);
 
-            if(!ArchiveMode)
+            if(!CompressChapters)
             {
                 archiveCompressionStream.Close();
                 archiveFileStream.Close();
@@ -1225,7 +1224,7 @@ wxArrayString MangaConnector::DownloadJobs(wxFileName BaseDirectory, wxStatusBar
                 targetImageFile.SetName(wxString::Format(wxT("%03u"), i+1));
                 targetImageFile.SetExt(sourceImageLink.AfterLast('.').BeforeFirst('?'));
 
-                if(ArchiveMode)
+                if(CompressChapters)
                 {
                     archiveCompressionStream.PutNextEntry(targetImageFile.GetFullName());
                     wxBufferedOutputStream bufferedDestinationStream(archiveCompressionStream);
@@ -1256,7 +1255,7 @@ wxArrayString MangaConnector::DownloadJobs(wxFileName BaseDirectory, wxStatusBar
                 wxYield();
                 if(*Abort)
                 {
-                    if(ArchiveMode)
+                    if(CompressChapters)
                     {
                         archiveCompressionStream.Close();
                         archiveFileStream.Close();
@@ -1265,7 +1264,7 @@ wxArrayString MangaConnector::DownloadJobs(wxFileName BaseDirectory, wxStatusBar
                 }
             }
 
-            if(ArchiveMode)
+            if(CompressChapters)
             {
                 archiveCompressionStream.Close();
                 archiveFileStream.Close();

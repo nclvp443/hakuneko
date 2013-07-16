@@ -2,8 +2,8 @@
 
 MangaConnectorCollection::MangaConnectorCollection()
 {
-	MangaConnectors.Add(new MangareaderNet());
-	MangaConnectors.Add(new MangahereCom());
+    MangaConnectors.Add(new MangareaderNet());
+    MangaConnectors.Add(new MangahereCom());
     MangaConnectors.Add(new MangafoxMe());
     MangaConnectors.Add(new BatotoNet());
     MangaConnectors.Add(new SubmangaCom());
@@ -44,7 +44,7 @@ int MangaConnectorCollection::GetConnectorIndexFromLabel(wxString ConnectorLabel
 
 void MangaConnectorCollection::UpdateMangaLists()
 {
-	for(size_t i=0; i<MangaConnectors.GetCount(); i++)
+    for(size_t i=0; i<MangaConnectors.GetCount(); i++)
     {
         MangaConnectors[i]->UpdateMangaList();
     }
@@ -102,15 +102,15 @@ bool MangaConnectorCollection::AddJob(MCJob Job)
         return MangaConnectors[index]->AddJob(Job);
     }
     else
-	{
-    	return false;
-	}
+    {
+        return false;
+    }
 }
 
 void MangaConnectorCollection::RemoveJob(unsigned long JobID)
 {
     // remove in all connectors
-	for(size_t i=0; i<MangaConnectors.GetCount(); i++)
+    for(size_t i=0; i<MangaConnectors.GetCount(); i++)
     {
         MangaConnectors[i]->RemoveJob(JobID);
     }
@@ -119,7 +119,7 @@ void MangaConnectorCollection::RemoveJob(unsigned long JobID)
 void MangaConnectorCollection::RemoveAllJobs()
 {
     // remove in all connectors
-	for(size_t i=0; i<MangaConnectors.GetCount(); i++)
+    for(size_t i=0; i<MangaConnectors.GetCount(); i++)
     {
         MangaConnectors[i]->RemoveAllJobs();
     }
@@ -127,7 +127,7 @@ void MangaConnectorCollection::RemoveAllJobs()
 
 bool MangaConnectorCollection::ContainsJob(unsigned long JobID)
 {
-	// search in all connectors
+    // search in all connectors
     for(size_t i=0; i<MangaConnectors.GetCount(); i++)
     {
         if(MangaConnectors[i]->ContainsJob(JobID))
@@ -152,47 +152,47 @@ size_t MangaConnectorCollection::GetJobCount()
 
 wxArrayJobID MangaConnectorCollection::GetCompletedJobIDs()
 {
-	wxArrayJobID completed;
-	wxArrayJobID temp;
+    wxArrayJobID completed;
+    wxArrayJobID temp;
 
-	for(size_t i=0; i<MangaConnectors.GetCount(); i++)
+    for(size_t i=0; i<MangaConnectors.GetCount(); i++)
     {
-    	temp = MangaConnectors[i]->GetCompletedJobIDs();
-    	completed.Alloc(completed.GetCount() + temp.GetCount());
+        temp = MangaConnectors[i]->GetCompletedJobIDs();
+        completed.Alloc(completed.GetCount() + temp.GetCount());
         for(size_t j=0; j<temp.GetCount(); j++)
-		{
-			completed.Add(temp[j]);
-		}
+        {
+            completed.Add(temp[j]);
+        }
     }
 
-	return completed;
+    return completed;
 }
 
 void MangaConnectorCollection::SetJobDownloadCompleted(unsigned long JobID, bool Value)
 {
-	for(size_t i=0; i<MangaConnectors.GetCount(); i++)
+    for(size_t i=0; i<MangaConnectors.GetCount(); i++)
     {
-		if(MangaConnectors[i]->ContainsJob(JobID))
-		{
-			MangaConnectors[i]->SetJobDownloadCompleted(JobID, Value);
-		}
+        if(MangaConnectors[i]->ContainsJob(JobID))
+        {
+            MangaConnectors[i]->SetJobDownloadCompleted(JobID, Value);
+        }
     }
 }
 
-void MangaConnectorCollection::DownloadJobs(wxFileName BaseDirectory, wxStatusBar* StatusBar, bool* Abort)
+void MangaConnectorCollection::DownloadJobs(wxFileName BaseDirectory, wxStatusBar* StatusBar, bool* Abort, bool CompressChapters)
 {
     wxArrayString temp;
     wxArrayString errorLog;
 
     if(!BaseDirectory.IsDirWritable())
-	{
-		wxMessageBox(wxT("Access denied!\nBase directory: ") + BaseDirectory.GetPath());
-		return;
-	}
+    {
+        wxMessageBox(wxT("Access denied!\nBase directory: ") + BaseDirectory.GetPath());
+        return;
+    }
 
     for(size_t i=0; i<MangaConnectors.GetCount(); i++)
     {
-        temp = MangaConnectors[i]->DownloadJobs(BaseDirectory, StatusBar, Abort);
+        temp = MangaConnectors[i]->DownloadJobs(BaseDirectory, StatusBar, Abort, CompressChapters);
 
         for(size_t n=0; n<temp.GetCount(); n++)
         {
