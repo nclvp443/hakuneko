@@ -583,11 +583,11 @@ void MangaDownloaderFrame::LoadMangaList(wxString Pattern)
             {
                 if(CurrentMangaList[i]->Label.Lower().IsSameAs(Pattern))
                 {
-                    // TODO: improve live search (only load chapter ist when no key preseed between 1~2 seconds?)
+                    // todo improve live search (only load chapter ist when no key preseed between 1~2 seconds?)
                     ComboBoxSearchPattern->Disable();
                     ListCtrlMangas->SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
                     ListCtrlMangas->EnsureVisible(i);
-                    // TODO: set focus back to control before selecting manga
+                    // todo set focus back to control before selecting manga
                     // move this part to OnSearch() ?
                     ComboBoxSearchPattern->Enable();
                     ComboBoxSearchPattern->SetFocus();
@@ -682,6 +682,10 @@ void MangaDownloaderFrame::ColorifyChapterList()
         for(long i=0; i<(long)CurrentChapterList.GetCount(); i++)
         {
             if(wxDirExists(baseDirectory.GetPathWithSep() + CurrentChapterList[i]->SafeLabel) && !wxDir::FindFirst(baseDirectory.GetPathWithSep() + CurrentChapterList[i]->SafeLabel, wxEmptyString, wxDIR_FILES).IsEmpty())
+            {
+                ListCtrlChapters->SetItemTextColour(i, wxColor(0, 150, 250));
+            }
+            else if(wxFileExists(baseDirectory.GetPathWithSep() + CurrentChapterList[i]->SafeLabel + wxT(".cbz")))
             {
                 ListCtrlChapters->SetItemTextColour(i, wxColor(0, 150, 250));
             }
@@ -1476,7 +1480,7 @@ void MangaDownloaderFrame::ErrorDetectionTest()
 
             // emulate manga selection (10)
 
-            // TODO: check chapters from all mangas instead of 10 random mangas (~8 hours runtime)
+            // todo check chapters from all mangas instead of 10 random mangas (~8 hours runtime)
             // for(long m=0; m<dbg_mangalist_length; m++)
             for(long m=0; m<10; m++)
             {

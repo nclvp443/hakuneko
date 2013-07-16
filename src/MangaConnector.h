@@ -14,6 +14,10 @@
 #include <wx/filename.h>
 #include <wx/sstream.h>
 #include <wx/zstream.h>
+//#include <wx/datstrm.h>
+#include <wx/zipstrm.h>
+// #include <wx/tarstrm.h>
+
 
 enum MANGA_LIST_TYPE
 {
@@ -80,8 +84,8 @@ class MangaConnector
     protected: wxString GetHtmlContent(wxString Url, bool UseGzip = false);
     // read content from multiple http:// files containing an incrementable integer (url must contain %i) and a minimum size of each page as abort condition, use gzip transfer for speed improvements (server must support gzip)
     protected: wxString GetHtmlContentF(wxString UrlFormat, int First, int Last, int Increment, size_t AbortSize = 0, bool UseGzip = false);
-    // store an image from a website to a file
-    protected: bool SaveHtmlImage(wxString SourceImageURL, wxFileName TargetImageFile, wxString ReferrerURL);
+    // store an image from a website to a stream (i.e. file, archive, ...)
+    protected: bool SaveHtmlImage(wxString SourceImageURL, wxBufferedOutputStream* TargetStream, wxString ReferrerURL);
     // store the content from the index list of the website to the local configuraion file
     public: virtual void UpdateMangaList();
     // return all manga titles / links
@@ -110,8 +114,8 @@ class MangaConnector
     public: wxArrayJobID GetCompletedJobIDs();
     // set the Downloaded Completed Value for a job
     public: void SetJobDownloadCompleted(unsigned long JobID, bool Value);
-    // downloads all chapters from the joblist to the base directory
-    public: wxArrayString DownloadJobs(wxFileName BaseDirectory, wxStatusBar* StatusBar, bool* Abort);
+    // downloads all chapters from the joblist to the base directory, when ArchiveMode is true -> .cbz instead of images
+    public: wxArrayString DownloadJobs(wxFileName BaseDirectory, wxStatusBar* StatusBar, bool* Abort, bool ArchiveMode=false);
 
     protected: wxString label;
     protected: wxString baseURL;

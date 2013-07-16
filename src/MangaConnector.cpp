@@ -984,7 +984,7 @@ wxString MangaConnector::GetHtmlContentF(wxString UrlFormat, int First, int Last
     return content;
 }
 
-bool MangaConnector::SaveHtmlImage(wxString SourceImageURL, wxFileName TargetImageFile, wxString ReferrerURL)
+bool MangaConnector::SaveHtmlImage(wxString SourceImageURL, wxBufferedOutputStream* TargetStream, wxString ReferrerURL)
 {
     SourceImageURL = HtmlEscapeUrl(SourceImageURL);
     SourceImageURL.Replace(wxT("http://"), wxT(""));
@@ -1015,7 +1015,6 @@ bool MangaConnector::SaveHtmlImage(wxString SourceImageURL, wxFileName TargetIma
         {
             size_t bytes_read;
             size_t bytes = imgSourceStream->GetSize(); // full filesize
-            wxFileOutputStream *imgDestinationStream = new wxFileOutputStream(TargetImageFile.GetFullPath());
 
             // if filesize is unknown or greater 25KB read in chunks
             if(bytes <= 0 || bytes > 25600)
@@ -1032,7 +1031,7 @@ bool MangaConnector::SaveHtmlImage(wxString SourceImageURL, wxFileName TargetIma
                 bytes_read = imgSourceStream->LastRead();
                 if(bytes_read > 0)
                 {
-                    imgDestinationStream->Write(buffer, bytes_read);
+                    TargetStream->Write(buffer, bytes_read);
                     success = true;
                 }
                 else
@@ -1042,8 +1041,6 @@ bool MangaConnector::SaveHtmlImage(wxString SourceImageURL, wxFileName TargetIma
             }
 
             wxDELETEA(buffer);
-            imgDestinationStream->Close();
-            wxDELETE(imgDestinationStream);
         }
 
         //imgSourceStream->Close();
@@ -1166,13 +1163,15 @@ void MangaConnector::SetJobDownloadCompleted(unsigned long JobID, bool Value)
     }
 }
 
-wxArrayString MangaConnector::DownloadJobs(wxFileName BaseDirectory, wxStatusBar* StatusBar, bool* Abort)
+wxArrayString MangaConnector::DownloadJobs(wxFileName BaseDirectory, wxStatusBar* StatusBar, bool* Abort, bool ArchiveMode)
 {
     wxArrayString errorLog;
     wxArrayString pageLinks;
     wxString sourceImageLink;
     wxFileName targetImageFile;
-
+    wxFileName targetArchiveFile;
+// TODO: remove this debug entry
+//ArchiveMode =true;
     // loop through all chapters of joblist
     unsigned int j=0;
     bool noError;
@@ -1188,11 +1187,33 @@ wxArrayString MangaConnector::DownloadJobs(wxFileName BaseDirectory, wxStatusBar
             targetImageFile.AssignDir(BaseDirectory.GetPath());
             targetImageFile.AppendDir(it->second.MangaSafeLabel);
             targetImageFile.AppendDir(it->second.ChapterSafeLabel);
+            targetArchiveFile.Assign(targetImageFile.GetPath() + wxT(".cbz"));
 
-            if(!targetImageFile.Mkdir(0755, wxPATH_MKDIR_FULL))
+            if(ArchiveMode)
             {
-                wxMessageBox(wxT("Error creating directory structure!"));
-                goto ABORT;
+                if(!targetArchiveFile.Mkdir(0755, wxPATH_MKDIR_FULL))
+                {
+                    wxMessageBox(wxT("Error creating directory structure!"));
+                    goto ABORT;
+                }
+            }
+            else
+            {
+                if(!targetImageFile.Mkdir(0755, wxPATH_MKDIR_FULL))
+                {
+                    wxMessageBox(wxT("Error creating directory structure!"));
+                    goto ABORT;
+                }
+            }
+
+            wxFileOutputStream archiveFileStream(targetArchiveFile.GetFullPath()); // overwrite existing archive file
+            wxZipOutputStream archiveCompressionStream(archiveFileStream);
+
+            if(!ArchiveMode)
+            {
+                archiveCompressionStream.Close();
+                archiveFileStream.Close();
+                wxRemoveFile(targetArchiveFile.GetFullPath());
             }
 
             pageLinks = GetPageLinks(it->second.ChapterLink);
@@ -1204,17 +1225,50 @@ wxArrayString MangaConnector::DownloadJobs(wxFileName BaseDirectory, wxStatusBar
                 targetImageFile.SetName(wxString::Format(wxT("%03u"), i+1));
                 targetImageFile.SetExt(sourceImageLink.AfterLast('.').BeforeFirst('?'));
 
-                if(!SaveHtmlImage(sourceImageLink, targetImageFile, referrerURL))
+                if(ArchiveMode)
                 {
-                    errorLog.Add(sourceImageLink + wxT("|") + targetImageFile.GetFullPath());
-                    noError = false;
+                    archiveCompressionStream.PutNextEntry(targetImageFile.GetFullName());
+                    wxBufferedOutputStream bufferedDestinationStream(archiveCompressionStream);
+
+                    if(!SaveHtmlImage(sourceImageLink, &bufferedDestinationStream, referrerURL))
+                    {
+                        errorLog.Add(sourceImageLink + wxT("|") + targetImageFile.GetFullPath());
+                        noError = false;
+                    }
+
+                    bufferedDestinationStream.Close();
+                }
+                else
+                {
+                    wxFileOutputStream fileDestinationStream(targetImageFile.GetFullPath());
+                    wxBufferedOutputStream bufferedDestinationStream(fileDestinationStream);
+
+                    if(!SaveHtmlImage(sourceImageLink, &bufferedDestinationStream, referrerURL))
+                    {
+                        errorLog.Add(sourceImageLink + wxT("|") + targetImageFile.GetFullPath());
+                        noError = false;
+                    }
+
+                    fileDestinationStream.Close();
+                    bufferedDestinationStream.Close();
                 }
 
                 wxYield();
                 if(*Abort)
                 {
+                    if(ArchiveMode)
+                    {
+                        archiveCompressionStream.Close();
+                        archiveFileStream.Close();
+                    }
                     goto ABORT;
                 }
+            }
+
+            if(ArchiveMode)
+            {
+                archiveCompressionStream.Close();
+                archiveFileStream.Close();
             }
         }
 
