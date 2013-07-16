@@ -24,6 +24,7 @@
 
 #include "resource.h"
 #include "MangaConnectorCollection.h"
+//#include "MangaDownloaderConfiguration.h"
 
 enum ResourceImage
 {
@@ -172,6 +173,7 @@ class MangaDownloaderFrame: public wxFrame
         wxComboBox* ComboBoxSearchPattern;
         //*)
 
+        //private: MangaDownloaderConfiguration Configuration;
         private: wxFileName ConfigurationFile;
         private: wxBitmap* ResourceImages;
         private: MangaConnectorCollection MCC;
