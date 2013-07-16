@@ -202,6 +202,7 @@ MangaDownloaderFrame::MangaDownloaderFrame(wxWindow* parent,wxWindowID id)
 
     StartupSync = false;
     TypingSearch = true;
+    NewChapterNotification = false;
     CompressChapters = false;
     DeleteCompletedJobs = true;
     LoadResources();
@@ -451,6 +452,18 @@ void MangaDownloaderFrame::LoadConfiguration()
             }
         }
 
+        if(line.StartsWith(wxT("chapternotification=")))
+        {
+            if(line.AfterFirst(L'=').IsSameAs(wxT("true")))
+            {
+                NewChapterNotification = true;
+            }
+            else
+            {
+                NewChapterNotification = false;
+            }
+        }
+
         if(line.StartsWith(wxT("compresschapters=")))
         {
             if(line.AfterFirst(L'=').IsSameAs(wxT("true")))
@@ -543,8 +556,10 @@ void MangaDownloaderFrame::SaveConfiguration()
     {
         f.AddLine(wxT("startupsync=false"));
     }
+
     f.AddLine(wxT("directory=") + TextCtrlDirectoryBase->GetValue());
     f.AddLine(wxT("connector=") + ComboBoxSource->GetValue());
+
     if(CheckBoxShowJobList->GetValue())
     {
         f.AddLine(wxT("viewjobs=true"));
@@ -553,6 +568,7 @@ void MangaDownloaderFrame::SaveConfiguration()
     {
         f.AddLine(wxT("viewjobs=false"));
     }
+
     if(TypingSearch)
     {
         f.AddLine(wxT("typingsearch=true"));
@@ -561,6 +577,16 @@ void MangaDownloaderFrame::SaveConfiguration()
     {
         f.AddLine(wxT("typingsearch=false"));
     }
+
+    if(NewChapterNotification)
+    {
+        f.AddLine(wxT("chapternotification=true"));
+    }
+    else
+    {
+        f.AddLine(wxT("chapternotification=false"));
+    }
+
     if(CompressChapters)
     {
         f.AddLine(wxT("compresschapters=true"));
@@ -569,6 +595,7 @@ void MangaDownloaderFrame::SaveConfiguration()
     {
         f.AddLine(wxT("compresschapters=false"));
     }
+
     if(DeleteCompletedJobs)
     {
         f.AddLine(wxT("deletejobs=true"));
@@ -577,6 +604,7 @@ void MangaDownloaderFrame::SaveConfiguration()
     {
         f.AddLine(wxT("deletejobs=false"));
     }
+
     f.AddLine(wxT("filter=") + ComboBoxSearchPattern->GetValue());
     for(unsigned int i=0; i<ComboBoxSearchPattern->GetCount(); i++)
     {
@@ -704,10 +732,10 @@ void MangaDownloaderFrame::LoadChapterList()
             CheckBoxChapters->SetValue(AllChaptersChecked);
         }
 
+        ListCtrlChapters->Thaw();
+
         // set chapter font color depending on their existence in base directory
         ColorifyChapterList();
-
-        ListCtrlChapters->Thaw();
     }
 }
 
@@ -719,6 +747,63 @@ void MangaDownloaderFrame::ColorifyChapterList()
     if(ComboBoxSource->GetSelection() > -1 && mangaIndex > -1)
     {
         baseDirectory.AppendDir(CurrentMangaList[mangaIndex]->SafeLabel);
+
+        bool addNewChaptersToJoblist = false;
+        if(wxDirExists(baseDirectory.GetPath()))
+        {
+            if(NewChapterNotification)
+            {
+                // problem when using different connectors for same manga (different chapter names!)
+                // also not reliable, because count based analysis can be wrong
+                // i.e.
+                // * additional files in directory
+                // * chapters differs in name because downloaded from different connectors
+                // * existing chapters checked for redownload
+                // NOTE: a one by one comparsion should be performed in advance, but this is to costly...
+
+                // count the chapters in the manga directory
+                size_t currentChapterCount = 0;
+                wxDir mangaDirectory(baseDirectory.GetPath());
+                wxString chapterItem;
+                if(mangaDirectory.GetFirst(&chapterItem))
+                {
+                    if(wxDir::Exists(baseDirectory.GetPathWithSep() + chapterItem) || chapterItem.EndsWith(wxT(".cbz")))
+                    {
+                        currentChapterCount++;
+                    }
+                    while(mangaDirectory.GetNext(&chapterItem))
+                    {
+                        if(wxDir::Exists(baseDirectory.GetPathWithSep() + chapterItem) || chapterItem.EndsWith(wxT(".cbz")))
+                        {
+                            currentChapterCount++;
+                        }
+                    }
+                }
+
+                // count the chapters that are available from the connector
+                size_t availableChapterCount = CurrentChapterList.GetCount();
+
+                // count the chapters that are already checked for download
+                size_t checkedChapterCount = 0;
+                for(long c=0; c<(long)CurrentChapterList.GetCount(); c++)
+                {
+                    if(MCC.ContainsJob(MCC.GenerateJobID(CurrentChapterList[c])))
+                    {
+                        checkedChapterCount++;
+                    }
+                }
+
+                //wxPrintf(wxString::Format(wxT("%lu, %lu, %lu"), currentChapterCount, availableChapterCount, checkedChapterCount));
+
+                if(currentChapterCount > 0 && currentChapterCount < availableChapterCount-checkedChapterCount)
+                {
+                    if(wxMessageBox(wxT("Add missing/new chapters to job list?"), wxT("Loading Chapters"), wxYES_NO) == wxYES)
+                    {
+                        addNewChaptersToJoblist = true;
+                    }
+                }
+            }
+        }
 
         ListCtrlChapters->Freeze();
         for(long i=0; i<(long)CurrentChapterList.GetCount(); i++)
@@ -735,6 +820,11 @@ void MangaDownloaderFrame::ColorifyChapterList()
             {
                 // reset item specific color to listctrl default background
                 ListCtrlChapters->SetItemTextColour(i, ListCtrlChapters->GetTextColour());
+                // add chapter to joblist, if user selected this capability
+                if(addNewChaptersToJoblist)
+                {
+                    SetChapterCheckedState(i, true, true);
+                }
             }
         }
         ListCtrlChapters->Thaw();

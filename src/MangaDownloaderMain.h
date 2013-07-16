@@ -182,6 +182,7 @@ class MangaDownloaderFrame: public wxFrame
         private: bool AbortDownload;
         private: bool StartupSync;
         private: bool TypingSearch;
+        private: bool NewChapterNotification;
         private: bool CompressChapters;
         private: bool DeleteCompletedJobs;
 
