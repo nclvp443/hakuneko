@@ -203,6 +203,7 @@ MangaDownloaderFrame::MangaDownloaderFrame(wxWindow* parent,wxWindowID id)
     StartupSync = false;
     TypingSearch = true;
     CompressChapters = false;
+    DeleteCompletedJobs = true;
     LoadResources();
     InitConfigurationFile();
     // LoadConfiguration() may show the window immediately, so call it last...
@@ -462,6 +463,18 @@ void MangaDownloaderFrame::LoadConfiguration()
             }
         }
 
+        if(line.StartsWith(wxT("deletejobs=")))
+        {
+            if(line.AfterFirst(L'=').IsSameAs(wxT("true")))
+            {
+                DeleteCompletedJobs = true;
+            }
+            else
+            {
+                DeleteCompletedJobs = false;
+            }
+        }
+
         if(line.StartsWith(wxT("filter=")))
         {
             ComboBoxSearchPattern->SetValue(line.AfterFirst(L'='));
@@ -555,6 +568,14 @@ void MangaDownloaderFrame::SaveConfiguration()
     else
     {
         f.AddLine(wxT("compresschapters=false"));
+    }
+    if(DeleteCompletedJobs)
+    {
+        f.AddLine(wxT("deletejobs=true"));
+    }
+    else
+    {
+        f.AddLine(wxT("deletejobs=false"));
     }
     f.AddLine(wxT("filter=") + ComboBoxSearchPattern->GetValue());
     for(unsigned int i=0; i<ComboBoxSearchPattern->GetCount(); i++)
@@ -1040,7 +1061,7 @@ void MangaDownloaderFrame::OnButtonDownloadClick(wxCommandEvent& event)
         MCC.DownloadJobs(baseDirectory, StatusBar, &AbortDownload, CompressChapters);
 
         wxArrayJobID completed = MCC.GetCompletedJobIDs();
-        if(completed.GetCount() > 0 && wxMessageBox(wxT("Remove completed jobs from download list?"), wxT("Operation Complete"), wxYES_NO) == wxYES)
+        if(DeleteCompletedJobs && completed.GetCount() > 0 && wxMessageBox(wxT("Remove completed jobs from download list?"), wxT("Operation Complete"), wxYES_NO) == wxYES)
         {
             // remove jobs from joblist
             ListCtrlJobs->Freeze();

@@ -183,6 +183,7 @@ class MangaDownloaderFrame: public wxFrame
         private: bool StartupSync;
         private: bool TypingSearch;
         private: bool CompressChapters;
+        private: bool DeleteCompletedJobs;
 
         DECLARE_EVENT_TABLE()
 };
