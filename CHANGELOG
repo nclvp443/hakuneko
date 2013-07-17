@@ -1,3 +1,9 @@
+hakuneko 1.1.0
+
+ * added configurtion option to for chapter compression (*.cbz)
+ * added configurtion option to disable the 'delete completed jobs' dialog after download
+ * added configurtion option to check missing/new chapters when selecting a manga
+
 hakuneko 1.0.5
 
  * fixed mangahere image download
