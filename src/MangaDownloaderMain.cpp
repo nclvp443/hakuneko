@@ -891,6 +891,9 @@ void MangaDownloaderFrame::OnButtonUpdateClick(wxCommandEvent& event)
 void MangaDownloaderFrame::UpdateBookmarkButton()
 {
     wxString pattern = ComboBoxSearchPattern->GetValue();
+
+    // FIXME: include connector in check
+
     int index = ComboBoxSearchPattern->FindString(pattern);
 
     if(index > -1)
@@ -912,32 +915,44 @@ void MangaDownloaderFrame::UpdateBookmarkButton()
 void MangaDownloaderFrame::OnBitmapButtonBookmarkClick(wxCommandEvent& event)
 {
     wxString pattern = ComboBoxSearchPattern->GetValue();
-    int index = ComboBoxSearchPattern->FindString(pattern);
-
-    if(index > -1)
+    // Do not allow bookmarking of blank entry
+    if(!pattern.IsEmpty())
     {
-        // remove bookmark
-        ComboBoxSearchPattern->Delete(index);
-    }
-    else
-    {
-        // add bookmark
-        ComboBoxSearchPattern->Append(pattern);
+        int index = ComboBoxSearchPattern->FindString(pattern);
 
-        // NOTE: wxGTK bug: entries not sorted automatically
-        //{
-            wxArrayString bookmarks = ComboBoxSearchPattern->GetStrings();
-            bookmarks.Sort(CompareStringCaseInsensitive);
-            ComboBoxSearchPattern->Clear();
-            ComboBoxSearchPattern->Append(bookmarks);
+        if(!(pattern.EndsWith(wxT(">")) && (int)pattern.rfind(wxT(" <")) > -1))
+        {
+            pattern += wxT(" <") + ComboBoxSource->GetValue() + wxT(">");
+            // FIXME: update search text box with the pattern
             ComboBoxSearchPattern->SetValue(pattern);
-        //}
+            index = ComboBoxSearchPattern->FindString(pattern);
+        }
 
-        GetSizer()->SetSizeHints(this); // fit window minwidth, in case combobox->minwidth increased
-        Center();
+        if(index > -1)
+        {
+            // remove bookmark
+            ComboBoxSearchPattern->Delete(index);
+        }
+        else
+        {
+            // add bookmark
+            ComboBoxSearchPattern->Append(pattern);
+
+            // NOTE: wxGTK bug: entries not sorted automatically
+            //{
+                wxArrayString bookmarks = ComboBoxSearchPattern->GetStrings();
+                bookmarks.Sort(CompareStringCaseInsensitive);
+                ComboBoxSearchPattern->Clear();
+                ComboBoxSearchPattern->Append(bookmarks);
+                ComboBoxSearchPattern->SetValue(pattern);
+            //}
+
+            GetSizer()->SetSizeHints(this); // fit window minwidth, in case combobox->minwidth increased
+            Center();
+        }
+
+        UpdateBookmarkButton();
     }
-
-    UpdateBookmarkButton();
 }
 
 void MangaDownloaderFrame::OnSearchPattern(wxCommandEvent& event)
@@ -952,6 +967,10 @@ void MangaDownloaderFrame::OnSearchPattern(wxCommandEvent& event)
     {
         wxBeginBusyCursor();
         StatusBar->SetStatusText(wxT("Searching in manga list..."));
+
+        // TODO: change connector if pattern contains valid one
+
+        // TODO: remove connector text if pattern contains one
 
         LoadMangaList(pattern);
 
