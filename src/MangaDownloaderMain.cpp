@@ -136,11 +136,11 @@ MangaDownloaderFrame::MangaDownloaderFrame(wxWindow* parent,wxWindowID id)
     CheckBoxChapters->SetToolTip(_("Select / Deselect all chapters in the list"));
     FlexGridSizerMangaChapter->Add(CheckBoxChapters, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
     ListCtrlMangas = new wxListCtrl(this, ID_LISTCTRL1, wxDefaultPosition, wxDefaultSize, wxLC_REPORT|wxLC_NO_HEADER|wxLC_SINGLE_SEL|wxSUNKEN_BORDER, wxDefaultValidator, _T("ID_LISTCTRL1"));
-    ListCtrlMangas->SetMinSize(wxSize(340,140));
+    ListCtrlMangas->SetMinSize(wxSize(380,160));
     ListCtrlMangas->InsertColumn(0, wxT("Mangas"));
     FlexGridSizerMangaChapter->Add(ListCtrlMangas, 1, wxBOTTOM|wxLEFT|wxRIGHT|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     ListCtrlChapters = new wxListCtrl(this, ID_LISTCTRL2, wxDefaultPosition, wxDefaultSize, wxLC_REPORT|wxLC_NO_HEADER|wxLC_SINGLE_SEL|wxSUNKEN_BORDER, wxDefaultValidator, _T("ID_LISTCTRL2"));
-    ListCtrlChapters->SetMinSize(wxSize(340,140));
+    ListCtrlChapters->SetMinSize(wxSize(380,160));
     ListCtrlChapters->InsertColumn(0, wxT("Chapters"));
     FlexGridSizerMangaChapter->Add(ListCtrlChapters, 1, wxBOTTOM|wxLEFT|wxRIGHT|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     CheckBoxShowJobList = new wxCheckBox(this, ID_CHECKBOX2, _("Show / Hide Job List"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_CHECKBOX2"));
@@ -264,13 +264,13 @@ void MangaDownloaderFrame::LoadResources()
     LoadImageResource(RESOURCES::BTN_BOOKREMOVE_NORMAL_PNG, wxBITMAP_TYPE_PNG, BTN_BOOKDEL_NORM);
     LoadImageResource(RESOURCES::BTN_BOOKREMOVE_HOVER_PNG, wxBITMAP_TYPE_PNG, BTN_BOOKDEL_HOVER);
     LoadImageResource(RESOURCES::BTN_BOOKREMOVE_DISABLED_PNG, wxBITMAP_TYPE_PNG, BTN_BOOKDEL_DISABLE);
-    BitmapButtonBookmark->SetToolTip(wxT("Add to search list"));
+    BitmapButtonBookmark->SetToolTip(wxT("Add entry to search list\nHold right mouse button + left click\nto bookmark without connector"));
     if(ComboBoxSearchPattern->FindString(ComboBoxSearchPattern->GetValue()) > -1)
     {
         BitmapButtonBookmark->SetBitmapLabel(ResourceImages[BTN_BOOKDEL_NORM]);
         BitmapButtonBookmark->SetBitmapHover(ResourceImages[BTN_BOOKDEL_HOVER]);
         BitmapButtonBookmark->SetBitmapDisabled(ResourceImages[BTN_BOOKDEL_DISABLE]);
-        BitmapButtonBookmark->SetToolTip(wxT("Remove from search list"));
+        BitmapButtonBookmark->SetToolTip(wxT("Remove entry from search list"));
     }
 
     LoadImageResource(RESOURCES::BTN_DOWNLOAD_NORMAL_PNG, wxBITMAP_TYPE_PNG, BTN_DOWN_NORM);
@@ -421,8 +421,8 @@ void MangaDownloaderFrame::LoadConfiguration()
 
         if(line.StartsWith(wxT("connector=")))
         {
-            // SetValue() don't trigger event and don't set SelectedIndex
             //ComboBoxSource->SetValue(line.AfterFirst(L'='));
+            // don't trigger event and don't set SelectedIndex
             ComboBoxSource->SetSelection(ComboBoxSource->FindString(line.AfterFirst(L'=')));
         }
 
@@ -625,6 +625,11 @@ void MangaDownloaderFrame::LoadMangaList(wxString Pattern)
         CurrentMangaList = MCC.GetMangaList(ComboBoxSource->GetValue());
         wxArrayMCEntry temp;
         long n = 0; // count search results
+
+        if(Pattern.EndsWith(wxT(">")) && (int)Pattern.rfind(wxT(" <")) > -1)
+        {
+            Pattern = Pattern.BeforeLast('<').BeforeLast(' ');
+        }
         Pattern.MakeLower();
 
         ListCtrlMangas->Freeze();
@@ -892,8 +897,6 @@ void MangaDownloaderFrame::UpdateBookmarkButton()
 {
     wxString pattern = ComboBoxSearchPattern->GetValue();
 
-    // FIXME: include connector in check
-
     int index = ComboBoxSearchPattern->FindString(pattern);
 
     if(index > -1)
@@ -901,14 +904,14 @@ void MangaDownloaderFrame::UpdateBookmarkButton()
         BitmapButtonBookmark->SetBitmapLabel(ResourceImages[BTN_BOOKDEL_NORM]);
         BitmapButtonBookmark->SetBitmapHover(ResourceImages[BTN_BOOKDEL_HOVER]);
         BitmapButtonBookmark->SetBitmapDisabled(ResourceImages[BTN_BOOKDEL_DISABLE]);
-        BitmapButtonBookmark->SetToolTip(wxT("Remove from search list"));
+        BitmapButtonBookmark->SetToolTip(wxT("Remove entry from search list"));
     }
     else
     {
         BitmapButtonBookmark->SetBitmapLabel(ResourceImages[BTN_BOOK_NORM]);
         BitmapButtonBookmark->SetBitmapHover(ResourceImages[BTN_BOOK_HOVER]);
         BitmapButtonBookmark->SetBitmapDisabled(ResourceImages[BTN_BOOK_DISABLE]);
-        BitmapButtonBookmark->SetToolTip(wxT("Add to search list"));
+        BitmapButtonBookmark->SetToolTip(wxT("Add entry to search list\nHold right mouse button + left click\nto bookmark without connector"));
     }
 }
 
@@ -920,35 +923,53 @@ void MangaDownloaderFrame::OnBitmapButtonBookmarkClick(wxCommandEvent& event)
     {
         int index = ComboBoxSearchPattern->FindString(pattern);
 
-        if(!(pattern.EndsWith(wxT(">")) && (int)pattern.rfind(wxT(" <")) > -1))
-        {
-            pattern += wxT(" <") + ComboBoxSource->GetValue() + wxT(">");
-            // FIXME: update search text box with the pattern
-            ComboBoxSearchPattern->SetValue(pattern);
-            index = ComboBoxSearchPattern->FindString(pattern);
-        }
-
         if(index > -1)
         {
             // remove bookmark
             ComboBoxSearchPattern->Delete(index);
+            // remove the connector part from the pattern
+            if(pattern.EndsWith(wxT(">")) && (int)pattern.rfind(wxT(" <")) > -1)
+            {
+                ComboBoxSearchPattern->SetValue(pattern.BeforeLast(' '));
+            }
         }
         else
         {
-            // add bookmark
-            ComboBoxSearchPattern->Append(pattern);
-
-            // NOTE: wxGTK bug: entries not sorted automatically
-            //{
-                wxArrayString bookmarks = ComboBoxSearchPattern->GetStrings();
-                bookmarks.Sort(CompareStringCaseInsensitive);
-                ComboBoxSearchPattern->Clear();
-                ComboBoxSearchPattern->Append(bookmarks);
+            if(!wxGetMouseState().RightIsDown())
+            {
+                if(pattern.EndsWith(wxT(">")) && (int)pattern.rfind(wxT(" <")) > -1)
+                {
+                    // replace the connector from the pattern with the connector from the combobox
+                    pattern = pattern.BeforeLast('<');
+                }
+                else
+                {
+                    // append the connector from the combobox to the pattern
+                    pattern += wxT(" ");
+                }
+                pattern += wxT("<") + ComboBoxSource->GetValue() + wxT(">");
                 ComboBoxSearchPattern->SetValue(pattern);
-            //}
+                index = ComboBoxSearchPattern->FindString(pattern);
+            }
 
-            GetSizer()->SetSizeHints(this); // fit window minwidth, in case combobox->minwidth increased
-            Center();
+            // re-check if modified pattern not already in list (prevent duplicates)
+            if(index < 0)
+            {
+                // add bookmark
+                ComboBoxSearchPattern->Append(pattern);
+
+                // NOTE: wxGTK bug: entries not sorted automatically
+                //{
+                    wxArrayString bookmarks = ComboBoxSearchPattern->GetStrings();
+                    bookmarks.Sort(CompareStringCaseInsensitive);
+                    ComboBoxSearchPattern->Clear();
+                    ComboBoxSearchPattern->Append(bookmarks);
+                    ComboBoxSearchPattern->SetValue(pattern);
+                //}
+
+                GetSizer()->SetSizeHints(this); // fit window minwidth, in case combobox->minwidth increased
+                Center();
+            }
         }
 
         UpdateBookmarkButton();
@@ -968,9 +989,11 @@ void MangaDownloaderFrame::OnSearchPattern(wxCommandEvent& event)
         wxBeginBusyCursor();
         StatusBar->SetStatusText(wxT("Searching in manga list..."));
 
-        // TODO: change connector if pattern contains valid one
-
-        // TODO: remove connector text if pattern contains one
+        if(pattern.EndsWith(wxT(">")) && (int)pattern.rfind(wxT(" <")) > -1)
+        {
+            // don't trigger event
+            ComboBoxSource->SetSelection(ComboBoxSource->FindString(pattern.AfterLast('<').BeforeLast('>')));
+        }
 
         LoadMangaList(pattern);
 
