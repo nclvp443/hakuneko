@@ -968,7 +968,7 @@ void MangaDownloaderFrame::OnBitmapButtonBookmarkClick(wxCommandEvent& event)
                 //}
 
                 GetSizer()->SetSizeHints(this); // fit window minwidth, in case combobox->minwidth increased
-                Center();
+                //Center();
             }
         }
 
@@ -993,6 +993,10 @@ void MangaDownloaderFrame::OnSearchPattern(wxCommandEvent& event)
         {
             // don't trigger event
             ComboBoxSource->SetSelection(ComboBoxSource->FindString(pattern.AfterLast('<').BeforeLast('>')));
+            if(ComboBoxSource->GetSelection() < 0)
+            {
+                ComboBoxSource->SetValue(wxEmptyString);
+            }
         }
 
         LoadMangaList(pattern);
