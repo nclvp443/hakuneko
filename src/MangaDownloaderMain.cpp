@@ -490,7 +490,17 @@ void MangaDownloaderFrame::LoadConfiguration()
 
         if(line.StartsWith(wxT("filter=")))
         {
-            ComboBoxSearchPattern->SetValue(line.AfterFirst(L'='));
+            wxString pattern = line.AfterFirst(L'=');
+            ComboBoxSearchPattern->SetValue(pattern);
+            if(pattern.EndsWith(wxT(">")) && (int)pattern.rfind(wxT(" <")) > -1)
+            {
+                // don't trigger event
+                ComboBoxSource->SetSelection(ComboBoxSource->FindString(pattern.AfterLast('<').BeforeLast('>')));
+                if(ComboBoxSource->GetSelection() < 0)
+                {
+                    ComboBoxSource->SetValue(wxEmptyString);
+                }
+            }
         }
 
         if(line.StartsWith(wxT("filter[]=")))
