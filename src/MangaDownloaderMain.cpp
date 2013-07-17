@@ -749,58 +749,55 @@ void MangaDownloaderFrame::ColorifyChapterList()
         baseDirectory.AppendDir(CurrentMangaList[mangaIndex]->SafeLabel);
 
         bool addNewChaptersToJoblist = false;
-        if(wxDirExists(baseDirectory.GetPath()))
+        if(wxDirExists(baseDirectory.GetPath()) && NewChapterNotification)
         {
-            if(NewChapterNotification)
-            {
-                // problem when using different connectors for same manga (different chapter names!)
-                // also not reliable, because count based analysis can be wrong
-                // i.e.
-                // * additional files in directory
-                // * chapters differs in name because downloaded from different connectors
-                // * existing chapters checked for redownload
-                // NOTE: a one by one comparsion should be performed in advance, but this is to costly...
+            // problem when using different connectors for same manga (different chapter names!)
+            // also not reliable, because count based analysis can be wrong
+            // i.e.
+            // * additional files in directory
+            // * chapters differs in name because downloaded from different connectors
+            // * existing chapters checked for redownload
+            // NOTE: a one by one comparsion should be performed in advance, but this is to costly...
 
-                // count the chapters in the manga directory
-                size_t currentChapterCount = 0;
-                wxDir mangaDirectory(baseDirectory.GetPath());
-                wxString chapterItem;
-                if(mangaDirectory.GetFirst(&chapterItem))
+            // count the chapters in the manga directory
+            size_t currentChapterCount = 0;
+            wxDir mangaDirectory(baseDirectory.GetPath());
+            wxString chapterItem;
+            if(mangaDirectory.GetFirst(&chapterItem))
+            {
+                if(wxDir::Exists(baseDirectory.GetPathWithSep() + chapterItem) || chapterItem.EndsWith(wxT(".cbz")))
+                {
+                    currentChapterCount++;
+                }
+                while(mangaDirectory.GetNext(&chapterItem))
                 {
                     if(wxDir::Exists(baseDirectory.GetPathWithSep() + chapterItem) || chapterItem.EndsWith(wxT(".cbz")))
                     {
                         currentChapterCount++;
                     }
-                    while(mangaDirectory.GetNext(&chapterItem))
-                    {
-                        if(wxDir::Exists(baseDirectory.GetPathWithSep() + chapterItem) || chapterItem.EndsWith(wxT(".cbz")))
-                        {
-                            currentChapterCount++;
-                        }
-                    }
                 }
+            }
 
-                // count the chapters that are available from the connector
-                size_t availableChapterCount = CurrentChapterList.GetCount();
+            // count the chapters that are available from the connector
+            size_t availableChapterCount = CurrentChapterList.GetCount();
 
-                // count the chapters that are already checked for download
-                size_t checkedChapterCount = 0;
-                for(long c=0; c<(long)CurrentChapterList.GetCount(); c++)
+            // count the chapters that are already checked for download
+            size_t checkedChapterCount = 0;
+            for(long c=0; c<(long)CurrentChapterList.GetCount(); c++)
+            {
+                if(MCC.ContainsJob(MCC.GenerateJobID(CurrentChapterList[c])))
                 {
-                    if(MCC.ContainsJob(MCC.GenerateJobID(CurrentChapterList[c])))
-                    {
-                        checkedChapterCount++;
-                    }
+                    checkedChapterCount++;
                 }
+            }
 
-                //wxPrintf(wxString::Format(wxT("%lu, %lu, %lu"), currentChapterCount, availableChapterCount, checkedChapterCount));
+            //wxPrintf(wxString::Format(wxT("%lu, %lu, %lu"), currentChapterCount, availableChapterCount, checkedChapterCount));
 
-                if(currentChapterCount > 0 && currentChapterCount < availableChapterCount-checkedChapterCount)
+            if(/*currentChapterCount > 0 && */currentChapterCount < availableChapterCount-checkedChapterCount)
+            {
+                if(wxMessageBox(wxT("Add missing/new chapters to job list?"), wxT("Loading Chapters"), wxYES_NO) == wxYES)
                 {
-                    if(wxMessageBox(wxT("Add missing/new chapters to job list?"), wxT("Loading Chapters"), wxYES_NO) == wxYES)
-                    {
-                        addNewChaptersToJoblist = true;
-                    }
+                    addNewChaptersToJoblist = true;
                 }
             }
         }
