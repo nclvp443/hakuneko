@@ -1,8 +1,10 @@
 hakuneko 1.1.0
 
- * added configurtion option to for chapter compression (*.cbz)
+ * support for chapter filter tags (i.e. English) when selecting a manga and loading chapter list
+ * added configurtion option for comic book archives (*.cbz)
  * added configurtion option to disable the 'delete completed jobs' dialog after download
- * added configurtion option to check missing/new chapters when selecting a manga
+ * added configurtion option to check for missing/new chapters when selecting a manga
+ * bookmarks now stores the current manga connector that will also be auto selected when clicking the bookmark
 
 hakuneko 1.0.5
 

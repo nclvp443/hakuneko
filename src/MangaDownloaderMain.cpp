@@ -804,6 +804,9 @@ void MangaDownloaderFrame::ColorifyChapterList()
             }
 
             // count the chapters that are available from the connector
+            // FIXME: if chapter list was filtered with a search pattern, the count does not represent the number of all available chapters
+            // solution: store the overall chapter count in another global variable when loading chapter list...
+            // this behaviour maybe correct i.e. you always use filter: "english" to ignore other languages...
             size_t availableChapterCount = CurrentChapterList.GetCount();
 
             // count the chapters that are already checked for download
@@ -955,7 +958,7 @@ void MangaDownloaderFrame::OnBitmapButtonBookmarkClick(wxCommandEvent& event)
         }
         else
         {
-            if(!wxGetMouseState().RightIsDown())
+            if(!wxGetMouseState().ControlDown())
             {
                 if(pattern.EndsWith(wxT(">")) && (int)pattern.rfind(wxT(" <")) > -1)
                 {
@@ -1047,8 +1050,17 @@ void MangaDownloaderFrame::OnListCtrlMangasItemSelect(wxListEvent& event)
     DisableListCtrl(ListCtrlMangas);
     //Disconnect(ID_LISTCTRL1,wxEVT_COMMAND_LIST_ITEM_SELECTED,(wxObjectEventFunction)&MangaDownloaderFrame::OnListCtrlMangasItemSelect);
 
-    // TODO: get search pattern for chapter list
-    LoadChapterList();
+    wxString pattern = wxEmptyString;
+    if(wxGetMouseState().ControlDown())
+    {
+        wxTextEntryDialog win(NULL, wxT("Please enter a search pattern to filter the chapter list.\n\ni.e. '043', 'english', 'scanlator-group', ..."), wxT("Chapter Filter"));
+        win.SetValue(wxEmptyString);
+        if(win.ShowModal() == wxID_OK&& !win.GetValue().IsEmpty())
+        {
+            pattern = win.GetValue();
+        }
+    }
+    LoadChapterList(pattern);
 
     //Connect(ID_LISTCTRL1,wxEVT_COMMAND_LIST_ITEM_SELECTED,(wxObjectEventFunction)&MangaDownloaderFrame::OnListCtrlMangasItemSelect);
     EnableListCtrl(ListCtrlMangas);

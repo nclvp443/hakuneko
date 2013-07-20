@@ -21,6 +21,7 @@
 #include <wx/mstream.h>
 #include <wx/timer.h>
 #include <wx/image.h>
+#include <wx/textdlg.h>
 
 #include "resource.h"
 #include "MangaConnectorCollection.h"
