@@ -634,7 +634,7 @@ void MangaDownloaderFrame::LoadMangaList(wxString Pattern)
     {
         CurrentMangaList = MCC.GetMangaList(ComboBoxSource->GetValue());
         wxArrayMCEntry temp;
-        long n = 0; // count search results
+        long n = 0; // counter for pattern match results
 
         if(Pattern.EndsWith(wxT(">")) && (int)Pattern.rfind(wxT(" <")) > -1)
         {
@@ -710,7 +710,7 @@ void MangaDownloaderFrame::ColorifyMangaList()
     }
 }
 
-void MangaDownloaderFrame::LoadChapterList()
+void MangaDownloaderFrame::LoadChapterList(wxString Pattern)
 {
     ListCtrlChapters->DeleteAllItems();
     CheckBoxChapters->SetValue(false);
@@ -722,23 +722,33 @@ void MangaDownloaderFrame::LoadChapterList()
     if(ComboBoxSource->GetSelection() > -1 && mangaIndex > -1)
     {
         CurrentChapterList = MCC.GetChapterList(connectorLabel, CurrentMangaList[mangaIndex]);
+        wxArrayMCEntry temp;
+        long n = 0; // counter for pattern match results
+
+        Pattern.MakeLower();
 
         ListCtrlChapters->Freeze();
         for(long i=0; i<(long)CurrentChapterList.GetCount(); i++)
         {
-            ListCtrlChapters->InsertItem(i, CurrentChapterList[i]->Label, 0);
+            if(CurrentChapterList[i]->Label.Lower().Find(Pattern) > -1)
+            {
+                temp.Add(CurrentMangaList[i]);
 
-            if(MCC.ContainsJob(MCC.GenerateJobID(CurrentChapterList[i])))
-            {
-                SetChapterCheckedState(i, true, false); // job is already in joblist
-            }
-            if(CheckBoxChapters->IsChecked() && !GetChapterCheckedState(i))
-            {
-                SetChapterCheckedState(i, true, true); // need to add this job to joblist
-            }
-            if(AllChaptersChecked && !GetChapterCheckedState(i))
-            {
-                AllChaptersChecked = false;
+                ListCtrlChapters->InsertItem(n, CurrentChapterList[i]->Label, 0);
+
+                if(MCC.ContainsJob(MCC.GenerateJobID(CurrentChapterList[i])))
+                {
+                    SetChapterCheckedState(i, true, false); // job is already in joblist
+                }
+                if(CheckBoxChapters->IsChecked() && !GetChapterCheckedState(i))
+                {
+                    SetChapterCheckedState(i, true, true); // need to add this job to joblist
+                }
+                if(AllChaptersChecked && !GetChapterCheckedState(i))
+                {
+                    AllChaptersChecked = false;
+                }
+                n++;
             }
         }
 
@@ -1037,6 +1047,7 @@ void MangaDownloaderFrame::OnListCtrlMangasItemSelect(wxListEvent& event)
     DisableListCtrl(ListCtrlMangas);
     //Disconnect(ID_LISTCTRL1,wxEVT_COMMAND_LIST_ITEM_SELECTED,(wxObjectEventFunction)&MangaDownloaderFrame::OnListCtrlMangasItemSelect);
 
+    // TODO: get search pattern for chapter list
     LoadChapterList();
 
     //Connect(ID_LISTCTRL1,wxEVT_COMMAND_LIST_ITEM_SELECTED,(wxObjectEventFunction)&MangaDownloaderFrame::OnListCtrlMangasItemSelect);

@@ -103,8 +103,8 @@ class MangaDownloaderFrame: public wxFrame
         void LoadMangaList(wxString Pattern = wxEmptyString);
         // change the color of all manga list items depending on their directory existence
         void ColorifyMangaList();
-        // load the chapter list for the selected manga
-        void LoadChapterList();
+        // load the chapter list for the selected manga and filter by the given pattern
+        void LoadChapterList(wxString Pattern = wxEmptyString);
         // change the color of all chapter list items depending on their directory existence
         void ColorifyChapterList();
         // get the checked state of a chapter in the chapter list
