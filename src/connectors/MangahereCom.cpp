@@ -183,6 +183,6 @@ wxString MangahereCom::GetImageLink(wxString PageLink)
     }
     else
     {
-        return wxT("");
+        return wxEmptyString;
     }
 }

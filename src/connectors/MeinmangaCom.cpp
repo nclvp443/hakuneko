@@ -94,5 +94,5 @@ wxArrayString MeinmangaCom::GetPageLinks(wxString ChapterLink)
 
 wxString MeinmangaCom::GetImageLink(wxString PageLink)
 {
-    return wxT("");
+    return wxEmptyString;
 }

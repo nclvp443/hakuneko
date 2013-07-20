@@ -100,7 +100,7 @@ class MangaDownloaderFrame: public wxFrame
         // change bookmark button depending on search value in bookmarks or not
         void UpdateBookmarkButton();
         // load manga list from the local file and filter by the given pattern
-        void LoadMangaList(wxString Pattern = wxT(""));
+        void LoadMangaList(wxString Pattern = wxEmptyString);
         // change the color of all manga list items depending on their directory existence
         void ColorifyMangaList();
         // load the chapter list for the selected manga

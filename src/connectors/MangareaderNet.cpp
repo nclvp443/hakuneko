@@ -171,6 +171,6 @@ wxString MangareaderNet::GetImageLink(wxString PageLink)
     }
     else
     {
-        return wxT("");
+        return wxEmptyString;
     }
 }

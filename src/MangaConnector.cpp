@@ -83,7 +83,7 @@ wxString MCEntry::invalidFileCharacters = wxT("\\/:*?\"<>|\r\n\t");
 
 void MCEntry::SetSafeLabel(wxString Name)
 {
-    SafeLabel = wxT("");
+    SafeLabel = wxEmptyString;
 
     // variable to store position of last non space/period in fixed string
     int safeLength = 0;
@@ -692,7 +692,7 @@ void MangaConnector::LoadLocalMangaList()
 wxString MangaConnector::GetHtmlContent(wxString Url, bool UseGzip)
 {
     Url = HtmlEscapeUrl(Url);
-    Url.Replace(wxT("http://"), wxT(""));
+    Url.Replace(wxT("http://"), wxEmptyString);
 
     wxHTTP webResponse;
     wxString host = Url.BeforeFirst(L'/');
@@ -824,7 +824,7 @@ wxString MangaConnector::GetHtmlContent(wxString Url, bool UseGzip)
 wxString MangaConnector::GetHtmlContentF(wxString UrlFormat, int First, int Last, int Increment, size_t AbortSize, bool UseGzip)
 {
     UrlFormat = HtmlEscapeUrl(UrlFormat);
-    UrlFormat.Replace(wxT("http://"), wxT(""));
+    UrlFormat.Replace(wxT("http://"), wxEmptyString);
 
     wxHTTP webResponse;
     wxString host = UrlFormat.BeforeFirst(L'/');
@@ -987,7 +987,7 @@ wxString MangaConnector::GetHtmlContentF(wxString UrlFormat, int First, int Last
 bool MangaConnector::SaveHtmlImage(wxString SourceImageURL, wxBufferedOutputStream* TargetStream, wxString ReferrerURL)
 {
     SourceImageURL = HtmlEscapeUrl(SourceImageURL);
-    SourceImageURL.Replace(wxT("http://"), wxT(""));
+    SourceImageURL.Replace(wxT("http://"), wxEmptyString);
 
     wxHTTP webResponse;
     wxString host = SourceImageURL.BeforeFirst(L'/');

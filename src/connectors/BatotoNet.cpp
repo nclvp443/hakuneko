@@ -152,7 +152,7 @@ wxArrayMCEntry BatotoNet::GetChapterList(MCEntry* MangaEntry)
                 {
                     posEnd = chEntry.rfind(wxT(" R"));
 
-                    chTitle = wxT(""); // overwrite previous title
+                    chTitle = wxEmptyString; // overwrite previous title
                 }
                 else
                 {
@@ -222,6 +222,6 @@ wxString BatotoNet::GetImageLink(wxString PageLink)
     }
     else
     {
-        return wxT("");
+        return wxEmptyString;
     }
 }

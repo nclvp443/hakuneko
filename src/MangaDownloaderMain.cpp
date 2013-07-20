@@ -865,7 +865,7 @@ void MangaDownloaderFrame::OnButtonBrowseClick(wxCommandEvent& event)
         ColorifyMangaList();
         ColorifyChapterList();
 
-        StatusBar->SetStatusText(wxT(""));
+        StatusBar->SetStatusText(wxEmptyString);
         wxEndBusyCursor();
     }
 }
@@ -878,7 +878,7 @@ void MangaDownloaderFrame::OnChoiceSourceSelect(wxCommandEvent& event)
     wxYield();
     LoadMangaList(ComboBoxSearchPattern->GetValue());
 
-    StatusBar->SetStatusText(wxT(""));
+    StatusBar->SetStatusText(wxEmptyString);
     wxEndBusyCursor();
 }
 
@@ -1011,7 +1011,7 @@ void MangaDownloaderFrame::OnSearchPattern(wxCommandEvent& event)
 
         LoadMangaList(pattern);
 
-        StatusBar->SetStatusText(wxT(""));
+        StatusBar->SetStatusText(wxEmptyString);
         wxEndBusyCursor();
     }
 }
@@ -1083,7 +1083,7 @@ void MangaDownloaderFrame::OnCheckBoxChaptersClick(wxCommandEvent& event)
 
     StatusBar->SetStatusText(wxString::Format(wxT("Selected Chapters: %u"), MCC.GetJobCount()), 1);
 
-    StatusBar->SetStatusText(wxT(""));
+    StatusBar->SetStatusText(wxEmptyString);
     wxEndBusyCursor();
 }
 
@@ -1192,7 +1192,7 @@ void MangaDownloaderFrame::SetChapterCheckedState(long ChapterIndex, bool State,
 void MangaDownloaderFrame::OnButtonDownloadClick(wxCommandEvent& event)
 {
     //wxBeginBusyCursor(wxHOURGLASS_CURSOR);
-    StatusBar->SetStatusText(wxT(""));
+    StatusBar->SetStatusText(wxEmptyString);
     wxFileName baseDirectory(TextCtrlDirectoryBase->GetValue(), wxEmptyString);
 
     AbortDownload = false;
@@ -1260,7 +1260,7 @@ void MangaDownloaderFrame::OnButtonDownloadClick(wxCommandEvent& event)
     ColorifyMangaList();
     ColorifyChapterList();
 
-    StatusBar->SetStatusText(wxT(""));
+    StatusBar->SetStatusText(wxEmptyString);
     //wxEndBusyCursor();
 }
 
@@ -1491,7 +1491,7 @@ void MangaDownloaderFrame::OnMenuJobContextClick(wxCommandEvent& event)
     ListCtrlJobs->Thaw();
 
     StatusBar->SetStatusText(wxString::Format(wxT("Selected Chapters: %u"), MCC.GetJobCount()), 1);
-    StatusBar->SetStatusText(wxT(""));
+    StatusBar->SetStatusText(wxEmptyString);
     wxEndBusyCursor();
 }
 
