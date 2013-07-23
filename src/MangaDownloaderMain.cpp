@@ -732,7 +732,7 @@ void MangaDownloaderFrame::LoadChapterList(wxString Pattern)
         {
             if(CurrentChapterList[i]->Label.Lower().Find(Pattern) > -1)
             {
-                temp.Add(CurrentMangaList[i]);
+                temp.Add(CurrentChapterList[i]);
 
                 ListCtrlChapters->InsertItem(n, CurrentChapterList[i]->Label, 0);
 
@@ -751,6 +751,8 @@ void MangaDownloaderFrame::LoadChapterList(wxString Pattern)
                 n++;
             }
         }
+
+        CurrentChapterList = temp;
 
         if(CurrentChapterList.GetCount() > 0)
         {
