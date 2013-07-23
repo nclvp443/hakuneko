@@ -721,38 +721,36 @@ void MangaDownloaderFrame::LoadChapterList(wxString Pattern)
 
     if(ComboBoxSource->GetSelection() > -1 && mangaIndex > -1)
     {
-        CurrentChapterList = MCC.GetChapterList(connectorLabel, CurrentMangaList[mangaIndex]);
-        wxArrayMCEntry temp;
+        wxArrayMCEntry temp = MCC.GetChapterList(connectorLabel, CurrentMangaList[mangaIndex]);
+        CurrentChapterList.Clear();
         long n = 0; // counter for pattern match results
 
         Pattern.MakeLower();
 
         ListCtrlChapters->Freeze();
-        for(long i=0; i<(long)CurrentChapterList.GetCount(); i++)
+        for(long i=0; i<(long)temp.GetCount(); i++)
         {
-            if(CurrentChapterList[i]->Label.Lower().Find(Pattern) > -1)
+            if(temp[i]->Label.Lower().Find(Pattern) > -1)
             {
-                temp.Add(CurrentChapterList[i]);
+                CurrentChapterList.Add(temp[i]);
 
-                ListCtrlChapters->InsertItem(n, CurrentChapterList[i]->Label, 0);
+                ListCtrlChapters->InsertItem(n, CurrentChapterList[n]->Label, 0);
 
-                if(MCC.ContainsJob(MCC.GenerateJobID(CurrentChapterList[i])))
+                if(MCC.ContainsJob(MCC.GenerateJobID(CurrentChapterList[n])))
                 {
-                    SetChapterCheckedState(i, true, false); // job is already in joblist
+                    SetChapterCheckedState(n, true, false); // job is already in joblist
                 }
-                if(CheckBoxChapters->IsChecked() && !GetChapterCheckedState(i))
+                if(CheckBoxChapters->IsChecked() && !GetChapterCheckedState(n))
                 {
-                    SetChapterCheckedState(i, true, true); // need to add this job to joblist
+                    SetChapterCheckedState(n, true, true); // need to add this job to joblist
                 }
-                if(AllChaptersChecked && !GetChapterCheckedState(i))
+                if(AllChaptersChecked && !GetChapterCheckedState(n))
                 {
                     AllChaptersChecked = false;
                 }
                 n++;
             }
         }
-
-        CurrentChapterList = temp;
 
         if(CurrentChapterList.GetCount() > 0)
         {
