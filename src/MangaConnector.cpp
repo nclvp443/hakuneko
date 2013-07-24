@@ -1039,6 +1039,7 @@ bool MangaConnector::SaveHtmlImage(wxString SourceImageURL, wxBufferedOutputStre
                     break; // maybe an error on read
                 }
             }
+            TargetStream->Sync();
 
             wxDELETEA(buffer);
         }
