@@ -58,6 +58,13 @@ const long MangaDownloaderFrame::ID_STATUSBAR1 = wxNewId();
 //*)
 const long MangaDownloaderFrame::ID_JOBMENUITEM_REMOVEALL = wxNewId();
 const long MangaDownloaderFrame::ID_JOBMENUITEM_REMOVESELECTED = wxNewId();
+const long MangaDownloaderFrame::ID_MenuHelp = wxNewId();
+const long MangaDownloaderFrame::ID_MenuAbout = wxNewId();
+const long MangaDownloaderFrame::ID_MenuStartUpSync = wxNewId();
+const long MangaDownloaderFrame::ID_MenuTypingSearch = wxNewId();
+const long MangaDownloaderFrame::ID_MenuNewChapterNotification = wxNewId();
+const long MangaDownloaderFrame::ID_MenuCompressChapters = wxNewId();
+const long MangaDownloaderFrame::ID_MenuDeleteCompletedJobs = wxNewId();
 
 BEGIN_EVENT_TABLE(MangaDownloaderFrame,wxFrame)
     //(*EventTable(MangaDownloaderFrame)
@@ -83,6 +90,7 @@ MangaDownloaderFrame::MangaDownloaderFrame(wxWindow* parent,wxWindowID id)
 
     Create(parent, id, _("HakuNeko - Manga Downloader"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE, _T("id"));
     SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
+    SetToolTip(_("Right click to open menu"));
     FlexGridSizerContainer = new wxFlexGridSizer(0, 1, 0, 0);
     FlexGridSizerContainer->AddGrowableCol(0);
     FlexGridSizerContainer->AddGrowableRow(3);
@@ -138,6 +146,7 @@ MangaDownloaderFrame::MangaDownloaderFrame(wxWindow* parent,wxWindowID id)
     ListCtrlMangas = new wxListCtrl(this, ID_LISTCTRL1, wxDefaultPosition, wxDefaultSize, wxLC_REPORT|wxLC_NO_HEADER|wxLC_SINGLE_SEL|wxSUNKEN_BORDER, wxDefaultValidator, _T("ID_LISTCTRL1"));
     ListCtrlMangas->SetMinSize(wxSize(380,160));
     ListCtrlMangas->InsertColumn(0, wxT("Mangas"));
+    ListCtrlMangas->SetToolTip(_("Holding the CTRL key while selecting a manga\nwill popup a dialog to filter the chapter list"));
     FlexGridSizerMangaChapter->Add(ListCtrlMangas, 1, wxBOTTOM|wxLEFT|wxRIGHT|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     ListCtrlChapters = new wxListCtrl(this, ID_LISTCTRL2, wxDefaultPosition, wxDefaultSize, wxLC_REPORT|wxLC_NO_HEADER|wxLC_SINGLE_SEL|wxSUNKEN_BORDER, wxDefaultValidator, _T("ID_LISTCTRL2"));
     ListCtrlChapters->SetMinSize(wxSize(380,160));
@@ -199,20 +208,34 @@ MangaDownloaderFrame::MangaDownloaderFrame(wxWindow* parent,wxWindowID id)
     Connect(wxID_ANY,wxEVT_CLOSE_WINDOW,(wxObjectEventFunction)&MangaDownloaderFrame::OnClose);
     Connect(wxEVT_SIZE,(wxObjectEventFunction)&MangaDownloaderFrame::OnResize);
     //*)
+    Connect(wxEVT_RIGHT_DOWN,(wxObjectEventFunction)&MangaDownloaderFrame::OnMainWindowRClick);
+
+    LoadResources();
+    //FlexGridSizerContainer->Fit(this); // will be done by SetSizeHints()
+    FlexGridSizerContainer->SetSizeHints(this); // fit window minwidth, in case combobox->minwidth increased by LoadConfiguration()
+    Center();
 
     StartupSync = false;
     TypingSearch = true;
     NewChapterNotification = false;
     CompressChapters = false;
     DeleteCompletedJobs = true;
-    LoadResources();
+
     InitConfigurationFile();
     // LoadConfiguration() may show the window immediately, so call it last...
     // it also may change initial minwidth of comboboxes
     LoadConfiguration();
-    //FlexGridSizerContainer->Fit(this); // will be done by SetSizeHints()
-    FlexGridSizerContainer->SetSizeHints(this); // fit window minwidth, in case combobox->minwidth increased by LoadConfiguration()
-    Center();
+
+    MenuMain = new wxMenu(_("Main Menu"));
+    MenuMain->AppendCheckItem(ID_MenuStartUpSync, _("Enable Start Up Sync"), wxT("Manga lists will be updated, every time when HakuNeko starts."))->Check(StartupSync);
+    MenuMain->AppendCheckItem(ID_MenuTypingSearch, _("Enable Smart Search"), wxT("Search manga list while typing (disable this on slow machines)."))->Check(TypingSearch);
+    MenuMain->AppendCheckItem(ID_MenuNewChapterNotification, _("Show Missing Chapter Notification"), wxT("When selecting a manga, a notification window will appear checking for missing chapters."))->Check(NewChapterNotification);
+    MenuMain->AppendCheckItem(ID_MenuCompressChapters, _("Compress Chapters (Comic Book Archive)"), wxT("Create comic book archives (*.cbz) instead of downloading separate images."))->Check(CompressChapters);
+    MenuMain->AppendCheckItem(ID_MenuDeleteCompletedJobs, _("Show 'Delete Completed Jobs' Dialog"), wxT("Shows a dialog after downloading, asking to remove completed jobs from the list."))->Check(DeleteCompletedJobs);
+    MenuMain->AppendSeparator();
+    MenuMain->Append(ID_MenuHelp, _("Help (Online)"));
+    MenuMain->Append(ID_MenuAbout, _("About"));
+    MenuMain->Connect(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MangaDownloaderFrame::OnMenuMainClick, NULL, this);
 }
 
 MangaDownloaderFrame::~MangaDownloaderFrame()
@@ -1589,6 +1612,55 @@ long MangaDownloaderFrame::Random(long Min, long Max)
 
         return rd;
     }
+}
+
+void MangaDownloaderFrame::OnMenuMainClick(wxCommandEvent& event)
+{
+    if(event.GetId() == ID_MenuStartUpSync)
+    {
+        StartupSync = event.IsChecked();
+    }
+
+    if(event.GetId() == ID_MenuTypingSearch)
+    {
+        TypingSearch = event.IsChecked();
+    }
+
+    if(event.GetId() == ID_MenuNewChapterNotification)
+    {
+        NewChapterNotification = event.IsChecked();
+    }
+
+    if(event.GetId() == ID_MenuCompressChapters)
+    {
+        CompressChapters = event.IsChecked();
+    }
+
+    if(event.GetId() == ID_MenuDeleteCompletedJobs)
+    {
+        DeleteCompletedJobs = event.IsChecked();
+    }
+
+    if(event.GetId() == ID_MenuHelp)
+    {
+        wxLaunchDefaultBrowser(wxT("http://code.google.com/p/hakuneko/wiki/introduction?tm=6"));
+    }
+
+    if(event.GetId() == ID_MenuAbout)
+    {
+        wxAboutDialogInfo about;
+        about.SetName(wxT("HakuNeko"));
+        about.SetVersion(wxT("1.1.0"));
+        about.SetDescription(wxT("A manga downloader for Linux & Windows."));
+        about.SetWebSite(wxT("http://hakuneko.googlecode.com"));
+        about.SetCopyright(wxT("(C) 2013 Ronny Wegener <wegener.ronny@gmail.com>"));
+        wxAboutBox(about);
+    }
+}
+
+void MangaDownloaderFrame::OnMainWindowRClick(wxMouseEvent& event)
+{
+    this->PopupMenu(MenuMain);
 }
 
 void MangaDownloaderFrame::ErrorDetectionTest()

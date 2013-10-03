@@ -22,6 +22,7 @@
 #include <wx/timer.h>
 #include <wx/image.h>
 #include <wx/textdlg.h>
+#include <wx/aboutdlg.h>
 
 #include "resource.h"
 #include "MangaConnectorCollection.h"
@@ -87,6 +88,8 @@ class MangaDownloaderFrame: public wxFrame
         void OnListCtrlMangasItemDeselect(wxListEvent& event);
         //*)
         void OnMenuJobContextClick(wxCommandEvent& event);
+        void OnMenuMainClick(wxCommandEvent& event);
+        void OnMainWindowRClick(wxMouseEvent& event);
 
         // load a bitmap from generated resource into an enumerated bitmap array
         void LoadImageResource(RCDATA RCImage, wxBitmapType Type, ResourceImage ImageLabel);
@@ -146,6 +149,13 @@ class MangaDownloaderFrame: public wxFrame
         //*)
         static const long ID_JOBMENUITEM_REMOVEALL;
         static const long ID_JOBMENUITEM_REMOVESELECTED;
+        static const long ID_MenuHelp;
+        static const long ID_MenuAbout;
+        static const long ID_MenuStartUpSync;
+        static const long ID_MenuTypingSearch;
+        static const long ID_MenuNewChapterNotification;
+        static const long ID_MenuCompressChapters;
+        static const long ID_MenuDeleteCompletedJobs;
 
         //(*Declarations(MangaDownloaderFrame)
         wxCheckBox* CheckBoxChapters;
@@ -173,6 +183,7 @@ class MangaDownloaderFrame: public wxFrame
         wxDirDialog* DirDialogBrowse;
         wxComboBox* ComboBoxSearchPattern;
         //*)
+        wxMenu* MenuMain;
 
         //private: MangaDownloaderConfiguration Configuration;
         private: wxFileName ConfigurationFile;
