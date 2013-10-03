@@ -1,5 +1,6 @@
 hakuneko 1.1.0
 
+ * added context main menu when right click on free space inside the main window
  * support for chapter filter tags (i.e. English) when selecting a manga and loading chapter list
  * added configurtion option for comic book archives (*.cbz)
  * added configurtion option to disable the 'delete completed jobs' dialog after download
