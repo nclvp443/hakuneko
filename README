@@ -6,7 +6,9 @@
     - requirements to build hakuneko on debian -
     --------------------------------------------
     + bash
-    + build-essentials (gcc, g++, make, lib*,...)
+    + make
+    + build-essentials (gcc, g++, lib*,...)
+      # OR: clang, make, lib*,...
     + libwxgtk2.8-dev
     + libwxbase2.8-dev
 
@@ -17,6 +19,8 @@
     # change into hakuneko directory
     # run configure (with --prefix=DIR if you want to install in a directory other than /usr/local)
     ./configure --prefix=/usr
+    # OR (if you want to use clang instead of gcc):
+    ./configure --config-clang --prefix=/usr
     make
     # run as root or installation will fail
     sudo make install
@@ -37,6 +41,8 @@
     # (configure with prefix /usr to prevent lintian errors)
     # (run as root for correct ownership of files)
     ./configure --prefix=/usr
+    # OR (if you want to use clang instead of gcc):
+    ./configure --config-clang --prefix=/usr
     sudo make deb
 
 #############
