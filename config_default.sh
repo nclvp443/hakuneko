@@ -23,7 +23,7 @@ SRCDIR="src"
 RCPATTERN=""
 RCDIR=""
 OBJDIR="obj"
-DISTROOT="dist/linux"
+DISTROOT="build/linux"
 BINFILE="$DISTROOT/bin/$PKGNAME"
 
 CC="g++"
