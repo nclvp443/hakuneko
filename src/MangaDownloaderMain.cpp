@@ -1643,7 +1643,7 @@ void MangaDownloaderFrame::OnMenuMainClick(wxCommandEvent& event)
 
     if(event.GetId() == ID_MenuHelp)
     {
-        wxLaunchDefaultBrowser(wxT("http://code.google.com/p/hakuneko/wiki/introduction?tm=6"));
+        wxLaunchDefaultBrowser(wxT("http://sourceforge.net/p/hakuneko/doc/"));
     }
 
     if(event.GetId() == ID_MenuAbout)
@@ -1652,7 +1652,7 @@ void MangaDownloaderFrame::OnMenuMainClick(wxCommandEvent& event)
         about.SetName(wxT("HakuNeko"));
         about.SetVersion(wxT("1.1.0"));
         about.SetDescription(wxT("A manga downloader for Linux & Windows."));
-        about.SetWebSite(wxT("http://hakuneko.googlecode.com"));
+        about.SetWebSite(wxT("http://sourceforge.net/projects/hakuneko/"));
         about.SetCopyright(wxT("(C) 2013 Ronny Wegener <wegener.ronny@gmail.com>"));
         wxAboutBox(about);
     }
