@@ -94,7 +94,7 @@ int main()
 // embed a version 6 manifest file to use ComCtl32.dll (modern WinXP+ gui style)
 1 MANIFEST \"app.manifest\"" > res/app.rc
 
-    # FIXME: \x00 not printed to file...
+    # FIXME: this is not working in mingw/msys the $'\x00' char is not printed to file
 printf %c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c $'\x42' $'\x5A' $'\x68' $'\x36' $'\x31' $'\x41' $'\x59' $'\x26' $'\x53' $'\x59' $'\xF1' $'\x0C' $'\x91' $'\x07' $'\x00' $'\x01' > res/app.ico.tar.bz2
 printf %c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c $'\x3E' $'\xFF' $'\xD5' $'\xFE' $'\x5C' $'\x6A' $'\xA0' $'\x5D' $'\x43' $'\x7B' $'\x80' $'\x4C' $'\x00' $'\x00' $'\x20' $'\x68' >> res/app.ico.tar.bz2
 printf %c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c $'\x61' $'\xDE' $'\x20' $'\x40' $'\x11' $'\x01' $'\x00' $'\x40' $'\x00' $'\x00' $'\x40' $'\x00' $'\x09' $'\xB0' $'\x01' $'\x4C' >> res/app.ico.tar.bz2
@@ -510,8 +510,9 @@ write_makefile_rule_build()
     $ECHO_ESC "\t@echo " >> $MAKEFILE
     $ECHO_ESC "\t@\$(shell mkdir -p \$(dir \$@))" >> $MAKEFILE
     $ECHO_ESC "\t\$(RC) \$(RCFLAGS) -o \$@ -i \$<" >> $MAKEFILE
-    # TODO: create a correct dependency file from an rc file... (depends on includes, icons, manifests, ...)
-    $ECHO_ESC "\t-@\$(CC) \$(CFLAGS) -MM -MT \$@ \$< > \$(OBJDIR)/\$*.d" >> $MAKEFILE
+    $ECHO_ESC "\t@cp \$< \$<.cpp" >> $MAKEFILE
+    $ECHO_ESC "\t-@\$(CC) \$(CFLAGS) -MM -MT \$@ \$<.cpp | sed 's|\$<.cpp|\$<|g' > \$(OBJDIR)/\$*.d" >> $MAKEFILE
+    $ECHO_ESC "\t@rm -f \$<.cpp" >> $MAKEFILE
     $ECHO_ESC "" >> $MAKEFILE
     $ECHO_ESC "\$(CURDIR)/\$(OBJDIR)/%.o \$(CURDIR)/\$(SRCDIR)/%.o \$(SRCDIR)/%.o: \$(OBJDIR)/%.o" >> $MAKEFILE
     $ECHO_ESC "\$(OBJDIR)/%.o: \$(SRCDIR)/%" >> $MAKEFILE
