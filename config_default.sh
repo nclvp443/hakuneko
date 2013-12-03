@@ -12,11 +12,11 @@ PKGDESCRIPTION="Manga Downloader based on wxGTK
  .
  Currently Supported:
  .
- + MangaReader
- + MangaHere
- + MangaFox
- + Batoto
- + Submanga"
+ * MangaReader
+ * MangaHere
+ * MangaFox
+ * Batoto
+ * Submanga"
 
 SRCPATTERN="*.cpp"
 SRCDIR="src"
