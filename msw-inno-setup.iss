@@ -1,10 +1,10 @@
 [Setup]
 AppName=HakuNeko
 AppVerName=HakuNeko
-AppVersion=1.1.0
-VersionInfoVersion=1.1.0
+AppVersion=1.1.1
+VersionInfoVersion=1.1.1
 AppPublisher=Ronny Wegener
-AppPublisherURL=http://hakuneko.googlecode.com
+AppPublisherURL=http://hakuneko.sourceforge.net
 SetupIconFile=res\app.ico
 UninstallDisplayIcon={app}\hakuneko.exe
 DisableWelcomePage=yes
@@ -15,7 +15,7 @@ DisableReadyPage=yes
 ; refresh windows explorer to update associated icons
 ;ChangesAssociations=yes
 OutputDir=.
-OutputBaseFilename=hakuneko_1.1.0_i386_msw-setup
+OutputBaseFilename=hakuneko_1.1.1_i386_msw-setup
 ;WizardImageFile=compiler:wizmodernimage.bmp
 ;WizardSmallImageFile=compiler:wizmodernsmallimage.bmp
 
