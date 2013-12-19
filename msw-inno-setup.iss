@@ -26,9 +26,9 @@ Name: shortcuts\startmenu; Description: "Startmenu Programs"; GroupDescription: 
 Name: shortcuts\quicklaunch; Description: "Quick Launch"; GroupDescription: "Create Shortcuts:"; Flags: unchecked
 
 [Files]
-Source: dist\msw\bin\hakuneko.exe; DestDir: {app}
-;Source: dist\msw\bin\gui.conf; DestDir: {userappdata}\hakuneko
-;Source: dist\msw\bin\connectors\*.*; DestDir: {commonappdata}\hakuneko
+Source: build\msw\bin\hakuneko.exe; DestDir: {app}
+;Source: build\msw\bin\gui.conf; DestDir: {userappdata}\hakuneko
+;Source: build\msw\bin\connectors\*.*; DestDir: {commonappdata}\hakuneko
 
 [UninstallDelete]
 Name: {app}; Type: filesandordirs
