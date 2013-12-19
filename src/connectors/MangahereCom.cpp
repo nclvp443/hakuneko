@@ -93,7 +93,7 @@ wxArrayMCEntry MangahereCom::GetChapterList(MCEntry* MangaEntry)
     wxString content = GetHtmlContent(MangaEntry->Link);
 
     int indexStart = content.find(wxT("<div class=\"detail_list\">")) + 25;
-    int indexEnd = content.find(wxT("</ul>"), indexStart);
+    int indexEnd = content.find(wxT("<ul class=\"tab_comment clearfix\">"), indexStart);
 
     if(indexStart > 24 && indexEnd >= -1)
     {

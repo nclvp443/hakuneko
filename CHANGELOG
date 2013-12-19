@@ -1,3 +1,7 @@
+hakuneko 1.1.1
+
+ * fixed mangahere crash when parsing empty chapter list
+
 hakuneko 1.1.0
 
  * added context main menu when right click on free space inside the main window

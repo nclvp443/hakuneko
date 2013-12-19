@@ -23,13 +23,13 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=1
+current_page=5
 FILE_NAME_0=5211;C;0;16;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaDownloaderMain.h;0;4
 FILE_NAME_1=16204;C++;0;16;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaDownloaderMain.cpp;0;4
 FILE_NAME_2=4507;C++;0;16;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaConnector.cpp;0;4
 FILE_NAME_3=889;C++;0;16;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2Fconnectors%2FBatotoNet.cpp;0;4
 FILE_NAME_4=2548;C++;0;16;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2Fconnectors%2FMangafoxMe.cpp;0;4
-FILE_NAME_5=2704;C++;0;16;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2Fconnectors%2FMangahereCom.cpp;0;4
+FILE_NAME_5=3706;C++;0;16;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2Fconnectors%2FMangahereCom.cpp;0;4
 FILE_NAME_6=2626;C++;0;16;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2Fconnectors%2FMangareaderNet.cpp;0;4
 FILE_NAME_7=903;C++;0;16;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2Fconnectors%2FMeinmangaCom.cpp;0;4
 FILE_NAME_8=2835;C++;0;16;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2Fconnectors%2FSubmangaCom.cpp;0;4
