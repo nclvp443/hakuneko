@@ -648,8 +648,6 @@ write_makefile_rule_dist_rpm()
     $ECHO_ESC "" >> $MAKEFILE
 }
 
-# TODO: add iss section for creating inno setup script
-
 write_makefile_rule_dist_iss()
 {
     $ECHO_ESC "ISSPKG := \$(PKGNAME)_\$(PKGVERSION)_windows-setup_\$(shell uname -m)" >> $MAKEFILE
@@ -694,6 +692,18 @@ write_makefile_rule_dist_iss()
     $ECHO_ESC "\t@echo 'Name: \"{userappdata}\\Microsoft\\Internet Explorer\\Quick Launch\\\$(PKGNAME)\"; Filename: \"\$(ISSAPP)\"; Tasks: shortcuts\\quicklaunch' >> iss/setup.iss" >> $MAKEFILE
     $ECHO_ESC "\t@ISCC.exe iss/setup.iss" >> $MAKEFILE
     $ECHO_ESC "\t@rm -r -f iss" >> $MAKEFILE
+    $ECHO_ESC "" >> $MAKEFILE
+}
+
+write_makefile_rule_dist_zip()
+{
+    $ECHO_ESC "ZIPPKG := \$(PKGNAME)_\$(PKGVERSION)_windows-portable_\$(shell uname -m).zip" >> $MAKEFILE
+    $ECHO_ESC "" >> $MAKEFILE
+    $ECHO_ESC "zip: all" >> $MAKEFILE
+    $ECHO_ESC "\t@mkdir -p \$(PKGNAME) 2> /dev/null" >> $MAKEFILE
+    $ECHO_ESC "\t@cp -r \$(DISTROOT)/* \$(PKGNAME)" >> $MAKEFILE
+    $ECHO_ESC "\t@zip -r \$(ZIPPKG) \$(PKGNAME)" >> $MAKEFILE
+    $ECHO_ESC "\t@rm -f -r \$(PKGNAME)" >> $MAKEFILE
     $ECHO_ESC "" >> $MAKEFILE
 }
 
@@ -760,10 +770,13 @@ then
         if [ $? = 0 ]
         then
             write_makefile_rule_dist_rpm
-            # rpmbuild resolves dependencies automatically
         fi
 
-        write_makefile_rule_dist_iss
+        if [ "$(uname -o)" = "Msys" ]
+        then
+            write_makefile_rule_dist_iss
+            write_makefile_rule_dist_zip
+        fi
     fi
 fi
 
