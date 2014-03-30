@@ -5,7 +5,6 @@
 #include <wx/stdpaths.h>
 #include <wx/textfile.h>
 #include <wx/msgdlg.h>
-//#include <wx/statusbr.h>
 #include <wx/sstream.h>
 #include <wx/zipstrm.h>
 #include "CurlRequest.h"
@@ -71,12 +70,6 @@ class MangaConnector
     public: wxString GetLabel();
     // loads all manga titles / links from configuration file
     protected: void LoadLocalMangaList();
-    // read content from a http:// file into a string, use gzip transfer for speed improvements (server must support gzip)
-//    protected: wxString GetHtmlContent(wxString Url, bool UseGzip = false);
-    // read content from multiple http:// files containing an incrementable integer (url must contain %i) and a minimum size of each page as abort condition, use gzip transfer for speed improvements (server must support gzip)
-//    protected: wxString GetHtmlContentF(wxString UrlFormat, int First, int Last, int Increment, size_t AbortSize = 0, bool UseGzip = false);
-    // store an image from a website to a stream (i.e. file, archive, ...)
-//    protected: bool SaveHtmlImage(wxString SourceImageURL, wxBufferedOutputStream* TargetStream, wxString ReferrerURL, wxStatusBar* StatusBar, bool* Abort);
     // store the content from the index list of the website to the local configuraion file
     public: virtual void UpdateMangaList();
     // return all manga titles / links

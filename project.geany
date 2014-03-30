@@ -26,8 +26,8 @@ long_line_column=72
 current_page=5
 FILE_NAME_0=5211;C;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaDownloaderMain.h;0;4
 FILE_NAME_1=12351;C++;0;EUTF-8;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaDownloaderMain.cpp;0;4
-FILE_NAME_2=151;C;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaConnector.h;0;4
-FILE_NAME_3=43340;C++;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaConnector.cpp;0;4
+FILE_NAME_2=2200;C;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaConnector.h;0;4
+FILE_NAME_3=29;C++;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaConnector.cpp;0;4
 FILE_NAME_4=944;C;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FCurlRequest.h;0;4
 FILE_NAME_5=6077;C++;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FCurlRequest.cpp;0;4
 
