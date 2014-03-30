@@ -36,49 +36,66 @@ void BatotoNet::UpdateMangaList()
     wxString mangaLink;
     wxString mangaLabel;
 
-    wxString content = GetHtmlContentF(baseURL + wxT("/comic/_/comics/?per_page=750&st=%i"), 0, 11250, 750, 31200, true);
-    content += GetHtmlContentF(baseURL + wxT("/comic/_/sp/?per_page=500&st=%i"), 0, 500, 500, 31200, true);
+    CurlRequest cr;
+    cr.SetCompression(wxT("gzip"));
+    cr.SetOutputStreamFixUTF8(true);
 
-    // only update local list, if connection successful...
-    if(!content.IsEmpty())
+    // self published content from batoto disabled
+    /*
+    for(wxUint32 i=0; i<500; i+=500)
     {
-        int indexStart = 0;// = content.find(wxT("<div class=\"manga_list\">")) + 24;
-        int indexEnd = 0;// = content.rfind(wxT("<div id=\"footer\">"));
+        cr.SetUrl(wxString::Format(baseURL + wxT("/comic/_/sp/?per_page=500&st=%i"), i));
+        cr.ExecuteRequest();
+    }
+    */
 
-        if(indexStart > -1 && indexEnd >= -1)
+    for(wxUint32 i=0; i<11250; i+=750)
+    {
+        wxString content;
+        wxStringOutputStream sos(&content);
+        cr.SetOutputStream(&sos);
+        cr.SetUrl(wxString::Format(baseURL + wxT("/comic/_/comics/?per_page=750&st=%i"), i));
+
+        //wxString content = GetHtmlContentF(baseURL + wxT("/comic/_/comics/?per_page=750&st=%i"), 0, 11250, 750, 31200, true);
+        //content += GetHtmlContentF(baseURL + wxT("/comic/_/sp/?per_page=500&st=%i"), 0, 500, 500, 31200, true);
+
+        // only update local list, if connection successful...
+        if(cr.ExecuteRequest() && !content.IsEmpty())
         {
-            //content = content.Mid(indexStart, indexEnd-indexStart);
-            //indexEnd = 0;
+            int indexStart = 0;// = content.find(wxT("<div class=\"manga_list\">")) + 24;
+            int indexEnd = 0;// = content.rfind(wxT("<div id=\"footer\">"));
 
-            // Example Entry: <a href='http://www.batoto.net/comic/_/sp/xandria-r8964'>Xandria</a>
-            while((indexStart = content.find(wxT("__topic"), indexEnd)) > -1)
+            if(indexStart > -1 && indexEnd >= -1)
             {
-                indexStart += 7;
-                indexStart = content.find(wxT("<a"), indexStart) + 9; // "<a href='"
-                indexEnd = content.find(wxT("'"), indexStart); // "'>"
-                mangaLink = content.Mid(indexStart, indexEnd-indexStart);
+                //content = content.Mid(indexStart, indexEnd-indexStart);
+                //indexEnd = 0;
 
-                indexStart = indexEnd + 2;
-                indexEnd = content.find(wxT("<"), indexStart); // "</a>"
-                mangaLabel = content.Mid(indexStart, indexEnd-indexStart);
-
-                if(!mangaLabel.IsEmpty())
+                // Example Entry: <a href='http://www.batoto.net/comic/_/sp/xandria-r8964'>Xandria</a>
+                while((indexStart = content.find(wxT("__topic"), indexEnd)) > -1)
                 {
-                    f.AddLine(HtmlUnescapeString(mangaLabel) + wxT("\t") + mangaLink);
-                }
+                    indexStart += 7;
+                    indexStart = content.find(wxT("<a"), indexStart) + 9; // "<a href='"
+                    indexEnd = content.find(wxT("'"), indexStart); // "'>"
+                    mangaLink = content.Mid(indexStart, indexEnd-indexStart);
 
-                //wxYield();
+                    indexStart = indexEnd + 2;
+                    indexEnd = content.find(wxT("<"), indexStart); // "</a>"
+                    mangaLabel = content.Mid(indexStart, indexEnd-indexStart);
+
+                    if(!mangaLabel.IsEmpty())
+                    {
+                        f.AddLine(HtmlUnescapeString(mangaLabel) + wxT("\t") + mangaLink);
+                    }
+
+                    //wxYield();
+                }
             }
         }
-
-        f.Write();
-        f.Close();
-        LoadLocalMangaList();
+        sos.Close();
     }
-    else
-    {
-        f.Close();
-    }
+    f.Write();
+    f.Close();
+    LoadLocalMangaList();
 }
 
 wxArrayMCEntry BatotoNet::GetChapterList(MCEntry* MangaEntry)
@@ -93,7 +110,13 @@ wxArrayMCEntry BatotoNet::GetChapterList(MCEntry* MangaEntry)
     wxString chTitle;
     wxString chLink;
 
-    wxString content = GetHtmlContent(MangaEntry->Link, true);
+    CurlRequest cr;
+    cr.SetUrl(MangaEntry->Link);
+    cr.SetCompression(wxT("gzip"));
+    wxString content;
+    wxStringOutputStream sos(&content);
+    cr.SetOutputStream(&sos);
+    cr.ExecuteRequest();
 
     int posStart, posEnd;
     int indexStart = content.find(wxT("ipb_table chapters_list")) + 23;
@@ -181,7 +204,15 @@ wxArrayString BatotoNet::GetPageLinks(wxString ChapterLink)
 {
     wxArrayString pageLinks;
 
-    wxString content = GetHtmlContent(ChapterLink + wxT("/?supress_webtoon=t"), true);
+    CurlRequest cr;
+    cr.SetUrl(ChapterLink + wxT("/?supress_webtoon=t"));
+    cr.SetCompression(wxT("gzip"));
+    wxString content;
+    wxStringOutputStream sos(&content);
+    cr.SetOutputStream(&sos);
+    cr.ExecuteRequest();
+
+    //wxString content = GetHtmlContent(ChapterLink + wxT("/?supress_webtoon=t"), true);
 
     int indexStart = content.find(wxT("<select name=\"page_select\"")) + 26;
     int indexEnd = content.find(wxT("</select>"), indexStart);
@@ -207,7 +238,15 @@ wxArrayString BatotoNet::GetPageLinks(wxString ChapterLink)
 
 wxString BatotoNet::GetImageLink(wxString PageLink)
 {
-    wxString content = GetHtmlContent(PageLink, true);
+    CurlRequest cr;
+    cr.SetUrl(PageLink);
+    cr.SetCompression(wxT("gzip"));
+    wxString content;
+    wxStringOutputStream sos(&content);
+    cr.SetOutputStream(&sos);
+    cr.ExecuteRequest();
+
+    //wxString content = GetHtmlContent(PageLink, true);
 
     // Example Entry: <img id="comic_page" style="max-width: 100%;" src="http://img.batoto.net/comics/2012/09/23/o/read505ee533070ca/img000003.png" alt="One Piece - ch 682 Page 3 | Batoto!" onerror="this.src='http://img.batoto.net/comics/misc/Img-Error.jpg'" onload="adjust_page_width();" />
     int indexStart = content.find(wxT("<img id=\"comic_page\"")) + 20;

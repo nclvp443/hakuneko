@@ -36,7 +36,15 @@ void SubmangaCom::UpdateMangaList()
     wxString mangaLink;
     wxString mangaLabel;
 
-    wxString content = GetHtmlContent(baseURL + wxT("/series/n"), true);
+    CurlRequest cr;
+    cr.SetUrl(baseURL + wxT("/series/n"));
+    cr.SetCompression(wxT("gzip"));
+    wxString content;
+    wxStringOutputStream sos(&content);
+    cr.SetOutputStream(&sos);
+    cr.ExecuteRequest();
+
+    //wxString content = GetHtmlContent(baseURL + wxT("/series/n"), true);
 
     // only update local list, if connection successful...
     if(!content.IsEmpty())
@@ -90,7 +98,13 @@ wxArrayMCEntry SubmangaCom::GetChapterList(MCEntry* MangaEntry)
     wxString chTitle;
     wxString chLink;
 
-    wxString content = GetHtmlContent(MangaEntry->Link, true);
+    CurlRequest cr;
+    cr.SetUrl(MangaEntry->Link);
+    cr.SetCompression(wxT("gzip"));
+    wxString content;
+    wxStringOutputStream sos(&content);
+    cr.SetOutputStream(&sos);
+    cr.ExecuteRequest();
 
     int indexStart = content.find(wxT("class=\"r\"")) + 9;
     int indexEnd = content.find(wxT("class=\"r\""), indexStart);
@@ -142,7 +156,15 @@ wxArrayString SubmangaCom::GetPageLinks(wxString ChapterLink)
 {
     wxArrayString pageLinks;
 
-    wxString content = GetHtmlContent(ChapterLink);
+    CurlRequest cr;
+    cr.SetUrl(ChapterLink);
+    cr.SetCompression(wxT("gzip"));
+    wxString content;
+    wxStringOutputStream sos(&content);
+    cr.SetOutputStream(&sos);
+    cr.ExecuteRequest();
+
+    //wxString content = GetHtmlContent(ChapterLink);
 
     int indexStart = content.find(wxT("<select")) + 7;
     int indexEnd = content.find(wxT("</select>"), indexStart);
@@ -169,7 +191,15 @@ wxArrayString SubmangaCom::GetPageLinks(wxString ChapterLink)
 
 wxString SubmangaCom::GetImageLink(wxString PageLink)
 {
-    wxString content = GetHtmlContent(PageLink);
+    CurlRequest cr;
+    cr.SetUrl(PageLink);
+    cr.SetCompression(wxT("gzip"));
+    wxString content;
+    wxStringOutputStream sos(&content);
+    cr.SetOutputStream(&sos);
+    cr.ExecuteRequest();
+
+    //wxString content = GetHtmlContent(PageLink);
 
     // Example Entry: <img src="http://img6.submanga.com/pages/105/1056821bb/2.jpg"/>
     int indexStart = content.rfind(wxT("<img src=\"")) + 10;

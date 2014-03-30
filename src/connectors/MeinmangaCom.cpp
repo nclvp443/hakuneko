@@ -36,7 +36,15 @@ void MeinmangaCom::UpdateMangaList()
     wxString mangaLink;
     wxString mangaLabel;
 
-    wxString content = GetHtmlContent(baseURL + wxT("/directory/all/"), false);
+    CurlRequest cr;
+    cr.SetUrl(baseURL + wxT("/directory/all/"));
+    cr.SetCompression(wxT("gzip"));
+    wxString content;
+    wxStringOutputStream sos(&content);
+    cr.SetOutputStream(&sos);
+    cr.ExecuteRequest();
+
+    //wxString content = GetHtmlContent(baseURL + wxT("/directory/all/"), false);
 
     // only update local list, if connection successful...
     if(!content.IsEmpty())

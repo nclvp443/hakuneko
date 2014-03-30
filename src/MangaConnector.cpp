@@ -117,11 +117,12 @@ void MCEntry::SetSafeLabel(wxString Name)
 MangaConnector::MangaConnector()
 {
     InitializeHtmlEntities();
+    curl_global_init(CURL_GLOBAL_ALL);
 }
 
 MangaConnector::~MangaConnector()
 {
-    //
+    curl_global_cleanup();
 }
 
 wxString MangaConnector::GetConfigurationPath()
@@ -688,7 +689,7 @@ void MangaConnector::LoadLocalMangaList()
         f.Close();
     }
 }
-
+/*
 wxString MangaConnector::GetHtmlContent(wxString Url, bool UseGzip)
 {
     Url = HtmlEscapeUrl(Url);
@@ -734,21 +735,19 @@ wxString MangaConnector::GetHtmlContent(wxString Url, bool UseGzip)
             {
                 // reading stream using string buffer (utf8)
                 //{
-                    /*
-                    if(UseGzip)
-                    {
-                        wxZlibInputStream httpGzipStream(httpStream);
-                        httpGzipStream.Read(strStream);
-                        bytesRead += httpGzipStream.LastRead();
-                    }
-                    else
-                    {
-                        //wxStringOutputStream strStream(NULL);
-                        httpStream->Read(strStream);
-                        bytesRead += httpStream->LastRead();
-                        //content = strStream.GetString();
-                    }
-                    */
+                    //if(UseGzip)
+                    //{
+                        //wxZlibInputStream httpGzipStream(httpStream);
+                        //httpGzipStream.Read(strStream);
+                        //bytesRead += httpGzipStream.LastRead();
+                    //}
+                    //else
+                    //{
+                        ////wxStringOutputStream strStream(NULL);
+                        //httpStream->Read(strStream);
+                        //bytesRead += httpStream->LastRead();
+                        ////content = strStream.GetString();
+                    //}
                 //}
 
                 // reading stream using char* buffer (char/utf8/...)
@@ -820,7 +819,8 @@ wxString MangaConnector::GetHtmlContent(wxString Url, bool UseGzip)
 
     return content;
 }
-
+*/
+/*
 wxString MangaConnector::GetHtmlContentF(wxString UrlFormat, int First, int Last, int Increment, size_t AbortSize, bool UseGzip)
 {
     UrlFormat = HtmlEscapeUrl(UrlFormat);
@@ -874,26 +874,24 @@ wxString MangaConnector::GetHtmlContentF(wxString UrlFormat, int First, int Last
             {
                 // reading stream using string buffer (utf8)
                 //{
-                    /*
-                    if(UseGzip)
-                    {
-                        httpGzipStream = new wxZlibInputStream(httpStream);
-                        // NOTE: data will be appended to strStream(&content)
-                        httpGzipStream->Read(strStream);
-                        pageSize = httpGzipStream->LastRead();
-                        bytesRead += pageSize;
-                        wxDELETE(httpGzipStream);
-                    }
-                    else
-                    {
-                        // NOTE: data will be appended to strStream(&content)
-                        //wxStringOutputStream strStream(NULL);
-                        httpStream->Read(strStream);
-                        //content = strStream.GetString();
-                        pageSize = httpStream->LastRead();
-                        bytesRead += pageSize;
-                    }
-                    */
+                    //if(UseGzip)
+                    //{
+                        //httpGzipStream = new wxZlibInputStream(httpStream);
+                        //// NOTE: data will be appended to strStream(&content)
+                        //httpGzipStream->Read(strStream);
+                        //pageSize = httpGzipStream->LastRead();
+                        //bytesRead += pageSize;
+                        //wxDELETE(httpGzipStream);
+                    //}
+                    //else
+                    //{
+                        //// NOTE: data will be appended to strStream(&content)
+                        ////wxStringOutputStream strStream(NULL);
+                        //httpStream->Read(strStream);
+                        ////content = strStream.GetString();
+                        //pageSize = httpStream->LastRead();
+                        //bytesRead += pageSize;
+                    //}
                 //}
 
                 // reading stream using char* buffer (char/utf8/...)
@@ -983,7 +981,8 @@ wxString MangaConnector::GetHtmlContentF(wxString UrlFormat, int First, int Last
 
     return content;
 }
-
+*/
+/*
 bool MangaConnector::SaveHtmlImage(wxString SourceImageURL, wxBufferedOutputStream* TargetStream, wxString ReferrerURL, wxStatusBar* StatusBar, bool* Abort)
 {
     SourceImageURL = HtmlEscapeUrl(SourceImageURL);
@@ -1066,7 +1065,7 @@ bool MangaConnector::SaveHtmlImage(wxString SourceImageURL, wxBufferedOutputStre
 
     return success;
 }
-
+*/
 void MangaConnector::UpdateMangaList()
 {
     //
@@ -1231,11 +1230,18 @@ wxArrayString MangaConnector::DownloadJobs(wxFileName BaseDirectory, wxStatusBar
                 wxRemoveFile(targetArchiveFile.GetFullPath());
             }
 
+            CurlRequest cr;
+            cr.SetUrl(sourceImageLink);
+            cr.SetReferer(referrerURL);
+            cr.SetStatusBar(StatusBar, 1);
+            cr.SetAbort(Abort);
+
             pageLinks = GetPageLinks(it->second.ChapterLink);
             for(unsigned int i=0; i<pageLinks.GetCount(); i++)
             {
                 StatusBar->SetStatusText(wxString::Format(it->second.MangaLabel + wxT(" - ") + it->second.ChapterLabel + wxT(" (%u/%u)"), i, pageLinks.GetCount()));
                 sourceImageLink = GetImageLink(pageLinks[i]);
+                cr.SetUrl(sourceImageLink);
 
                 targetImageFile.SetName(wxString::Format(wxT("%03u"), i+1));
                 targetImageFile.SetExt(sourceImageLink.AfterLast('.').BeforeFirst('?'));
@@ -1243,29 +1249,26 @@ wxArrayString MangaConnector::DownloadJobs(wxFileName BaseDirectory, wxStatusBar
                 if(CompressChapters)
                 {
                     archiveCompressionStream.PutNextEntry(targetImageFile.GetFullName());
-                    wxBufferedOutputStream bufferedDestinationStream(archiveCompressionStream);
+                    cr.SetOutputStream(&archiveCompressionStream);
 
-                    if(!SaveHtmlImage(sourceImageLink, &bufferedDestinationStream, referrerURL, StatusBar, Abort))
+                    if(!cr.ExecuteRequest()/*!SaveHtmlImage(sourceImageLink, &bufferedDestinationStream, referrerURL, StatusBar, Abort)*/)
                     {
-                        errorLog.Add(sourceImageLink + wxT("|") + targetImageFile.GetFullPath());
+                        errorLog.Add(sourceImageLink + wxT(" | ") + targetImageFile.GetFullPath());
                         noError = false;
                     }
-
-                    bufferedDestinationStream.Close();
                 }
                 else
                 {
-                    wxFileOutputStream fileDestinationStream(targetImageFile.GetFullPath());
-                    wxBufferedOutputStream bufferedDestinationStream(fileDestinationStream);
+                    wxFFileOutputStream fileDestinationStream(targetImageFile.GetFullPath());
+                    cr.SetOutputStream(&fileDestinationStream);
 
-                    if(!SaveHtmlImage(sourceImageLink, &bufferedDestinationStream, referrerURL, StatusBar, Abort))
+                    if(!cr.ExecuteRequest()/*!SaveHtmlImage(sourceImageLink, &bufferedDestinationStream, referrerURL, StatusBar, Abort)*/)
                     {
-                        errorLog.Add(sourceImageLink + wxT("|") + targetImageFile.GetFullPath());
+                        errorLog.Add(sourceImageLink + wxT(" | ") + targetImageFile.GetFullPath());
                         noError = false;
                     }
 
                     fileDestinationStream.Close();
-                    bufferedDestinationStream.Close();
                 }
 
                 wxYield();

@@ -178,7 +178,7 @@ MangaDownloaderFrame::MangaDownloaderFrame(wxWindow* parent,wxWindowID id)
     FlexGridSizerContainer->Add(FlexGridSizerButtons, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     SetSizer(FlexGridSizerContainer);
     StatusBar = new wxStatusBar(this, ID_STATUSBAR1, wxST_SIZEGRIP, _T("ID_STATUSBAR1"));
-    int __wxStatusBarWidths_1[3] = { -5, -1, -2 };
+    int __wxStatusBarWidths_1[3] = { -10, -3, -4 };
     int __wxStatusBarStyles_1[3] = { wxSB_NORMAL, wxSB_NORMAL, wxSB_NORMAL };
     StatusBar->SetFieldsCount(3,__wxStatusBarWidths_1);
     StatusBar->SetStatusStyles(3,__wxStatusBarStyles_1);

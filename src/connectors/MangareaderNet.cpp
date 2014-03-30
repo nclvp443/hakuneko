@@ -36,7 +36,15 @@ void MangareaderNet::UpdateMangaList()
     wxString mangaLink;
     wxString mangaLabel;
 
-    wxString content = GetHtmlContent(baseURL + wxT("/alphabetical"), false);
+    CurlRequest cr;
+    cr.SetUrl(baseURL + wxT("/alphabetical"));
+    cr.SetCompression(wxT("gzip"));
+    wxString content;
+    wxStringOutputStream sos(&content);
+    cr.SetOutputStream(&sos);
+    cr.ExecuteRequest();
+
+    //wxString content = GetHtmlContent(baseURL + wxT("/alphabetical"), false);
 
     // only update local list, if connection successful...
     if(!content.IsEmpty())
@@ -88,7 +96,13 @@ wxArrayMCEntry MangareaderNet::GetChapterList(MCEntry* MangaEntry)
     wxString chTitle;
     wxString chLink;
 
-    wxString content = GetHtmlContent(MangaEntry->Link);
+    CurlRequest cr;
+    cr.SetUrl(MangaEntry->Link);
+    cr.SetCompression(wxT("gzip"));
+    wxString content;
+    wxStringOutputStream sos(&content);
+    cr.SetOutputStream(&sos);
+    cr.ExecuteRequest();
 
     int indexStart = content.find(wxT("<table id=\"listing\">")) + 20;
     int indexEnd = content.find(wxT("</table>"), indexStart);
@@ -132,7 +146,15 @@ wxArrayString MangareaderNet::GetPageLinks(wxString ChapterLink)
 {
     wxArrayString pageLinks;
 
-    wxString content = GetHtmlContent(ChapterLink);
+    CurlRequest cr;
+    cr.SetUrl(ChapterLink);
+    cr.SetCompression(wxT("gzip"));
+    wxString content;
+    wxStringOutputStream sos(&content);
+    cr.SetOutputStream(&sos);
+    cr.ExecuteRequest();
+
+    //wxString content = GetHtmlContent(ChapterLink);
 
     int indexStart = content.find(wxT("<select id=\"pageMenu\" name=\"pageMenu\">")) + 37;
     int indexEnd = content.find(wxT("</select>"), indexStart);
@@ -158,7 +180,15 @@ wxArrayString MangareaderNet::GetPageLinks(wxString ChapterLink)
 
 wxString MangareaderNet::GetImageLink(wxString PageLink)
 {
-    wxString content = GetHtmlContent(PageLink);
+    CurlRequest cr;
+    cr.SetUrl(PageLink);
+    cr.SetCompression(wxT("gzip"));
+    wxString content;
+    wxStringOutputStream sos(&content);
+    cr.SetOutputStream(&sos);
+    cr.ExecuteRequest();
+
+    //wxString content = GetHtmlContent(PageLink);
 
     // Example Entry: <img id="img" width="800" height="1214" src="http://i30.mangareader.net/manga/chapter/image.jpg" alt="label" name="img" />
     int indexStart = content.find(wxT("<img id=\"img\"")) + 13;

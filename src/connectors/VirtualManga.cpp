@@ -72,7 +72,15 @@ wxArrayString VirtualManga::GetPageLinks(wxString ChapterLink)
 
 wxString VirtualManga::GetImageLink(wxString PageLink)
 {
-    wxString content = GetHtmlContent(wxT("http://www.goodfon.com/catalog/anime/rand/"));
+    CurlRequest cr;
+    cr.SetUrl(wxT("http://www.goodfon.com/catalog/anime/rand/"));
+    cr.SetCompression(wxT("gzip"));
+    wxString content;
+    wxStringOutputStream sos(&content);
+    cr.SetOutputStream(&sos);
+    cr.ExecuteRequest();
+
+    //wxString content = GetHtmlContent(wxT("http://www.goodfon.com/catalog/anime/rand/"));
 
     int indexStart = content.find(wxT("tabl_td")) + 7;
     indexStart = content.find(wxT("<img src=\""), indexStart) + 10;

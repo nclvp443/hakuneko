@@ -36,7 +36,15 @@ void MangafoxMe::UpdateMangaList()
     wxString mangaLink;
     wxString mangaLabel;
 
-    wxString content = GetHtmlContent(baseURL + wxT("/manga"), false);
+    CurlRequest cr;
+    cr.SetUrl(baseURL + wxT("/manga"));
+    cr.SetCompression(wxT("gzip"));
+    wxString content;
+    wxStringOutputStream sos(&content);
+    cr.SetOutputStream(&sos);
+    cr.ExecuteRequest();
+
+   // wxString content = GetHtmlContent(baseURL + wxT("/manga"), false);
 
     // only update local list, if connection successful...
     if(!content.IsEmpty())
@@ -88,7 +96,13 @@ wxArrayMCEntry MangafoxMe::GetChapterList(MCEntry* MangaEntry)
     wxString chTitle;
     wxString chLink;
 
-    wxString content = GetHtmlContent(MangaEntry->Link);
+    CurlRequest cr;
+    cr.SetUrl(MangaEntry->Link);
+    cr.SetCompression(wxT("gzip"));
+    wxString content;
+    wxStringOutputStream sos(&content);
+    cr.SetOutputStream(&sos);
+    cr.ExecuteRequest();
 
     //int indexStart = content.find(wxT("<div id=\"chapters\" >")) + 20;
     int indexStart = content.find(wxT("</h2><hr/>")) + 10;
@@ -156,7 +170,15 @@ wxArrayString MangafoxMe::GetPageLinks(wxString ChapterLink)
 {
     wxArrayString pageLinks;
 
-    wxString content = GetHtmlContent(ChapterLink);
+    CurlRequest cr;
+    cr.SetUrl(ChapterLink);
+    cr.SetCompression(wxT("gzip"));
+    wxString content;
+    wxStringOutputStream sos(&content);
+    cr.SetOutputStream(&sos);
+    cr.ExecuteRequest();
+
+    //wxString content = GetHtmlContent(ChapterLink);
 
     int indexStart = content.find(wxT("<select onchange=\"change_page(this)\" class=\"m\">")) + 48;
     // ignore last option (comments -> value="0")
@@ -183,7 +205,15 @@ wxArrayString MangafoxMe::GetPageLinks(wxString ChapterLink)
 
 wxString MangafoxMe::GetImageLink(wxString PageLink)
 {
-    wxString content = GetHtmlContent(PageLink);
+    CurlRequest cr;
+    cr.SetUrl(PageLink);
+    cr.SetCompression(wxT("gzip"));
+    wxString content;
+    wxStringOutputStream sos(&content);
+    cr.SetOutputStream(&sos);
+    cr.ExecuteRequest();
+
+    //wxString content = GetHtmlContent(PageLink);
 
     // Example Entry: <img src="http://c.mfcdn.net/store/manga/10235/01-001.0/compressed/pimg001.jpg" onerror="this.src='http://l.mfcdn.net/store/manga/10235/01-001.0/compressed/pimg001.jpg'" width="728" id="image" alt="Tenshin Ranman: Lucky or Unlucky!? 1: Unlucky Nature &amp;amp; Kiss at MangaFox.me"/>
     // use the onerror-server instead the src-server (to save bandwith for web-browsing users which will read from src-server)
