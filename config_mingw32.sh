@@ -46,6 +46,8 @@ LDLIBS="
     -lwxjpeg
     -lwxtiff
     -lwxzlib
+    -Llib/msw/curl
+    -lcurl
     -L/mingw/lib
     -lwinspool
     -lole32

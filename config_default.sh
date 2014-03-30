@@ -39,4 +39,7 @@ RCFLAGS=""
 
 LD="g++"
 LDFLAGS="-s"
-LDLIBS="$(wx-config --static=no --debug=no --libs)"
+LDLIBS="
+    $(wx-config --static=no --debug=no --libs)
+    -lcurl
+    "

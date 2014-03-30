@@ -17,7 +17,7 @@
 //#include <wx/datstrm.h>
 #include <wx/zipstrm.h>
 // #include <wx/tarstrm.h>
-
+#include "CurlRequest.h"
 
 enum MANGA_LIST_TYPE
 {
