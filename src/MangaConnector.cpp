@@ -725,8 +725,8 @@ wxString MangaConnector::GetHtmlContent(wxString Url, bool UseGzip)
 
         if(webResponse.GetError() == wxPROTO_NOERR && httpStream)
         {
-            // follow page location if moved (code 301)
-            if(webResponse.GetResponse() == 301)
+            // follow page location if moved (code 301 || 302)
+            if(webResponse.GetResponse() == 301 || webResponse.GetResponse() == 302)
             {
                 content = GetHtmlContent(webResponse.GetHeader(wxT("Location")), UseGzip);
             }
@@ -984,7 +984,7 @@ wxString MangaConnector::GetHtmlContentF(wxString UrlFormat, int First, int Last
     return content;
 }
 
-bool MangaConnector::SaveHtmlImage(wxString SourceImageURL, wxBufferedOutputStream* TargetStream, wxString ReferrerURL)
+bool MangaConnector::SaveHtmlImage(wxString SourceImageURL, wxBufferedOutputStream* TargetStream, wxString ReferrerURL, wxStatusBar* StatusBar, bool* Abort)
 {
     SourceImageURL = HtmlEscapeUrl(SourceImageURL);
     SourceImageURL.Replace(wxT("http://"), wxEmptyString);
@@ -1013,35 +1013,50 @@ bool MangaConnector::SaveHtmlImage(wxString SourceImageURL, wxBufferedOutputStre
 
         if(webResponse.GetError() == wxPROTO_NOERR)
         {
-            size_t bytes_read;
-            size_t bytes = imgSourceStream->GetSize(); // full filesize
-
-            // if filesize is unknown or greater 25KB read in chunks
-            if(bytes <= 0 || bytes > 25600)
+            // follow page location if moved (code 301)
+            if(webResponse.GetResponse() == 301 || webResponse.GetResponse() == 302)
             {
-                bytes = 25600; // 25 KB chunks
+                success = SaveHtmlImage(webResponse.GetHeader(wxT("Location")), TargetStream, ReferrerURL, StatusBar, Abort);
             }
-
-            wxByte* buffer = new wxByte[bytes];
-
-            while(!imgSourceStream->Eof())
+            else
             {
-                wxYield();
-                imgSourceStream->Read(buffer, bytes);
-                bytes_read = imgSourceStream->LastRead();
-                if(bytes_read > 0)
-                {
-                    TargetStream->Write(buffer, bytes_read);
-                    success = true;
-                }
-                else
-                {
-                    break; // maybe an error on read
-                }
-            }
-            TargetStream->Sync();
+                size_t bytes_read;
+                size_t bytes = imgSourceStream->GetSize(); // full filesize
 
-            wxDELETEA(buffer);
+                // if filesize is unknown or greater 25KB read in chunks
+                if(bytes <= 0 || bytes > 25600)
+                {
+                    bytes = 25600; // 25 KB chunks
+                }
+
+                wxByte* buffer = new wxByte[bytes];
+
+                while(!imgSourceStream->Eof())
+                {
+                    StatusBar->SetStatusText(wxString::Format(wxT("%u/%u MB"), TargetStream->TellO()/1048576+1, imgSourceStream->GetSize()/1048576+1), 1);
+                    wxYield();
+                    if(Abort && *Abort)
+                    {
+                        success = false;
+                        break;
+                    }
+
+                    imgSourceStream->Read(buffer, bytes);
+                    bytes_read = imgSourceStream->LastRead();
+                    if(bytes_read > 0)
+                    {
+                        TargetStream->Write(buffer, bytes_read);
+                        success = true;
+                    }
+                    else
+                    {
+                        break; // maybe an error on read
+                    }
+                }
+                TargetStream->Sync();
+
+                wxDELETEA(buffer);
+            }
         }
 
         //imgSourceStream->Close();
@@ -1182,7 +1197,7 @@ wxArrayString MangaConnector::DownloadJobs(wxFileName BaseDirectory, wxStatusBar
         // NOTE: jobs marked as already downloaded will be skipped, use SetJobDownloadCompleted() to change a job's state
         if(!it->second.DownloadCompleted)
         {
-            StatusBar->SetStatusText(wxString::Format(GetLabel() + wxT(" (%u/%u)"), j, GetJobCount()), 1);
+            StatusBar->SetStatusText(wxString::Format(GetLabel() + wxT(" (%u/%u)"), j, GetJobCount()), 2);
 
             targetImageFile.AssignDir(BaseDirectory.GetPath());
             targetImageFile.AppendDir(it->second.MangaSafeLabel);
@@ -1230,7 +1245,7 @@ wxArrayString MangaConnector::DownloadJobs(wxFileName BaseDirectory, wxStatusBar
                     archiveCompressionStream.PutNextEntry(targetImageFile.GetFullName());
                     wxBufferedOutputStream bufferedDestinationStream(archiveCompressionStream);
 
-                    if(!SaveHtmlImage(sourceImageLink, &bufferedDestinationStream, referrerURL))
+                    if(!SaveHtmlImage(sourceImageLink, &bufferedDestinationStream, referrerURL, StatusBar, Abort))
                     {
                         errorLog.Add(sourceImageLink + wxT("|") + targetImageFile.GetFullPath());
                         noError = false;
@@ -1243,7 +1258,7 @@ wxArrayString MangaConnector::DownloadJobs(wxFileName BaseDirectory, wxStatusBar
                     wxFileOutputStream fileDestinationStream(targetImageFile.GetFullPath());
                     wxBufferedOutputStream bufferedDestinationStream(fileDestinationStream);
 
-                    if(!SaveHtmlImage(sourceImageLink, &bufferedDestinationStream, referrerURL))
+                    if(!SaveHtmlImage(sourceImageLink, &bufferedDestinationStream, referrerURL, StatusBar, Abort))
                     {
                         errorLog.Add(sourceImageLink + wxT("|") + targetImageFile.GetFullPath());
                         noError = false;

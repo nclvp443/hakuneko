@@ -1,7 +1,5 @@
 #include "BatotoNet.h"
 
-#include <wx/timer.h>
-
 BatotoNet::BatotoNet()
 {
     label = wxT("Batoto");

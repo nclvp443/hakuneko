@@ -178,12 +178,12 @@ MangaDownloaderFrame::MangaDownloaderFrame(wxWindow* parent,wxWindowID id)
     FlexGridSizerContainer->Add(FlexGridSizerButtons, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     SetSizer(FlexGridSizerContainer);
     StatusBar = new wxStatusBar(this, ID_STATUSBAR1, wxST_SIZEGRIP, _T("ID_STATUSBAR1"));
-    int __wxStatusBarWidths_1[2] = { -5, -2 };
-    int __wxStatusBarStyles_1[2] = { wxSB_NORMAL, wxSB_NORMAL };
-    StatusBar->SetFieldsCount(2,__wxStatusBarWidths_1);
-    StatusBar->SetStatusStyles(2,__wxStatusBarStyles_1);
+    int __wxStatusBarWidths_1[3] = { -5, -1, -2 };
+    int __wxStatusBarStyles_1[3] = { wxSB_NORMAL, wxSB_NORMAL, wxSB_NORMAL };
+    StatusBar->SetFieldsCount(3,__wxStatusBarWidths_1);
+    StatusBar->SetStatusStyles(3,__wxStatusBarStyles_1);
     SetStatusBar(StatusBar);
-    StatusBar->SetStatusText(wxT("Selected Chapters: 0"), 1);
+    StatusBar->SetStatusText(wxT("Selected Chapters: 0"), 2);
     DirDialogBrowse = new wxDirDialog(this, _("Select directory"), wxEmptyString, wxDD_DEFAULT_STYLE, wxDefaultPosition, wxDefaultSize, _T("wxDirDialog"));
     MenuJobContext.Append(ID_JOBMENUITEM_REMOVESELECTED, wxT("Remove Selected"));
     MenuJobContext.Append(ID_JOBMENUITEM_REMOVEALL, wxT("Remove All Jobs"));
@@ -1127,7 +1127,7 @@ void MangaDownloaderFrame::OnCheckBoxChaptersClick(wxCommandEvent& event)
     ListCtrlJobs->Thaw();
     ListCtrlChapters->Thaw();
 
-    StatusBar->SetStatusText(wxString::Format(wxT("Selected Chapters: %u"), MCC.GetJobCount()), 1);
+    StatusBar->SetStatusText(wxString::Format(wxT("Selected Chapters: %u"), MCC.GetJobCount()), 2);
 
     StatusBar->SetStatusText(wxEmptyString);
     wxEndBusyCursor();
@@ -1164,7 +1164,7 @@ void MangaDownloaderFrame::OnListCtrlChaptersItemSelect(wxListEvent& event)
         }
         CheckBoxChapters->SetValue(AllChaptersChecked);
 
-        StatusBar->SetStatusText(wxString::Format(wxT("Selected Chapters: %u"), MCC.GetJobCount()), 1);
+        StatusBar->SetStatusText(wxString::Format(wxT("Selected Chapters: %u"), MCC.GetJobCount()), 2);
     }
 }
 
@@ -1285,7 +1285,7 @@ void MangaDownloaderFrame::OnButtonDownloadClick(wxCommandEvent& event)
             }
 
             // update job count in statusbar
-            StatusBar->SetStatusText(wxString::Format(wxT("Selected Chapters: %u"), MCC.GetJobCount()), 1);
+            StatusBar->SetStatusText(wxString::Format(wxT("Selected Chapters: %u"), MCC.GetJobCount()), 2);
         }
         else
         {
@@ -1296,6 +1296,7 @@ void MangaDownloaderFrame::OnButtonDownloadClick(wxCommandEvent& event)
             }
         }
 
+        StatusBar->SetStatusText(wxEmptyString, 1);
         EnableControls(true);
     }
     else
@@ -1536,7 +1537,7 @@ void MangaDownloaderFrame::OnMenuJobContextClick(wxCommandEvent& event)
     ListCtrlChapters->Thaw();
     ListCtrlJobs->Thaw();
 
-    StatusBar->SetStatusText(wxString::Format(wxT("Selected Chapters: %u"), MCC.GetJobCount()), 1);
+    StatusBar->SetStatusText(wxString::Format(wxT("Selected Chapters: %u"), MCC.GetJobCount()), 2);
     StatusBar->SetStatusText(wxEmptyString);
     wxEndBusyCursor();
 }
