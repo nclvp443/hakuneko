@@ -14,6 +14,7 @@ CFLAGS="
     -D__GNUWIN32__
     -D__WXMSW__
     -DwxUSE_UNICODE
+    -DCURL_STATICLIB
     -Iinclude/msw
     -Ilib/msw/wx/mswu
     "

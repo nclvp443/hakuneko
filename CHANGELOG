@@ -1,3 +1,10 @@
+hakuneko 1.3.0
+
+ * replaced internal wxHTTP with cURL engine
+ * showst the size of transfered data
+ * allows abort during a file transfer
+ * added Kissanime connector
+
 hakuneko 1.1.1
 
  * fixed mangahere crash when parsing empty chapter list
