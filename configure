@@ -212,7 +212,7 @@ initialize()
 
 check_command()
 {
-    $@ >/dev/null 2>&1
+    $@ > /dev/null 2>&1
     if [ $? = 0 ]
     then
         $ECHO_ESC "$AF_GREEN ok $AF_RESET"
@@ -241,7 +241,7 @@ check_env()
         $ECHO_ESC "\033[33munknown\033[0m"
     fi
 
-    tput -V >/dev/null 2>&1
+    tput -V > /dev/null 2>&1
     if [ $? = 0 ]
     then
         AF_RED=$(tput setaf 1)

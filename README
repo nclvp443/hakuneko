@@ -1,6 +1,6 @@
-#############
-### LINUX ###
-#############
+###################
+### LINUX (DEB) ###
+###################
 
     --------------------------------------------
     - requirements to build hakuneko on debian -
@@ -11,6 +11,8 @@
       # OR: clang, make, lib*,...
     + libwxgtk2.8-dev
     + libwxbase2.8-dev
+    + libcurl4-openssl-dev
+    + libssl-dev
 
     ----------------------------
     - build & install hakuneko -
@@ -39,6 +41,17 @@
     # OR (if you want to use clang instead of gcc):
     ./configure --config-clang --prefix=/usr
     sudo make deb
+
+###################
+### LINUX (RPM) ###
+###################
+
+    ------------------------------
+    - similar to the DEB variant -
+    ------------------------------
+
+    ./configure --prefix=/usr
+    sudo make rpm
 
 #############
 ### WINNT ###

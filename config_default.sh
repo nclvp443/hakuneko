@@ -1,10 +1,10 @@
 #!/bin/bash
 
 PKGNAME="hakuneko"
-PKGVERSION="1.1.1"
+PKGVERSION="1.3.0"
 PKGSECTION="net"
 PKGAUTHOR="Ronny Wegener <wegener.ronny@gmail.com>"
-PKGHOMEPAGE="http://hakuneko.googlecode.com"
+PKGHOMEPAGE="http://hakuneko.sourceforge.net"
 PKGDEPENDS=""
 PKGDESCRIPTION="Manga Downloader based on wxGTK
  HakuNeko allows you to download manga images from
@@ -16,7 +16,8 @@ PKGDESCRIPTION="Manga Downloader based on wxGTK
  * MangaHere
  * MangaFox
  * Batoto
- * Submanga"
+ * Submanga
+ * KissAnime"
 
 SRCPATTERN="*.cpp"
 SRCDIR="src"
