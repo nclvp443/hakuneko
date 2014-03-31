@@ -2,6 +2,7 @@
 
 MangahereCom::MangahereCom()
 {
+    type = CONNECTOR_TYPE_MANGA;
     label = wxT("MangaHere");
     baseURL = wxT("http://www.mangahere.com");
     referrerURL = wxT("http://www.mangahere.com");
@@ -42,12 +43,9 @@ void MangahereCom::UpdateMangaList()
     wxString content;
     wxStringOutputStream sos(&content);
     cr.SetOutputStream(&sos);
-    cr.ExecuteRequest();
-
-    //wxString content = GetHtmlContent(baseURL + wxT("/mangalist/"), false);
 
     // only update local list, if connection successful...
-    if(!content.IsEmpty())
+    if(cr.ExecuteRequest() && !content.IsEmpty())
     {
         int indexStart = content.find(wxT("<div class=\"sort_list\">")) + 23;
         int indexEnd = content.rfind(wxT("<footer>"));
@@ -78,15 +76,11 @@ void MangahereCom::UpdateMangaList()
                 //wxYield();
             }
         }
-
-        f.Write();
-        f.Close();
-        LoadLocalMangaList();
     }
-    else
-    {
-        f.Close();
-    }
+    sos.Close();
+    f.Write();
+    f.Close();
+    LoadLocalMangaList();
 }
 
 wxArrayMCEntry MangahereCom::GetChapterList(MCEntry* MangaEntry)

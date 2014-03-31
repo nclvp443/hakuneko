@@ -7,7 +7,14 @@
 #include <wx/msgdlg.h>
 #include <wx/sstream.h>
 #include <wx/zipstrm.h>
+#include <openssl/sha.h>
 #include "CurlRequest.h"
+
+enum CONNECTOR_TYPE
+{
+    CONNECTOR_TYPE_MANGA = 1,
+    CONNECTOR_TYPE_ANIME = 2
+};
 
 enum MANGA_LIST_TYPE
 {
@@ -101,6 +108,7 @@ class MangaConnector
     // downloads all chapters from the joblist to the base directory, when CompressChapters is true -> .cbz instead of images
     public: wxArrayString DownloadJobs(wxFileName BaseDirectory, wxStatusBar* StatusBar, bool* Abort, bool CompressChapters = false);
 
+    protected: CONNECTOR_TYPE type;
     protected: wxString label;
     protected: wxString baseURL;
     protected: wxString referrerURL;

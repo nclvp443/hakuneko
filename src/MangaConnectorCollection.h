@@ -1,23 +1,16 @@
 #ifndef MANGACONNECTORCOLLECTION_H
 #define MANGACONNECTORCOLLECTION_H
 
-#include <wx/string.h>
-#include <wx/txtstrm.h>
-#include <wx/protocol/http.h>
-#include <wx/wfstream.h>
-#include <wx/stdpaths.h>
 #include <wx/dir.h>
-#include <wx/textfile.h>
-#include <wx/msgdlg.h>
-#include <wx/hashmap.h>
 
 #include "connectors/VirtualManga.h"
 #include "connectors/MangareaderNet.h"
 #include "connectors/MangafoxMe.h"
 #include "connectors/MangahereCom.h"
 #include "connectors/BatotoNet.h"
-#include "connectors/MeinmangaCom.h"
 #include "connectors/SubmangaCom.h"
+#include "connectors/MeinmangaCom.h"
+#include "connectors/KissAnimeCom.h"
 #include "MangaConnector.h"
 #include "ErrorLogFrame.h"
 

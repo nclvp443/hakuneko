@@ -64,7 +64,7 @@ CurlRequest::CurlRequest()
     {
         curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
         curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 15);
-        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 30);
+        //curl_easy_setopt(curl, CURLOPT_TIMEOUT, 30);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
     }
@@ -90,6 +90,7 @@ void CurlRequest::SetUrl(wxString Url)
     if(curl)
     {
         curl_easy_setopt(curl, CURLOPT_URL, (const char*)Url.mb_str(wxConvUTF8));
+        //curl_easy_setopt(curl, CURLOPT_URL, (const char*)memcpy(new wxByte[Url.Len()], Url.mb_str(wxConvUTF8).data(), Url.Len()));
     }
 }
 
@@ -98,6 +99,7 @@ void CurlRequest::SetCompression(wxString Compression)
     if(curl)
     {
         curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, (const char*)Compression.mb_str(wxConvUTF8));
+        //curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, (const char*)memcpy(new wxByte[Compression.Len()], Compression.mb_str(wxConvUTF8).data(), Compression.Len()));
     }
 }
 
@@ -106,6 +108,7 @@ void CurlRequest::SetAgent(wxString Agent)
     if(curl)
     {
         curl_easy_setopt(curl, CURLOPT_USERAGENT, (const char*)Agent.mb_str(wxConvUTF8));
+        //curl_easy_setopt(curl, CURLOPT_USERAGENT, (const char*)memcpy(new wxByte[Agent.Len()], Agent.mb_str(wxConvUTF8).data(), Agent.Len()));
     }
 }
 
@@ -114,6 +117,7 @@ void CurlRequest::SetReferer(wxString Referer)
     if(curl)
     {
         curl_easy_setopt(curl, CURLOPT_REFERER, (const char*)Referer.mb_str(wxConvUTF8));
+        //curl_easy_setopt(curl, CURLOPT_REFERER, (const char*)memcpy(new wxByte[Referer.Len()], Referer.mb_str(wxConvUTF8).data(), Referer.Len()));
     }
 }
 
@@ -131,13 +135,11 @@ void CurlRequest::SetGetData(wxString Data)
 
 void CurlRequest::SetPostData(wxString Data)
 {
-    if(curl)
+    if(curl && Data != wxEmptyString)
     {
         curl_easy_setopt(curl, CURLOPT_POST, 1);
-        if(Data != wxEmptyString)
-        {
-            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, (const char*)Data.mb_str(wxConvUTF8)); // "foo=bar&foz=baz"
-        }
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, (const char*)Data.mb_str(wxConvUTF8));
+        //curl_easy_setopt(curl, CURLOPT_POSTFIELDS, (const char*)memcpy(new wxByte[Data.Len()], Data.mb_str(wxConvUTF8).data(), Data.Len()));
     }
 }
 

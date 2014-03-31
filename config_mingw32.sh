@@ -48,6 +48,8 @@ LDLIBS="
     -lwxzlib
     -Llib/msw/curl
     -lcurl
+    -Llib/msw/openssl
+    -lcrypto
     -L/mingw/lib
     -lwinspool
     -lole32

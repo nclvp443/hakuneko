@@ -813,13 +813,13 @@ void MangaDownloaderFrame::ColorifyChapterList()
             wxString chapterItem;
             if(mangaDirectory.GetFirst(&chapterItem))
             {
-                if(wxDir::Exists(baseDirectory.GetPathWithSep() + chapterItem) || chapterItem.EndsWith(wxT(".cbz")))
+                if(wxDir::Exists(baseDirectory.GetPathWithSep() + chapterItem) || chapterItem.EndsWith(wxT(".cbz")) || chapterItem.EndsWith(wxT(".mp4")))
                 {
                     currentChapterCount++;
                 }
                 while(mangaDirectory.GetNext(&chapterItem))
                 {
-                    if(wxDir::Exists(baseDirectory.GetPathWithSep() + chapterItem) || chapterItem.EndsWith(wxT(".cbz")))
+                    if(wxDir::Exists(baseDirectory.GetPathWithSep() + chapterItem) || chapterItem.EndsWith(wxT(".cbz")) || chapterItem.EndsWith(wxT(".mp4")))
                     {
                         currentChapterCount++;
                     }
@@ -861,6 +861,10 @@ void MangaDownloaderFrame::ColorifyChapterList()
                 ListCtrlChapters->SetItemTextColour(i, wxColor(0, 150, 250));
             }
             else if(wxFileExists(baseDirectory.GetPathWithSep() + CurrentChapterList[i]->SafeLabel + wxT(".cbz")))
+            {
+                ListCtrlChapters->SetItemTextColour(i, wxColor(0, 150, 250));
+            }
+            else if(wxFileExists(baseDirectory.GetPathWithSep() + CurrentChapterList[i]->SafeLabel + wxT(".mp4")))
             {
                 ListCtrlChapters->SetItemTextColour(i, wxColor(0, 150, 250));
             }

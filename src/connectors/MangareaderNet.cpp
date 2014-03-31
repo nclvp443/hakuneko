@@ -2,6 +2,7 @@
 
 MangareaderNet::MangareaderNet()
 {
+    type = CONNECTOR_TYPE_MANGA;
     label = wxT("MangaReader");
     baseURL = wxT("http://www.mangareader.net");
     referrerURL = wxT("http://www.mangareader.net");
@@ -42,12 +43,9 @@ void MangareaderNet::UpdateMangaList()
     wxString content;
     wxStringOutputStream sos(&content);
     cr.SetOutputStream(&sos);
-    cr.ExecuteRequest();
-
-    //wxString content = GetHtmlContent(baseURL + wxT("/alphabetical"), false);
 
     // only update local list, if connection successful...
-    if(!content.IsEmpty())
+    if(cr.ExecuteRequest() && !content.IsEmpty())
     {
         int indexStart = content.find(wxT("<div class=\"series_col\">")) + 24;
         int indexEnd = content.rfind(wxT("<div id=\"adfooter\">"));
@@ -76,15 +74,11 @@ void MangareaderNet::UpdateMangaList()
                 //wxYield();
             }
         }
-
-        f.Write();
-        f.Close();
-        LoadLocalMangaList();
     }
-    else
-    {
-        f.Close();
-    }
+    sos.Close();
+    f.Write();
+    f.Close();
+    LoadLocalMangaList();
 }
 
 wxArrayMCEntry MangareaderNet::GetChapterList(MCEntry* MangaEntry)

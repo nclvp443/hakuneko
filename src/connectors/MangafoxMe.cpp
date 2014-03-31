@@ -2,6 +2,7 @@
 
 MangafoxMe::MangafoxMe()
 {
+    type = CONNECTOR_TYPE_MANGA;
     label = wxT("MangaFox");
     baseURL = wxT("http://mangafox.me");
     referrerURL = wxT("http://mangafox.me");
@@ -42,12 +43,9 @@ void MangafoxMe::UpdateMangaList()
     wxString content;
     wxStringOutputStream sos(&content);
     cr.SetOutputStream(&sos);
-    cr.ExecuteRequest();
-
-   // wxString content = GetHtmlContent(baseURL + wxT("/manga"), false);
 
     // only update local list, if connection successful...
-    if(!content.IsEmpty())
+    if(cr.ExecuteRequest() && !content.IsEmpty())
     {
         int indexStart = content.find(wxT("<div class=\"manga_list\">")) + 24;
         int indexEnd = content.rfind(wxT("<div id=\"footer\">"));
@@ -76,15 +74,11 @@ void MangafoxMe::UpdateMangaList()
                 //wxYield();
             }
         }
-
-        f.Write();
-        f.Close();
-        LoadLocalMangaList();
     }
-    else
-    {
-        f.Close();
-    }
+    sos.Close();
+    f.Write();
+    f.Close();
+    LoadLocalMangaList();
 }
 
 wxArrayMCEntry MangafoxMe::GetChapterList(MCEntry* MangaEntry)

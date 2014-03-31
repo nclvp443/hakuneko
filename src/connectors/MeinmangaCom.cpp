@@ -2,6 +2,7 @@
 
 MeinmangaCom::MeinmangaCom()
 {
+    type = CONNECTOR_TYPE_MANGA;
     label = wxT("MeinManga");
     baseURL = wxT("http://meinmanga.com");
     referrerURL = wxT("http://meinmanga.com");
@@ -42,12 +43,9 @@ void MeinmangaCom::UpdateMangaList()
     wxString content;
     wxStringOutputStream sos(&content);
     cr.SetOutputStream(&sos);
-    cr.ExecuteRequest();
-
-    //wxString content = GetHtmlContent(baseURL + wxT("/directory/all/"), false);
 
     // only update local list, if connection successful...
-    if(!content.IsEmpty())
+    if(cr.ExecuteRequest() && !content.IsEmpty())
     {
         int indexStart = content.find(wxT("<th>Serienname</th>")) + 19;
         int indexEnd = content.rfind(wxT("</table>"));
@@ -77,15 +75,11 @@ void MeinmangaCom::UpdateMangaList()
                 //wxYield();
             }
         }
-
-        f.Write();
-        f.Close();
-        LoadLocalMangaList();
     }
-    else
-    {
-        f.Close();
-    }
+    sos.Close();
+    f.Write();
+    f.Close();
+    LoadLocalMangaList();
 }
 
 wxArrayMCEntry MeinmangaCom::GetChapterList(MCEntry* MangaEntry)

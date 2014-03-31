@@ -2,6 +2,7 @@
 
 SubmangaCom::SubmangaCom()
 {
+    type = CONNECTOR_TYPE_MANGA;
     label = wxT("Submanga");
     baseURL = wxT("http://submanga.com");
     referrerURL = wxT("http://submanga.com");
@@ -42,12 +43,9 @@ void SubmangaCom::UpdateMangaList()
     wxString content;
     wxStringOutputStream sos(&content);
     cr.SetOutputStream(&sos);
-    cr.ExecuteRequest();
-
-    //wxString content = GetHtmlContent(baseURL + wxT("/series/n"), true);
 
     // only update local list, if connection successful...
-    if(!content.IsEmpty())
+    if(cr.ExecuteRequest() && !content.IsEmpty())
     {
         int indexStart = content.find(wxT("<div class=\"b468\">")) + 18;
         int indexEnd = content.rfind(wxT("<div class=\"b250 bmr0\">"));
@@ -77,15 +75,11 @@ void SubmangaCom::UpdateMangaList()
                 //wxYield();
             }
         }
-
-        f.Write();
-        f.Close();
-        LoadLocalMangaList();
     }
-    else
-    {
-        f.Close();
-    }
+    sos.Close();
+    f.Write();
+    f.Close();
+    LoadLocalMangaList();
 }
 
 wxArrayMCEntry SubmangaCom::GetChapterList(MCEntry* MangaEntry)

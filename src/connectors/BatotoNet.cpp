@@ -2,6 +2,7 @@
 
 BatotoNet::BatotoNet()
 {
+    type = CONNECTOR_TYPE_MANGA;
     label = wxT("Batoto");
     baseURL = wxT("http://www.batoto.net");
     referrerURL = wxT("http://www.batoto.net");

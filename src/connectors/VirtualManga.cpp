@@ -2,6 +2,7 @@
 
 VirtualManga::VirtualManga()
 {
+    type = CONNECTOR_TYPE_MANGA;
     label = wxT("VirtualManga");
     baseURL = wxT("http://virtualmanga.null");
     referrerURL = wxT("http://virtualmanga.null");

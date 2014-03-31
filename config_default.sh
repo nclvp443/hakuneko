@@ -42,4 +42,5 @@ LDFLAGS="-s"
 LDLIBS="
     $(wx-config --static=no --debug=no --libs)
     -lcurl
+    -lcrypto
     "

@@ -753,6 +753,11 @@ wxArrayString MangaConnector::DownloadJobs(wxFileName BaseDirectory, wxStatusBar
     wxFileName targetImageFile;
     wxFileName targetArchiveFile;
 
+    if(!(type & CONNECTOR_TYPE_MANGA))
+    {
+        CompressChapters = false;
+    }
+
     // loop through all chapters of joblist
     unsigned int j=0;
     bool noError;
@@ -767,7 +772,10 @@ wxArrayString MangaConnector::DownloadJobs(wxFileName BaseDirectory, wxStatusBar
 
             targetImageFile.AssignDir(BaseDirectory.GetPath());
             targetImageFile.AppendDir(it->second.MangaSafeLabel);
-            targetImageFile.AppendDir(it->second.ChapterSafeLabel);
+            if(type & CONNECTOR_TYPE_MANGA)
+            {
+                targetImageFile.AppendDir(it->second.ChapterSafeLabel);
+            }
             targetArchiveFile.Assign(targetImageFile.GetPath() + wxT(".cbz"));
 
             if(CompressChapters)
@@ -806,21 +814,36 @@ wxArrayString MangaConnector::DownloadJobs(wxFileName BaseDirectory, wxStatusBar
             pageLinks = GetPageLinks(it->second.ChapterLink);
             for(unsigned int i=0; i<pageLinks.GetCount(); i++)
             {
-                StatusBar->SetStatusText(wxString::Format(it->second.MangaLabel + wxT(" - ") + it->second.ChapterLabel + wxT(" (%u/%u)"), i, pageLinks.GetCount()));
+                if(type & CONNECTOR_TYPE_MANGA)
+                {
+                    StatusBar->SetStatusText(wxString::Format(it->second.MangaLabel + wxT(" - ") + it->second.ChapterLabel + wxT(" (%u/%u)"), i, pageLinks.GetCount()));
+                }
+                else
+                {
+                    StatusBar->SetStatusText(it->second.MangaLabel + wxT(" - ") + it->second.ChapterLabel);
+                }
                 sourceImageLink = GetImageLink(pageLinks[i]);
                 cr.SetUrl(sourceImageLink);
 
-                targetImageFile.SetName(wxString::Format(wxT("%03u"), i+1));
-                targetImageFile.SetExt(sourceImageLink.AfterLast('.').BeforeFirst('?'));
+                if(type & CONNECTOR_TYPE_MANGA)
+                {
+                    targetImageFile.SetName(wxString::Format(wxT("%03u"), i+1));
+                    targetImageFile.SetExt(sourceImageLink.AfterLast('.').BeforeFirst('?'));
+                }
+                if(type & CONNECTOR_TYPE_ANIME)
+                {
+                    targetImageFile.SetName(it->second.ChapterSafeLabel);
+                    targetImageFile.SetExt(wxT("mp4"));
+                }
 
                 if(CompressChapters)
                 {
                     archiveCompressionStream.PutNextEntry(targetImageFile.GetFullName());
                     cr.SetOutputStream(&archiveCompressionStream);
 
-                    if(!cr.ExecuteRequest()/*!SaveHtmlImage(sourceImageLink, &bufferedDestinationStream, referrerURL, StatusBar, Abort)*/)
+                    if(!cr.ExecuteRequest())
                     {
-                        errorLog.Add(sourceImageLink + wxT(" | ") + targetImageFile.GetFullPath());
+                        errorLog.Add(sourceImageLink + wxT("|") + targetImageFile.GetFullPath());
                         noError = false;
                     }
                 }
@@ -829,9 +852,9 @@ wxArrayString MangaConnector::DownloadJobs(wxFileName BaseDirectory, wxStatusBar
                     wxFFileOutputStream fileDestinationStream(targetImageFile.GetFullPath());
                     cr.SetOutputStream(&fileDestinationStream);
 
-                    if(!cr.ExecuteRequest()/*!SaveHtmlImage(sourceImageLink, &bufferedDestinationStream, referrerURL, StatusBar, Abort)*/)
+                    if(!cr.ExecuteRequest())
                     {
-                        errorLog.Add(sourceImageLink + wxT(" | ") + targetImageFile.GetFullPath());
+                        errorLog.Add(sourceImageLink + wxT("|") + targetImageFile.GetFullPath());
                         noError = false;
                     }
 
