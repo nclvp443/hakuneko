@@ -94,6 +94,21 @@ void CurlRequest::SetUrl(wxString Url)
     }
 }
 
+void CurlRequest::SetHeader(bool Include)
+{
+    if(curl)
+    {
+        if(Include)
+        {
+            curl_easy_setopt(curl, CURLOPT_HEADER, 1);
+        }
+        else
+        {
+            curl_easy_setopt(curl, CURLOPT_HEADER, 0);
+        }
+    }
+}
+
 void CurlRequest::SetCompression(wxString Compression)
 {
     if(curl)
@@ -118,6 +133,15 @@ void CurlRequest::SetReferer(wxString Referer)
     {
         curl_easy_setopt(curl, CURLOPT_REFERER, (const char*)Referer.mb_str(wxConvUTF8));
         //curl_easy_setopt(curl, CURLOPT_REFERER, (const char*)memcpy(new wxByte[Referer.Len()], Referer.mb_str(wxConvUTF8).data(), Referer.Len()));
+    }
+}
+
+void CurlRequest::SetCookies(wxString Cookies)
+{
+    if(curl)
+    {
+        curl_easy_setopt(curl, CURLOPT_COOKIE, (const char*)Cookies.mb_str(wxConvUTF8));
+        //curl_easy_setopt(curl, CURLOPT_COOKIE, (const char*)memcpy(new wxByte[Cookies.Len()], Cookies.mb_str(wxConvUTF8).data(), Cookies.Len()));
     }
 }
 

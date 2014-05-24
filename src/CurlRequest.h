@@ -12,10 +12,12 @@ class CurlRequest
     public: ~CurlRequest();
 
     public: void SetUrl(wxString Url);
+    public: void SetHeader(bool Include = true);
     // identity, deflate, gzip
     public: void SetCompression(wxString Compression);
     public: void SetAgent(wxString Agent);
     public: void SetReferer(wxString Referer);
+    public: void SetCookies(wxString Cookies);
     public: void SetGetData(wxString Data = wxEmptyString);
     public: void SetPostData(wxString Data = wxEmptyString);
     public: void SetOutputStream(wxOutputStream* Stream);

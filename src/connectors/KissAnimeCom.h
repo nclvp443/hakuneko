@@ -14,6 +14,7 @@ class KissAnimeCom : public MangaConnector
     public: /*override*/ wxString GetImageLink(wxString PageLink);
 
     private: void Activate(wxString Link);
+    private: wxString CFCookie();
 };
 
 #endif // KISSANIME_H

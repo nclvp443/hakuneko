@@ -8,6 +8,7 @@ KissAnimeCom::KissAnimeCom()
     referrerURL = wxT("http://kissanime.com");
     mangaListFile.Assign(GetConfigurationPath(), wxT("kissanime"), wxT("list"));
     LoadLocalMangaList();
+    CFCookie();
 }
 
 KissAnimeCom::~KissAnimeCom()
@@ -231,4 +232,50 @@ void KissAnimeCom::Activate(wxString Link)
     wxStringOutputStream sos(&response);
     cr.SetOutputStream(&sos);
     cr.ExecuteRequest();
+}
+
+wxString KissAnimeCom::CFCookie()
+{
+    int indexStart;
+    int indexEnd;
+
+    CurlRequest cr;
+    cr.SetUrl(baseURL);
+    cr.SetHeader(true);
+    cr.SetReferer(referrerURL);
+    cr.SetAgent(wxT("Android"));
+    wxString response;
+    wxStringOutputStream sos(&response);
+    cr.SetOutputStream(&sos);
+    cr.ExecuteRequest();
+
+    if(!response.Contains(wxT("chk_jschl")))
+    {
+        return wxEmptyString;
+    }
+
+    indexStart = response.find(wxT("a.value = ")) + 10;
+    indexEnd = response.find(wxT(";"), indexStart);
+    wxString equation = response.Mid(indexStart, indexEnd-indexStart);
+    indexStart = equation.find(wxT("+"));
+    indexEnd = equation.find(wxT("*"));
+    wxInt32 result = wxAtoi(equation.Mid(indexStart+1, indexEnd-indexStart-1)) * wxAtoi(equation.Mid(indexEnd+1)) + wxAtoi(equation.Mid(0, indexStart)) + 13; // 13 = strlen("kissanime.com")
+    indexStart = response.find(wxT("jschl_vc")) + 17;
+    indexEnd = response.find(wxT("\""), indexStart);
+    wxString token = response.Mid(indexStart, indexEnd-indexStart);
+
+    // TODO: complete the determination of cookies (currently halted)
+    // CF-IUAM protection for kissanime was turned of during development
+
+    //response = wxEmptyString;
+    cr.SetUrl(wxString::Format(baseURL + wxT("/cdn-cgi/l/chk_jschl?jschl_vc=") + token + wxT("&jschl_answer=%i"), result));
+    cr.ExecuteRequest();
+
+    indexStart = response.find(wxT("cf_clearance="));
+    indexEnd = response.find(wxT(";"), indexStart) + 1;
+    wxString cookies = response.Mid(indexStart, indexEnd-indexStart);
+    wxPrintf(cookies);
+
+    //wxPrintf(wxT("\n++++++++++++++++++++++++++++++++++\n\n") + response);
+    return wxEmptyString;
 }
