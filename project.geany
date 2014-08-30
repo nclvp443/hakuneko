@@ -23,15 +23,13 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=5
+current_page=1
 FILE_NAME_0=5211;C;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaDownloaderMain.h;0;4
 FILE_NAME_1=41723;C++;0;EUTF-8;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaDownloaderMain.cpp;0;4
 FILE_NAME_2=324;C;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaConnector.h;0;4
 FILE_NAME_3=28664;C++;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaConnector.cpp;0;4
 FILE_NAME_4=0;C;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2Fconnectors%2FKissAnimeCom.h;0;4
-FILE_NAME_5=9321;C++;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2Fconnectors%2FKissAnimeCom.cpp;0;4
-FILE_NAME_6=286;C;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FCurlRequest.h;0;4
-FILE_NAME_7=3236;C++;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FCurlRequest.cpp;0;4
+FILE_NAME_5=8940;C++;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2Fconnectors%2FKissAnimeCom.cpp;0;4
 
 [VTE]
 last_dir=/home/ronny/Documents/development/hakuneko

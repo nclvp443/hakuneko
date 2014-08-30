@@ -50,7 +50,7 @@ void BatotoNet::UpdateMangaList()
     }
     */
 
-    for(wxUint32 i=0; i<11250; i+=750)
+    for(wxUint32 i=0; i<15000; i+=750)
     {
         wxString content;
         wxStringOutputStream sos(&content);
