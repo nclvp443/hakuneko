@@ -139,7 +139,7 @@ wxArrayMCEntry BatotoNet::GetChapterList(MCEntry* MangaEntry)
         {
             indexStart += 10;
             indexStart = content.find(wxT("_"), indexStart) + 1;
-            indexEnd = content.find(wxT("\""), indexStart); // "\""
+            indexEnd = content.find(wxT(" "), indexStart); // "\""
             chLanguage = content.Mid(indexStart, indexEnd-indexStart);
 
             indexStart += 1;
