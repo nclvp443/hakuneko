@@ -4,8 +4,8 @@ BatotoNet::BatotoNet()
 {
     type = CONNECTOR_TYPE_MANGA;
     label = wxT("Batoto");
-    baseURL = wxT("http://www.batoto.net");
-    referrerURL = wxT("http://www.batoto.net");
+    baseURL = wxT("http://bato.to");
+    referrerURL = wxT("bato.to");
     mangaListFile.Assign(GetConfigurationPath(), wxT("batoto"), wxT("list"));
     LoadLocalMangaList();
 }
@@ -114,11 +114,13 @@ wxArrayMCEntry BatotoNet::GetChapterList(MCEntry* MangaEntry)
     CurlRequest cr;
     cr.SetUrl(MangaEntry->Link);
     cr.SetCompression(wxT("gzip"));
+    cr.SetReferer(referrerURL);
     wxString content;
     wxStringOutputStream sos(&content);
     cr.SetOutputStream(&sos);
     cr.ExecuteRequest();
-
+wxPrintf(content + wxT("\n\n"));
+wxPrintf(MangaEntry->Link + wxT("\n"));
     int posStart, posEnd;
     int indexStart = content.find(wxT("ipb_table chapters_list")) + 23;
     int indexEnd = content.rfind(wxT("comments"));
@@ -157,7 +159,7 @@ wxArrayMCEntry BatotoNet::GetChapterList(MCEntry* MangaEntry)
             indexStart = content.find(wxT(">"), indexStart) + 1; // "\">"
             indexEnd = content.find(wxT("<"), indexStart); // "</a>"
             chScangroup = content.Mid(indexStart, indexEnd-indexStart);
-
+//wxPrintf(chEntry + wxT(" - ") + chScangroup + wxT("\n"));
             // parse chEntry for: volumePrefix, chNumber, chTitle
 
             posStart = chEntry.find(wxT("Vol."));
