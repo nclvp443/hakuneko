@@ -1655,7 +1655,7 @@ void MangaDownloaderFrame::OnMenuMainClick(wxCommandEvent& event)
     {
         wxAboutDialogInfo about;
         about.SetName(wxT("HakuNeko"));
-        about.SetVersion(wxT("1.3.1"));
+        about.SetVersion(wxT("1.3.2"));
         about.SetDescription(wxT("A manga downloader for Linux & Windows."));
         about.SetWebSite(wxT("http://sourceforge.net/projects/hakuneko/"));
         about.SetCopyright(wxT("(C) 2014 Ronny Wegener <wegener.ronny@gmail.com>"));
