@@ -655,7 +655,7 @@ write_makefile_rule_dist_rpm()
 
 write_makefile_rule_dist_iss()
 {
-    $ECHO_ESC "ISSPKG := \$(PKGNAME)_\$(PKGVERSION)_\$(shell wmic os get caption | cut -d ' ' -f 2,3 | tr ' ' '-' | tr '[:upper:]' '[:lower:]')-setup_\$(shell uname -m)" >> $MAKEFILE
+    $ECHO_ESC "ISSPKG := \$(PKGNAME)_\$(PKGVERSION)_\$(shell wmic os get caption | grep 'Win' | cut -d ' ' -f 2,3 | tr ' ' '-' | tr '[:upper:]' '[:lower:]')-setup_\$(shell uname -m)" >> $MAKEFILE
     $ECHO_ESC "ISSAPP := \$(subst /,\\,\$(patsubst \$(DISTROOT)/%,{app}/%,\$(BINFILE)))" >> $MAKEFILE
     $ECHO_ESC "" >> $MAKEFILE
     $ECHO_ESC "iss: all" >> $MAKEFILE
@@ -702,7 +702,7 @@ write_makefile_rule_dist_iss()
 
 write_makefile_rule_dist_zip()
 {
-    $ECHO_ESC "ZIPPKG := \$(PKGNAME)_\$(PKGVERSION)_\$(shell wmic os get caption | cut -d ' ' -f 2,3 | tr ' ' '-' | tr '[:upper:]' '[:lower:]')-portable_\$(shell uname -m).zip" >> $MAKEFILE
+    $ECHO_ESC "ZIPPKG := \$(PKGNAME)_\$(PKGVERSION)_\$(shell wmic os get caption | grep 'Win' | cut -d ' ' -f 2,3 | tr ' ' '-' | tr '[:upper:]' '[:lower:]')-portable_\$(shell uname -m).zip" >> $MAKEFILE
     $ECHO_ESC "" >> $MAKEFILE
     $ECHO_ESC "zip: all" >> $MAKEFILE
     $ECHO_ESC "\t@mkdir -p \$(PKGNAME) 2> /dev/null" >> $MAKEFILE
