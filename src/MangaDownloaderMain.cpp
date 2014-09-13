@@ -225,6 +225,7 @@ MangaDownloaderFrame::MangaDownloaderFrame(wxWindow* parent,wxWindowID id)
     // LoadConfiguration() may show the window immediately, so call it last...
     // it also may change initial minwidth of comboboxes
     LoadConfiguration();
+    UpdateCheck();
 
     MenuMain = new wxMenu(_("Main Menu"));
     MenuMain->AppendCheckItem(ID_MenuStartUpSync, _("Enable Start Up Sync"), wxT("Manga lists will be updated, every time when HakuNeko starts."))->Check(StartupSync);
@@ -319,6 +320,52 @@ void MangaDownloaderFrame::LoadResources()
     ListCtrlChapters->SetImageList(checkIcons, wxIMAGE_LIST_SMALL);
 }
 
+void MangaDownloaderFrame::UpdateCheck()
+{
+    this->Disable();
+    wxString latest;
+    wxMemoryOutputStream mos;
+    CurlRequest cr;
+    // cr.SetUrl(wxT("http://sourceforge.net/projects/hakuneko/files/list"));
+    cr.SetUrl(wxT("http://sourceforge.net/projects/hakuneko/rss?path=/"));
+    cr.SetOutputStream(&mos);
+    if(cr.ExecuteRequest())
+    {
+        wxMemoryInputStream mis(mos);
+        wxXmlDocument xml_feed(mis);
+        wxXmlNode* node = xml_feed.GetRoot()->GetChildren()->GetChildren();
+        while(node)
+        {
+            if(node->GetName().IsSameAs(wxT("item"), false))
+            {
+                latest = node->GetChildren()->GetNodeContent();
+
+                #ifdef __LINUX__
+                    if(latest.Contains(wxT("hakuneko")) && !latest.Contains(wxT("windows")))
+                #endif
+                #ifdef __WINDOWS__
+                    if(latest.Contains(wxT("hakuneko")) && latest.Contains(wxT("windows")))
+                #endif
+                {
+                    wxString version = VERSION;
+                    if(!latest.Contains(version))
+                    {
+                        wxMessageBox(wxT("An update for your HakuNeko (") + version + wxT(") is available.\nNewest version: ") + latest.AfterLast('/').AfterFirst('_').BeforeFirst('_') + wxT("\nDownload @ http://hakuneko.sf.net\n"));
+                    }
+                    else
+                    {
+                        //wxMessageBox(wxT("Your launcher (") + version + wxT(") is the latest version."));
+                    }
+                    break;
+                }
+            }
+            node = node->GetNext();
+        }
+    }
+    mos.Close();
+    this->Enable();
+}
+
 void MangaDownloaderFrame::InitConfigurationFile()
 {
     /*
@@ -386,7 +433,7 @@ void MangaDownloaderFrame::InitConfigurationFile()
                 // check if deprecated configuration path is different from current
                 if(!DeprecatedPath.IsSameAs(ConfigurationFile.GetPath()))
                 {
-                    wxMessageBox(wxT("Hakuneko has detected a deprecated configuration directory that will no longer be used in:\n\n") + wxStandardPaths::Get().GetUserDataDir() + wxT("\n\nThe new configuration directory is located in:\n\n") + ConfigurationFile.GetPath() + wxT("\n\nYou can move your deprecated files into the new configuration directory and/or delete the old configuration directory."));
+                    wxMessageBox(wxT("HakuNeko has detected a deprecated configuration directory that will no longer be used in:\n\n") + wxStandardPaths::Get().GetUserDataDir() + wxT("\n\nThe new configuration directory is located in:\n\n") + ConfigurationFile.GetPath() + wxT("\n\nYou can move your deprecated files into the new configuration directory and/or delete the old configuration directory."));
                 }
             }
         #endif
@@ -1655,7 +1702,7 @@ void MangaDownloaderFrame::OnMenuMainClick(wxCommandEvent& event)
     {
         wxAboutDialogInfo about;
         about.SetName(wxT("HakuNeko"));
-        about.SetVersion(wxT("1.3.2"));
+        about.SetVersion(VERSION);
         about.SetDescription(wxT("A manga downloader for Linux & Windows."));
         about.SetWebSite(wxT("http://sourceforge.net/projects/hakuneko/"));
         about.SetCopyright(wxT("(C) 2014 Ronny Wegener <wegener.ronny@gmail.com>"));

@@ -23,7 +23,9 @@
 #include <wx/image.h>
 #include <wx/textdlg.h>
 #include <wx/aboutdlg.h>
+#include <wx/xml/xml.h>
 
+#include "version.h"
 #include "resource.h"
 #include "MangaConnectorCollection.h"
 //#include "MangaDownloaderConfiguration.h"
@@ -95,6 +97,8 @@ class MangaDownloaderFrame: public wxFrame
         void LoadImageResource(RCDATA RCImage, wxBitmapType Type, ResourceImage ImageLabel);
         // load the resources from the generated resources.h(& .cpp)
         void LoadResources();
+        // check if a new version of hakuneko is available
+        void UpdateCheck();
         // initialize configuration file
         void InitConfigurationFile();
         // load and apply gui settings from configuration file
