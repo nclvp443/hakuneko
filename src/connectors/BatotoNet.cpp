@@ -192,8 +192,18 @@ wxArrayMCEntry BatotoNet::GetChapterList(MCEntry* MangaEntry)
 
             // NOTE: batoto seems to use global chapter numbering, where the chapter numbers are unique (volumes are optional)
             // -> ignore volume prefix
+            // unfortunately this is no longer true: http://bato.to/comic/_/comics/hidamari-sketch-r334
+            // chapters are counted for each volumes...
+            // this change will break the detection of chapters that has the old naming convention without the volume
 
-            chapterList.Add(new MCEntry(HtmlUnescapeString(chNumber + wxT(" - ") + chTitle + wxT(" [") + chLanguage + wxT("] by [") + chScangroup + wxT("]")), chLink));
+            if(volumePrefix.IsEmpty())
+            {
+                chapterList.Add(new MCEntry(HtmlUnescapeString(chNumber + wxT(" - ") + chTitle + wxT(" [") + chLanguage + wxT("] by [") + chScangroup + wxT("]")), chLink));
+            }
+            else
+            {
+                chapterList.Add(new MCEntry(HtmlUnescapeString(wxT("[") + volumePrefix + wxT("] - ") + chNumber + wxT(" - ") + chTitle + wxT(" [") + chLanguage + wxT("] by [") + chScangroup + wxT("]")), chLink));
+            }
 
             //wxYield();
         }
