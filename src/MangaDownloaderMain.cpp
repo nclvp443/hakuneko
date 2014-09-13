@@ -1128,10 +1128,11 @@ void MangaDownloaderFrame::OnListCtrlMangasItemSelect(wxListEvent& event)
     if(wxGetMouseState().ControlDown())
     {
         wxTextEntryDialog win(NULL, wxT("Please enter a search pattern to filter the chapter list.\n\ni.e. '043', 'english', 'scanlator-group', ..."), wxT("Chapter Filter"));
-        win.SetValue(wxEmptyString);
+        win.SetValue(ChapterPattern);
         if(win.ShowModal() == wxID_OK&& !win.GetValue().IsEmpty())
         {
             pattern = win.GetValue();
+            ChapterPattern = pattern;
         }
     }
     LoadChapterList(pattern);

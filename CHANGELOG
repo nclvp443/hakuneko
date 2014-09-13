@@ -1,3 +1,17 @@
+hakuneko 1.3.3
+
+ * Added update check
+ * Save the last pattern to filter chapters (CTRL + manga click)
+ * Fixed: batoto chapter naming collision (including volume number)
+
+hakuneko 1.3.2
+
+ * Fixed: batoto invalid utf8 characters
+
+hakuneko 1.3.1
+
+ * Fixed: batoto internal manga list limit
+
 hakuneko 1.3.0
 
  * replaced internal wxHTTP with cURL engine

@@ -195,6 +195,7 @@ class MangaDownloaderFrame: public wxFrame
         private: MangaConnectorCollection MCC;
         private: wxArrayMCEntry CurrentMangaList;
         private: wxArrayMCEntry CurrentChapterList;
+        private: wxString ChapterPattern;
         private: bool AbortDownload;
         private: bool StartupSync;
         private: bool TypingSearch;
