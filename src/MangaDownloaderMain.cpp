@@ -221,6 +221,7 @@ MangaDownloaderFrame::MangaDownloaderFrame(wxWindow* parent,wxWindowID id)
     CompressChapters = false;
     DeleteCompletedJobs = true;
 
+    InitLogFile();
     InitConfigurationFile();
     // LoadConfiguration() may show the window immediately, so call it last...
     // it also may change initial minwidth of comboboxes
@@ -324,6 +325,8 @@ void MangaDownloaderFrame::UpdateCheck()
 {
     this->Disable();
     wxString latest;
+    wxString version = VERSION;
+    Log(wxT("MangaDownloaderFrame::UpdateCheck() -> current version = ") + version);
     wxMemoryOutputStream mos;
     CurlRequest cr;
     // cr.SetUrl(wxT("http://sourceforge.net/projects/hakuneko/files/list"));
@@ -339,7 +342,6 @@ void MangaDownloaderFrame::UpdateCheck()
             if(node->GetName().IsSameAs(wxT("item"), false))
             {
                 latest = node->GetChildren()->GetNodeContent();
-
                 #ifdef __LINUX__
                     if(latest.Contains(wxT("hakuneko")) && !latest.Contains(wxT("windows")))
                 #endif
@@ -347,7 +349,7 @@ void MangaDownloaderFrame::UpdateCheck()
                     if(latest.Contains(wxT("hakuneko")) && latest.Contains(wxT("windows")))
                 #endif
                 {
-                    wxString version = VERSION;
+                    Log(wxT("MangaDownloaderFrame::UpdateCheck() -> latest package = ") + latest);
                     if(!latest.Contains(version))
                     {
                         wxMessageBox(wxT("An update for your HakuNeko (") + version + wxT(") is available.\nNewest version: ") + latest.AfterLast('/').AfterFirst('_').BeforeFirst('_') + wxT("\nDownload @ http://hakuneko.sf.net\n"));
@@ -361,6 +363,10 @@ void MangaDownloaderFrame::UpdateCheck()
             }
             node = node->GetNext();
         }
+    }
+    else
+    {
+        Log(wxT("MangaDownloaderFrame::UpdateCheck() -> server connection failed"));
     }
     mos.Close();
     this->Enable();
@@ -693,6 +699,72 @@ void MangaDownloaderFrame::SaveConfiguration()
 
     f.Write();
     f.Close();
+}
+
+void MangaDownloaderFrame::InitLogFile()
+{
+    #ifdef PORTABLE
+        #ifdef __LINUX__
+            LogFile.Assign(wxStandardPaths::Get().GetExecutablePath() + wxT(".log"));
+        #endif
+        #ifdef __WINDOWS__
+            LogFile.Assign(wxStandardPaths::Get().GetExecutablePath() + wxT(".log"));
+        #endif
+    #else
+        #ifdef __LINUX__
+            // LogFile.Assign(wxT("/var/log/hakuneko.log")); // requires write access
+            wxString EnvironmentFilePath;
+            wxGetEnv(wxT("XDG_CONFIG_HOME"), &EnvironmentFilePath);
+            EnvironmentFilePath = EnvironmentFilePath.BeforeFirst(':');
+            if(EnvironmentFilePath.IsEmpty())
+            {
+                EnvironmentFilePath = wxStandardPaths::Get().GetUserConfigDir() + wxT("/.config/hakuneko/hakuneko.log");
+            }
+            else
+            {
+                EnvironmentFilePath +=  wxT("/hakuneko/hakuneko.log");
+            }
+            LogFile.Assign(EnvironmentFilePath);
+        #endif
+        #ifdef __WINDOWS__
+            LogFile.Assign(wxStandardPaths::Get().GetUserDataDir() + wxT("\\hakuneko.log"));
+        #endif
+    #endif
+
+    if(wxFile::Exists(LogFile.GetFullPath()))
+    {
+        bool reset = false;
+        wxFile log(LogFile.GetFullPath(), wxFile::read);
+        if(log.Length() > 5242880)
+        {
+            reset = true;
+        }
+        log.Close();
+
+        if(reset)
+        {
+            wxRemoveFile(LogFile.GetFullPath());
+        }
+    }
+
+    #ifdef __LINUX__
+        Log(wxT("\n+++++++++++++++++++++++++++++++++\n+++ ") + wxDateTime::Now().Format(wxT("%Y-%m-%dT%H:%M:%S +0000"), wxDateTime::UTC) + wxT(" +++\n+++++++++++++++++++++++++++++++++\n"));
+    #endif
+    #ifdef __WINDOWS__
+        Log(wxT("\r\n+++++++++++++++++++++++++++++++++\r\n+++ ") + wxDateTime::Now().Format(wxT("%Y-%m-%dT%H:%M:%S +0000"), wxDateTime::UTC) + wxT(" +++\r\n+++++++++++++++++++++++++++++++++\r\n"));
+    #endif
+}
+
+void MangaDownloaderFrame::Log(wxString Text)
+{
+    wxFile log(LogFile.GetFullPath(), wxFile::write_append);
+    #ifdef __LINUX__
+        log.Write(Text + wxT("\n"));
+    #endif
+    #ifdef __WINDOWS__
+        log.Write(Text + wxT("\r\n"));
+    #endif
+    log.Close();
 }
 
 void MangaDownloaderFrame::LoadMangaList(wxString Pattern)
@@ -1631,42 +1703,6 @@ void MangaDownloaderFrame::OnClose(wxCloseEvent& event)
     Destroy();
 }
 
-// #################################
-// ### FUNCTIONS FOR SELFTESTING ###
-// #################################
-
-long MangaDownloaderFrame::Random(long Min, long Max)
-{
-    if(Min > Max)
-    {
-        long temp = Min;
-        Min = Max;
-        Max = temp;
-    }
-
-    // prevent division by zero
-    if(Min == Max)
-    {
-        return Min;
-    }
-    else
-    {
-        long rd = (wxGetLocalTimeMillis() % (Max-Min) + Min).ToLong();
-
-        if(rd < Min)
-        {
-            return Min;
-        }
-
-        if(rd > Max)
-        {
-            return Max;
-        }
-
-        return rd;
-    }
-}
-
 void MangaDownloaderFrame::OnMenuMainClick(wxCommandEvent& event)
 {
     if(event.GetId() == ID_MenuStartUpSync)
@@ -1714,6 +1750,42 @@ void MangaDownloaderFrame::OnMenuMainClick(wxCommandEvent& event)
 void MangaDownloaderFrame::OnMainWindowRClick(wxMouseEvent& event)
 {
     this->PopupMenu(MenuMain);
+}
+
+// #################################
+// ### FUNCTIONS FOR SELFTESTING ###
+// #################################
+
+long MangaDownloaderFrame::Random(long Min, long Max)
+{
+    if(Min > Max)
+    {
+        long temp = Min;
+        Min = Max;
+        Max = temp;
+    }
+
+    // prevent division by zero
+    if(Min == Max)
+    {
+        return Min;
+    }
+    else
+    {
+        long rd = (wxGetLocalTimeMillis() % (Max-Min) + Min).ToLong();
+
+        if(rd < Min)
+        {
+            return Min;
+        }
+
+        if(rd > Max)
+        {
+            return Max;
+        }
+
+        return rd;
+    }
 }
 
 void MangaDownloaderFrame::ErrorDetectionTest()

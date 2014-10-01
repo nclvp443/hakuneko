@@ -1,1 +1,1 @@
-#define VERSION wxT("1.3.3")
+#define VERSION wxT("1.3.4")

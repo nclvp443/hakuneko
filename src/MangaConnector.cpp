@@ -757,7 +757,13 @@ wxArrayString MangaConnector::DownloadJobs(wxFileName BaseDirectory, wxStatusBar
     {
         CompressChapters = false;
     }
-
+/*
+    wxArrayJob jobListSorted;
+    for(wxJobHashMap::iterator it=jobList.begin(); it!=jobList.end(); ++it)
+    {
+        jobListSorted.Add(&(it->second));
+    }
+*/
     // loop through all chapters of joblist
     unsigned int j=0;
     bool noError;
