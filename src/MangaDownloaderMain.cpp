@@ -62,6 +62,7 @@ const long MangaDownloaderFrame::ID_MenuHelp = wxNewId();
 const long MangaDownloaderFrame::ID_MenuAbout = wxNewId();
 const long MangaDownloaderFrame::ID_MenuStartUpSync = wxNewId();
 const long MangaDownloaderFrame::ID_MenuTypingSearch = wxNewId();
+const long MangaDownloaderFrame::ID_MenuChapterAutoSelect = wxNewId();
 const long MangaDownloaderFrame::ID_MenuNewChapterNotification = wxNewId();
 const long MangaDownloaderFrame::ID_MenuCompressChapters = wxNewId();
 const long MangaDownloaderFrame::ID_MenuDeleteCompletedJobs = wxNewId();
@@ -217,6 +218,7 @@ MangaDownloaderFrame::MangaDownloaderFrame(wxWindow* parent,wxWindowID id)
 
     StartupSync = false;
     TypingSearch = true;
+    ChapterAutoSelect = false;
     NewChapterNotification = false;
     CompressChapters = false;
     DeleteCompletedJobs = true;
@@ -231,6 +233,7 @@ MangaDownloaderFrame::MangaDownloaderFrame(wxWindow* parent,wxWindowID id)
     MenuMain = new wxMenu(_("Main Menu"));
     MenuMain->AppendCheckItem(ID_MenuStartUpSync, _("Enable Start Up Sync"), wxT("Manga lists will be updated, every time when HakuNeko starts."))->Check(StartupSync);
     MenuMain->AppendCheckItem(ID_MenuTypingSearch, _("Enable Smart Search"), wxT("Search manga list while typing (disable this on slow machines)."))->Check(TypingSearch);
+    MenuMain->AppendCheckItem(ID_MenuChapterAutoSelect, _("Enable Chapter Auto-Selection"), wxT("Search manga list while typing (disable this on slow machines)."))->Check(ChapterAutoSelect);
     MenuMain->AppendCheckItem(ID_MenuNewChapterNotification, _("Show Missing Chapter Notification"), wxT("When selecting a manga, a notification window will appear checking for missing chapters."))->Check(NewChapterNotification);
     MenuMain->AppendCheckItem(ID_MenuCompressChapters, _("Compress Chapters (Comic Book Archive)"), wxT("Create comic book archives (*.cbz) instead of downloading separate images."))->Check(CompressChapters);
     MenuMain->AppendCheckItem(ID_MenuDeleteCompletedJobs, _("Show 'Delete Completed Jobs' Dialog"), wxT("Shows a dialog after downloading, asking to remove completed jobs from the list."))->Check(DeleteCompletedJobs);
@@ -528,6 +531,11 @@ void MangaDownloaderFrame::LoadConfiguration()
             }
         }
 
+        if(line.StartsWith(wxT("chapterautoselect=")))
+        {
+            ChapterAutoSelect = line.AfterFirst(L'=').IsSameAs(wxT("true"));
+        }
+
         if(line.StartsWith(wxT("chapternotification=")))
         {
             if(line.AfterFirst(L'=').IsSameAs(wxT("true")))
@@ -664,6 +672,15 @@ void MangaDownloaderFrame::SaveConfiguration()
         f.AddLine(wxT("typingsearch=false"));
     }
 
+    if(ChapterAutoSelect)
+    {
+        f.AddLine(wxT("chapterautoselect=true"));
+    }
+    else
+    {
+        f.AddLine(wxT("chapterautoselect=false"));
+    }
+
     if(NewChapterNotification)
     {
         f.AddLine(wxT("chapternotification=true"));
@@ -747,12 +764,11 @@ void MangaDownloaderFrame::InitLogFile()
         }
     }
 
-    #ifdef __LINUX__
-        Log(wxT("\n+++++++++++++++++++++++++++++++++\n+++ ") + wxDateTime::Now().Format(wxT("%Y-%m-%dT%H:%M:%S +0000"), wxDateTime::UTC) + wxT(" +++\n+++++++++++++++++++++++++++++++++\n"));
-    #endif
-    #ifdef __WINDOWS__
-        Log(wxT("\r\n+++++++++++++++++++++++++++++++++\r\n+++ ") + wxDateTime::Now().Format(wxT("%Y-%m-%dT%H:%M:%S +0000"), wxDateTime::UTC) + wxT(" +++\r\n+++++++++++++++++++++++++++++++++\r\n"));
-    #endif
+    Log(wxEmptyString);
+    Log(wxT("+++++++++++++++++++++++++++++++++"));
+    Log(wxT("+++ ") + wxDateTime::Now().Format(wxT("%Y-%m-%dT%H:%M:%S +0000"), wxDateTime::UTC) + wxT(" +++"));
+    Log(wxT("+++++++++++++++++++++++++++++++++"));
+    Log(wxEmptyString);
 }
 
 void MangaDownloaderFrame::Log(wxString Text)
@@ -803,19 +819,17 @@ void MangaDownloaderFrame::LoadMangaList(wxString Pattern)
         ColorifyMangaList();
 
         // select chapters from exactly matching manga
-        /*
-        if(CurrentMangaList.GetCount() < 20) // for performance reasons: only crawl list when < 20 items
+        if(ChapterAutoSelect && CurrentMangaList.GetCount() < 16) // for performance reasons: only crawl list when < 16 items
         {
             for(size_t i=0; i<CurrentMangaList.GetCount(); i++)
             {
                 if(CurrentMangaList[i]->Label.Lower().IsSameAs(Pattern))
                 {
-                    // todo improve live search (only load chapter ist when no key preseed between 1~2 seconds?)
+                    // TODO: improve live search (only load chapter ist when no key pressed between 1~2 seconds?)
                     ComboBoxSearchPattern->Disable();
                     ListCtrlMangas->SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
                     ListCtrlMangas->EnsureVisible(i);
-                    // todo set focus back to control before selecting manga
-                    // move this part to OnSearch() ?
+                    // TODO: set focus back to control before selecting manga
                     ComboBoxSearchPattern->Enable();
                     ComboBoxSearchPattern->SetFocus();
                     ComboBoxSearchPattern->SetSelection(Pattern.Len()+4, Pattern.Len()+4);
@@ -823,7 +837,10 @@ void MangaDownloaderFrame::LoadMangaList(wxString Pattern)
                 }
             }
         }
-        */
+        else
+        {
+            Log(wxT("MangaDownloaderFrame::LoadMangaList() -> pattern = ") + Pattern + wxT(" -> To many results for auto-loading of chapters"));
+        }
         ListCtrlMangas->Thaw();
     }
 }
@@ -1713,6 +1730,11 @@ void MangaDownloaderFrame::OnMenuMainClick(wxCommandEvent& event)
     if(event.GetId() == ID_MenuTypingSearch)
     {
         TypingSearch = event.IsChecked();
+    }
+
+    if(event.GetId() == ID_MenuChapterAutoSelect)
+    {
+        ChapterAutoSelect = event.IsChecked();
     }
 
     if(event.GetId() == ID_MenuNewChapterNotification)

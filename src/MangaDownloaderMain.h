@@ -161,6 +161,7 @@ class MangaDownloaderFrame: public wxFrame
         static const long ID_MenuAbout;
         static const long ID_MenuStartUpSync;
         static const long ID_MenuTypingSearch;
+        static const long ID_MenuChapterAutoSelect;
         static const long ID_MenuNewChapterNotification;
         static const long ID_MenuCompressChapters;
         static const long ID_MenuDeleteCompletedJobs;
@@ -204,6 +205,7 @@ class MangaDownloaderFrame: public wxFrame
         private: bool AbortDownload;
         private: bool StartupSync;
         private: bool TypingSearch;
+        private: bool ChapterAutoSelect;
         private: bool NewChapterNotification;
         private: bool CompressChapters;
         private: bool DeleteCompletedJobs;
