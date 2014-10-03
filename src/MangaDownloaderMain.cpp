@@ -825,11 +825,10 @@ void MangaDownloaderFrame::LoadMangaList(wxString Pattern)
             {
                 if(CurrentMangaList[i]->Label.Lower().IsSameAs(Pattern))
                 {
-                    // TODO: improve live search (only load chapter ist when no key pressed between 1~2 seconds?)
+                    // TODO: improve live search (only load chapter list when no key pressed between 1~2 seconds?)
                     ComboBoxSearchPattern->Disable();
                     ListCtrlMangas->SetItemState(i, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
                     ListCtrlMangas->EnsureVisible(i);
-                    // TODO: set focus back to control before selecting manga
                     ComboBoxSearchPattern->Enable();
                     ComboBoxSearchPattern->SetFocus();
                     ComboBoxSearchPattern->SetSelection(Pattern.Len()+4, Pattern.Len()+4);
