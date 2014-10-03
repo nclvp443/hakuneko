@@ -12,7 +12,6 @@
 #include "connectors/MeinmangaCom.h"
 #include "connectors/KissAnimeCom.h"
 #include "MangaConnector.h"
-#include "ErrorLogFrame.h"
 
 class MangaConnectorCollection
 {
@@ -35,7 +34,7 @@ class MangaConnectorCollection
     public: size_t GetJobCount();
     public: wxArrayJobID GetCompletedJobIDs();
     public: void SetJobDownloadCompleted(unsigned long JobID, bool Value);
-    public: void DownloadJobs(wxFileName BaseDirectory, wxStatusBar* StatusBar, bool* Abort, bool CompressChapters = false);
+    public: wxArrayString DownloadJobs(wxFileName BaseDirectory, wxStatusBar* StatusBar, bool* Abort, bool CompressChapters = false);
 };
 
 #endif // MANGACONNECTORCONNECTION_H

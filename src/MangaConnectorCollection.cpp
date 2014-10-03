@@ -180,7 +180,7 @@ void MangaConnectorCollection::SetJobDownloadCompleted(unsigned long JobID, bool
     }
 }
 
-void MangaConnectorCollection::DownloadJobs(wxFileName BaseDirectory, wxStatusBar* StatusBar, bool* Abort, bool CompressChapters)
+wxArrayString MangaConnectorCollection::DownloadJobs(wxFileName BaseDirectory, wxStatusBar* StatusBar, bool* Abort, bool CompressChapters)
 {
     wxArrayString temp;
     wxArrayString errorLog;
@@ -188,7 +188,7 @@ void MangaConnectorCollection::DownloadJobs(wxFileName BaseDirectory, wxStatusBa
     if(!BaseDirectory.IsDirWritable())
     {
         wxMessageBox(wxT("Access denied!\nBase directory: ") + BaseDirectory.GetPath());
-        return;
+        return errorLog;
     }
 
     for(size_t i=0; i<MangaConnectors.GetCount(); i++)
@@ -201,10 +201,5 @@ void MangaConnectorCollection::DownloadJobs(wxFileName BaseDirectory, wxStatusBa
         }
     }
 
-    if(errorLog.Count() > 0)
-    {
-        ErrorLogFrame* LogFrame = new ErrorLogFrame(0);
-        LogFrame->SetLog(errorLog);
-        LogFrame->Show();
-    }
+    return errorLog;
 }

@@ -29,6 +29,7 @@
 #include "resource.h"
 #include "MangaConnectorCollection.h"
 //#include "MangaDownloaderConfiguration.h"
+#include "ErrorLogFrame.h"
 
 enum ResourceImage
 {

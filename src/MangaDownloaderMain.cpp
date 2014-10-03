@@ -836,10 +836,6 @@ void MangaDownloaderFrame::LoadMangaList(wxString Pattern)
                 }
             }
         }
-        else
-        {
-            Log(wxT("MangaDownloaderFrame::LoadMangaList() -> pattern = ") + Pattern + wxT(" -> To many results for auto-loading of chapters"));
-        }
         ListCtrlMangas->Thaw();
     }
 }
@@ -1387,7 +1383,19 @@ void MangaDownloaderFrame::OnButtonDownloadClick(wxCommandEvent& event)
     {
         DisableControls(true);
 
-        MCC.DownloadJobs(baseDirectory, StatusBar, &AbortDownload, CompressChapters);
+        wxArrayString errorLog = MCC.DownloadJobs(baseDirectory, StatusBar, &AbortDownload, CompressChapters);
+
+        for(unsigned int i=0; i<errorLog.Count(); i++)
+        {
+            Log(wxT("MangaDownloaderFrame::OnButtonDownloadClick() -> ERROR downloading (SOURCE|TARGET): ") + errorLog[i]);
+        }
+
+        if(errorLog.Count() > 0)
+        {
+            ErrorLogFrame* LogFrame = new ErrorLogFrame(0);
+            LogFrame->SetLog(errorLog);
+            LogFrame->Show();
+        }
 
         wxArrayJobID completed = MCC.GetCompletedJobIDs();
         if(DeleteCompletedJobs && completed.GetCount() > 0 && wxMessageBox(wxT("Remove completed jobs from download list?"), wxT("Operation Complete"), wxYES_NO) == wxYES)
