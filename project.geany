@@ -24,11 +24,11 @@ long_line_column=72
 
 [files]
 current_page=2
-FILE_NAME_0=33;None;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2FCHANGELOG;0;4
-FILE_NAME_1=3102;C;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaDownloaderMain.h;0;4
-FILE_NAME_2=36902;C++;0;EUTF-8;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaDownloaderMain.cpp;0;4
-FILE_NAME_3=1283;C;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaConnector.h;0;4
-FILE_NAME_4=25233;C++;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaConnector.cpp;0;4
+FILE_NAME_0=159;None;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2FCHANGELOG;0;4
+FILE_NAME_1=761;C;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaDownloaderMain.h;0;4
+FILE_NAME_2=39391;C++;0;EUTF-8;1;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaDownloaderMain.cpp;0;4
+FILE_NAME_3=1097;C;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaConnector.h;0;4
+FILE_NAME_4=29886;C++;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaConnector.cpp;0;4
 FILE_NAME_5=0;C;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2Fconnectors%2FKissAnimeCom.h;0;4
 FILE_NAME_6=8940;C++;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2Fconnectors%2FKissAnimeCom.cpp;0;4
 

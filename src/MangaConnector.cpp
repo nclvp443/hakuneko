@@ -757,30 +757,31 @@ wxArrayString MangaConnector::DownloadJobs(wxFileName BaseDirectory, wxStatusBar
     {
         CompressChapters = false;
     }
-/*
-    wxArrayJob jobListSorted;
+
+    wxArrayJob jobListSorted(CompareMCJob);
     for(wxJobHashMap::iterator it=jobList.begin(); it!=jobList.end(); ++it)
     {
         jobListSorted.Add(&(it->second));
     }
-*/
+
     // loop through all chapters of joblist
-    unsigned int j=0;
+    MCJob* job;
     bool noError;
-    for(wxJobHashMap::iterator it=jobList.begin(); it!=jobList.end(); ++it)
+    for(unsigned int j=0; j<jobListSorted.Count(); j++)
     {
         noError = true;
+        job = jobListSorted[j];
 
         // NOTE: jobs marked as already downloaded will be skipped, use SetJobDownloadCompleted() to change a job's state
-        if(!it->second.DownloadCompleted)
+        if(!job->DownloadCompleted)
         {
             StatusBar->SetStatusText(wxString::Format(GetLabel() + wxT(" (%u/%u)"), j, GetJobCount()), 2);
 
             targetImageFile.AssignDir(BaseDirectory.GetPath());
-            targetImageFile.AppendDir(it->second.MangaSafeLabel);
+            targetImageFile.AppendDir(job->MangaSafeLabel);
             if(type & CONNECTOR_TYPE_MANGA)
             {
-                targetImageFile.AppendDir(it->second.ChapterSafeLabel);
+                targetImageFile.AppendDir(job->ChapterSafeLabel);
             }
             targetArchiveFile.Assign(targetImageFile.GetPath() + wxT(".cbz"));
 
@@ -817,16 +818,16 @@ wxArrayString MangaConnector::DownloadJobs(wxFileName BaseDirectory, wxStatusBar
             cr.SetStatusBar(StatusBar, 1);
             cr.SetAbort(Abort);
 
-            pageLinks = GetPageLinks(it->second.ChapterLink);
+            pageLinks = GetPageLinks(job->ChapterLink);
             for(unsigned int i=0; i<pageLinks.GetCount(); i++)
             {
                 if(type & CONNECTOR_TYPE_MANGA)
                 {
-                    StatusBar->SetStatusText(wxString::Format(it->second.MangaLabel + wxT(" - ") + it->second.ChapterLabel + wxT(" (%u/%u)"), i, pageLinks.GetCount()));
+                    StatusBar->SetStatusText(wxString::Format(job->MangaLabel + wxT(" - ") + job->ChapterLabel + wxT(" (%u/%u)"), i, pageLinks.GetCount()));
                 }
                 else
                 {
-                    StatusBar->SetStatusText(it->second.MangaLabel + wxT(" - ") + it->second.ChapterLabel);
+                    StatusBar->SetStatusText(job->MangaLabel + wxT(" - ") + job->ChapterLabel);
                 }
                 sourceImageLink = GetImageLink(pageLinks[i]);
                 cr.SetUrl(sourceImageLink);
@@ -838,7 +839,7 @@ wxArrayString MangaConnector::DownloadJobs(wxFileName BaseDirectory, wxStatusBar
                 }
                 if(type & CONNECTOR_TYPE_ANIME)
                 {
-                    targetImageFile.SetName(it->second.ChapterSafeLabel);
+                    targetImageFile.SetName(job->ChapterSafeLabel);
                     targetImageFile.SetExt(wxT("mp4"));
                 }
 
@@ -889,10 +890,8 @@ wxArrayString MangaConnector::DownloadJobs(wxFileName BaseDirectory, wxStatusBar
         // mark job as done
         if(noError)
         {
-            it->second.DownloadCompleted = true;
+            job->DownloadCompleted = true;
         }
-
-        j++;
     }
 
     ABORT:

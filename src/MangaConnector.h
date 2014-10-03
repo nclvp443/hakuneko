@@ -50,12 +50,12 @@ struct MCJob
     public: wxString ChapterLink;
     public: bool DownloadCompleted;
 };
-/*
-int CompareMCJob(MCJob* job1, MCJob* job2)
+
+static int wxCMPFUNC_CONV CompareMCJob(MCJob* job1, MCJob* job2)
 {
-    return (job1->Connector + job1->MangaLabel + job1->ChapterLabel).CmpNoCase(job2->Connector + job2->MangaLabel + job2->ChapterLabel);
+    return (/*job1->Connector + */job1->MangaLabel + job1->ChapterLabel).CmpNoCase(/*job2->Connector + */job2->MangaLabel + job2->ChapterLabel);
 }
-*/
+
 WX_DEFINE_SORTED_ARRAY(MCJob*, wxArrayJob);
 WX_DEFINE_ARRAY_LONG(unsigned long, wxArrayJobID);
 WX_DECLARE_STRING_HASH_MAP(wxChar, wxCharHashMap);
