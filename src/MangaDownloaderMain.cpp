@@ -818,12 +818,12 @@ void MangaDownloaderFrame::LoadMangaList(wxString Pattern)
         // set manga font color depending on their existence in base directory
         ColorifyMangaList();
 
-        // select chapters from exactly matching manga
+        // select chapters from exactly matching manga or when there is only one manga in the list
         if(ChapterAutoSelect && CurrentMangaList.GetCount() < 16) // for performance reasons: only crawl list when < 16 items
         {
             for(size_t i=0; i<CurrentMangaList.GetCount(); i++)
             {
-                if(CurrentMangaList[i]->Label.Lower().IsSameAs(Pattern))
+                if(CurrentMangaList.GetCount() == 1 || CurrentMangaList[i]->Label.Lower().IsSameAs(Pattern))
                 {
                     // TODO: improve live search (only load chapter list when no key pressed between 1~2 seconds?)
                     ComboBoxSearchPattern->Disable();
