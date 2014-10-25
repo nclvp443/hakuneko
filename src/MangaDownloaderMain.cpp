@@ -223,7 +223,7 @@ MangaDownloaderFrame::MangaDownloaderFrame(wxWindow* parent,wxWindowID id)
     CompressChapters = false;
     DeleteCompletedJobs = true;
 
-    InitLogFile();
+    Logger::Init();
     InitConfigurationFile();
     // LoadConfiguration() may show the window immediately, so call it last...
     // it also may change initial minwidth of comboboxes
@@ -329,7 +329,7 @@ void MangaDownloaderFrame::UpdateCheck()
     this->Disable();
     wxString latest;
     wxString version = VERSION;
-    Log(wxT("MangaDownloaderFrame::UpdateCheck() -> current version = ") + version);
+    Logger::Log(wxT("NOTE +++ MangaDownloaderFrame::UpdateCheck() -> current version = ") + version);
     wxMemoryOutputStream mos;
     CurlRequest cr;
     // cr.SetUrl(wxT("http://sourceforge.net/projects/hakuneko/files/list"));
@@ -352,7 +352,7 @@ void MangaDownloaderFrame::UpdateCheck()
                     if(latest.Contains(wxT("hakuneko")) && latest.Contains(wxT("windows")))
                 #endif
                 {
-                    Log(wxT("MangaDownloaderFrame::UpdateCheck() -> latest package = ") + latest);
+                    Logger::Log(wxT("NOTE +++ MangaDownloaderFrame::UpdateCheck() -> latest package = ") + latest);
                     if(!latest.Contains(version))
                     {
                         wxMessageBox(wxT("An update for your HakuNeko (") + version + wxT(") is available.\nNewest version: ") + latest.AfterLast('/').AfterFirst('_').BeforeFirst('_') + wxT("\nDownload @ http://hakuneko.sf.net\n"));
@@ -369,7 +369,7 @@ void MangaDownloaderFrame::UpdateCheck()
     }
     else
     {
-        Log(wxT("MangaDownloaderFrame::UpdateCheck() -> server connection failed"));
+        Logger::Log(wxT("ERROR +++ MangaDownloaderFrame::UpdateCheck() -> server connection failed"));
     }
     mos.Close();
     this->Enable();
@@ -716,71 +716,6 @@ void MangaDownloaderFrame::SaveConfiguration()
 
     f.Write();
     f.Close();
-}
-
-void MangaDownloaderFrame::InitLogFile()
-{
-    #ifdef PORTABLE
-        #ifdef __LINUX__
-            LogFile.Assign(wxStandardPaths::Get().GetExecutablePath() + wxT(".log"));
-        #endif
-        #ifdef __WINDOWS__
-            LogFile.Assign(wxStandardPaths::Get().GetExecutablePath() + wxT(".log"));
-        #endif
-    #else
-        #ifdef __LINUX__
-            // LogFile.Assign(wxT("/var/log/hakuneko.log")); // requires write access
-            wxString EnvironmentFilePath;
-            wxGetEnv(wxT("XDG_CONFIG_HOME"), &EnvironmentFilePath);
-            EnvironmentFilePath = EnvironmentFilePath.BeforeFirst(':');
-            if(EnvironmentFilePath.IsEmpty())
-            {
-                EnvironmentFilePath = wxStandardPaths::Get().GetUserConfigDir() + wxT("/.config/hakuneko/hakuneko.log");
-            }
-            else
-            {
-                EnvironmentFilePath +=  wxT("/hakuneko/hakuneko.log");
-            }
-            LogFile.Assign(EnvironmentFilePath);
-        #endif
-        #ifdef __WINDOWS__
-            LogFile.Assign(wxStandardPaths::Get().GetUserDataDir() + wxT("\\hakuneko.log"));
-        #endif
-    #endif
-
-    if(wxFile::Exists(LogFile.GetFullPath()))
-    {
-        bool reset = false;
-        wxFile log(LogFile.GetFullPath(), wxFile::read);
-        if(log.Length() > 5242880)
-        {
-            reset = true;
-        }
-        log.Close();
-
-        if(reset)
-        {
-            wxRemoveFile(LogFile.GetFullPath());
-        }
-    }
-
-    Log(wxEmptyString);
-    Log(wxT("+++++++++++++++++++++++++++++++++"));
-    Log(wxT("+++ ") + wxDateTime::Now().Format(wxT("%Y-%m-%dT%H:%M:%S +0000"), wxDateTime::UTC) + wxT(" +++"));
-    Log(wxT("+++++++++++++++++++++++++++++++++"));
-    Log(wxEmptyString);
-}
-
-void MangaDownloaderFrame::Log(wxString Text)
-{
-    wxFile log(LogFile.GetFullPath(), wxFile::write_append);
-    #ifdef __LINUX__
-        log.Write(Text + wxT("\n"));
-    #endif
-    #ifdef __WINDOWS__
-        log.Write(Text + wxT("\r\n"));
-    #endif
-    log.Close();
 }
 
 void MangaDownloaderFrame::LoadMangaList(wxString Pattern)
@@ -1384,12 +1319,12 @@ void MangaDownloaderFrame::OnButtonDownloadClick(wxCommandEvent& event)
         DisableControls(true);
 
         wxArrayString errorLog = MCC.DownloadJobs(baseDirectory, StatusBar, &AbortDownload, CompressChapters);
-
+/*
         for(unsigned int i=0; i<errorLog.Count(); i++)
         {
             Log(wxT("MangaDownloaderFrame::OnButtonDownloadClick() -> ERROR downloading (SOURCE|TARGET): ") + errorLog[i]);
         }
-
+*/
         if(errorLog.Count() > 0)
         {
             ErrorLogFrame* LogFrame = new ErrorLogFrame(0);

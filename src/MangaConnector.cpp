@@ -851,6 +851,7 @@ wxArrayString MangaConnector::DownloadJobs(wxFileName BaseDirectory, wxStatusBar
                     if(!cr.ExecuteRequest())
                     {
                         errorLog.Add(sourceImageLink + wxT("|") + targetImageFile.GetFullPath());
+                        Logger::Log(wxT("ERROR +++ MangaConnector::DownloadJobs(...) -> failed downloading '") + sourceImageLink + wxT("'"));
                         noError = false;
                     }
                 }
@@ -862,6 +863,7 @@ wxArrayString MangaConnector::DownloadJobs(wxFileName BaseDirectory, wxStatusBar
                     if(!cr.ExecuteRequest())
                     {
                         errorLog.Add(sourceImageLink + wxT("|") + targetImageFile.GetFullPath());
+                        Logger::Log(wxT("ERROR +++ MangaConnector::DownloadJobs(...) -> failed downloading '") + sourceImageLink + wxT("'"));
                         noError = false;
                     }
 

@@ -100,10 +100,6 @@ class MangaDownloaderFrame: public wxFrame
         void LoadResources();
         // check if a new version of hakuneko is available
         void UpdateCheck();
-        // initialize the log file
-        void InitLogFile();
-        // write a message to the log file
-        void Log(wxString Text);
         // initialize configuration file
         void InitConfigurationFile();
         // load and apply gui settings from configuration file
@@ -197,7 +193,6 @@ class MangaDownloaderFrame: public wxFrame
 
         //private: MangaDownloaderConfiguration Configuration;
         private: wxFileName ConfigurationFile;
-        private: wxFileName LogFile;
         private: wxBitmap* ResourceImages;
         private: MangaConnectorCollection MCC;
         private: wxArrayMCEntry CurrentMangaList;

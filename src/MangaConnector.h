@@ -8,6 +8,7 @@
 #include <wx/sstream.h>
 #include <wx/zipstrm.h>
 #include <openssl/sha.h>
+#include "Logger.h"
 #include "CurlRequest.h"
 
 enum CONNECTOR_TYPE
