@@ -223,11 +223,11 @@ MangaDownloaderFrame::MangaDownloaderFrame(wxWindow* parent,wxWindowID id)
     CompressChapters = false;
     DeleteCompletedJobs = true;
 
-    Logger::Init();
     InitConfigurationFile();
     // LoadConfiguration() may show the window immediately, so call it last...
     // it also may change initial minwidth of comboboxes
     LoadConfiguration();
+    Logger::Init();
     UpdateCheck();
 
     MenuMain = new wxMenu(_("Main Menu"));
