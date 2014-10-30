@@ -133,11 +133,11 @@ wxArrayMCEntry MangahereCom::GetChapterList(MCEntry* MangaEntry)
             indexEnd = content.find(wxT("<"), indexStart); // "</span>"
             chTitle = content.Mid(indexStart, indexEnd-indexStart);
 
-            // NOTE: mangahere seems to use global chapter numbering, where the chapter numbers are unique (i.e. vol1-ch1, vol2-ch2)
-            // -> ignore volume prefix
+            // NOTE: mangafox sometimes uses relative chapter numbering, where the chapter numbers are not unique (i.e. vol1-ch1, vol2-ch1)
+            // -> add volume prefix
 
             // in case chTitle is NULL or whitespaced, whitespaces will be removed bei MCEntry::SetSafeLabel()
-            chapterList.Add(new MCEntry(HtmlUnescapeString(chNumber + wxT(" - ") + chTitle), chLink));
+            chapterList.Add(new MCEntry(HtmlUnescapeString(wxT("[") + volumePrefix + wxT("] - ") + chNumber + wxT(" - ") + chTitle), chLink));
 
             //wxYield();
         }
