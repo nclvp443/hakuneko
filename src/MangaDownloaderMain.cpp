@@ -346,7 +346,7 @@ void MangaDownloaderFrame::UpdateCheck()
             {
                 latest = node->GetChildren()->GetNodeContent();
                 #ifdef __LINUX__
-                    if(latest.Contains(wxT("hakuneko")) && !latest.Contains(wxT("windows")))
+                    if(latest.Contains(wxT("hakuneko")) && !latest.Contains(wxT("windows")) && !latest.Contains(wxT("src")))
                 #endif
                 #ifdef __WINDOWS__
                     if(latest.Contains(wxT("hakuneko")) && latest.Contains(wxT("windows")))
@@ -355,7 +355,11 @@ void MangaDownloaderFrame::UpdateCheck()
                     Logger::Log(wxT("NOTE +++ MangaDownloaderFrame::UpdateCheck() -> latest package = ") + latest);
                     if(!latest.Contains(version))
                     {
-                        wxMessageBox(wxT("An update for your HakuNeko (") + version + wxT(") is available.\nNewest version: ") + latest.AfterLast('/').AfterFirst('_').BeforeFirst('_') + wxT("\nDownload @ http://hakuneko.sf.net\n"));
+                        wxAboutDialogInfo about;
+                        about.SetName(wxT("HakuNeko Update"));
+                        about.SetDescription(wxT("Your version: ") + version + wxT("\nLatest version: ") + latest.AfterLast('/').AfterFirst('_').BeforeFirst('_'));
+                        about.SetWebSite(wxT("http://sourceforge.net/projects/hakuneko/files/"), wxT("Download Page"));
+                        wxAboutBox(about);
                     }
                     else
                     {
@@ -1706,7 +1710,9 @@ void MangaDownloaderFrame::OnMenuMainClick(wxCommandEvent& event)
         about.SetVersion(VERSION);
         about.SetDescription(wxT("A manga downloader for Linux & Windows."));
         about.SetWebSite(wxT("http://sourceforge.net/projects/hakuneko/"));
-        about.SetCopyright(wxT("(C) 2014 Ronny Wegener <wegener.ronny@gmail.com>"));
+        about.SetCopyright(wxT("(C) 2015"));
+        about.AddDeveloper(wxT("Ronny Wegener"));
+        about.AddDeveloper(wxT("mytenmo"));
         wxAboutBox(about);
     }
 }

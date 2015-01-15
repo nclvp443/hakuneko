@@ -23,6 +23,7 @@
 #include <wx/image.h>
 #include <wx/textdlg.h>
 #include <wx/aboutdlg.h>
+#include <wx/progdlg.h>
 #include <wx/xml/xml.h>
 
 #include "version.h"

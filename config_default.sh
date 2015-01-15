@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PKGNAME="hakuneko"
-PKGVERSION="1.3.6"
+PKGVERSION="1.3.7"
 PKGSECTION="net"
 PKGAUTHOR="Ronny Wegener <wegener.ronny@gmail.com>"
 PKGHOMEPAGE="http://hakuneko.sourceforge.net"
