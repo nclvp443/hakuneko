@@ -11,6 +11,7 @@
 #include "connectors/SubmangaCom.h"
 #include "connectors/MeinmangaCom.h"
 #include "connectors/KissAnimeCom.h"
+#include "connectors/MangaheadCom.h"
 #include "MangaConnector.h"
 
 class MangaConnectorCollection
