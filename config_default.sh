@@ -17,6 +17,7 @@ PKGDESCRIPTION="Manga Downloader based on wxGTK
  * MangaFox
  * Batoto
  * Submanga
+ * MangaHead
  * KissAnime"
 
 SRCPATTERN="*.cpp"
