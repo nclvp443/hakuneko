@@ -47,10 +47,10 @@ void SubmangaCom::UpdateMangaList()
     // only update local list, if connection successful...
     if(cr.ExecuteRequest() && !content.IsEmpty())
     {
-        int indexStart = content.find(wxT("<div class=\"b468\">")) + 18;
-        int indexEnd = content.rfind(wxT("<div class=\"b250 bmr0\">"));
+        int indexStart = content.find(wxT("<div id=\"tabla\">")) + 16;
+        int indexEnd = content.rfind(wxT("<div id=\"inferior\">"));
 
-        if(indexStart > 17 && indexEnd >= -1)
+        if(indexStart > 15 && indexEnd >= -1)
         {
             content = content.Mid(indexStart, indexEnd-indexStart);
             indexEnd = 0;
@@ -100,44 +100,44 @@ wxArrayMCEntry SubmangaCom::GetChapterList(MCEntry* MangaEntry)
     cr.SetOutputStream(&sos);
     cr.ExecuteRequest();
 
-    int indexStart = content.find(wxT("class=\"r\"")) + 9;
-    int indexEnd = content.find(wxT("class=\"r\""), indexStart);
+    int indexStart = content.find(wxT("<div id=\"tabla\">")) + 16;
+    int indexEnd = content.find(wxT("<div id=\"paginacion\">"), indexStart);
 
-    if(indexStart > 8 && indexEnd >= -1)
+    if(indexStart > 15 && indexEnd >= -1)
     {
         content = content.Mid(indexStart, indexEnd-indexStart);
         indexEnd = 0;
 
-        // Example Entry: <td class="s"><a href="http://submanga.com/One_Piece/684/172521">One Piece <strong>684</strong></a></td><td><a class="grey s" href="http://submanga.com/scanlation/Shinshin_Fansub" rel="nofollow">Shinshin Fansub</a></td>
-        while((indexStart = content.find(wxT("<a href=\""), indexEnd)) > -1)
+        // Example Entry:
+        // Headline: <tr><td colspan="3"><a href="#">Especiales</a></td></tr>
+        // Valid:   <tr><td><a href="http://submanga.com/Distance/oneshot/236360">Distance<span class="label label-primary">OneShot</span></a></td><td><a href="http://submanga.com/scanlation/hentai-series">hentai-series</a></td><td><a href="#">15.714</a></td></tr>
+        // Valid:   <tr><td><a href="http://submanga.com/Gantz/383/195163">Gantz <strong>383</strong></a></td><td><a href="http://submanga.com/scanlation/Mangatopia">Mangatopia</a></td><td><a href="#">114.958</a></td></tr>
+        while((indexStart = content.find(wxT("<tr><td><a href=\""), indexEnd)) > -1)
         {
-            indexStart += 9;
+            indexStart += 17;
             indexEnd = content.find(wxT("\""), indexStart); // "\">"
             chLink = content.Mid(indexStart, indexEnd-indexStart);
             chLink = baseURL + wxT("/c/") + chLink.AfterLast('/');
 
             indexStart = indexEnd + 2;
-            indexStart = content.find(wxT("g>"), indexStart) + 2; // "<strong>"
-            indexEnd = content.find(wxT("<"), indexStart); // "</a> : "
-            chTitle = content.Mid(indexStart, indexEnd-indexStart);
-            chNumber = chTitle;
+            indexEnd = content.find(wxT("<"), indexStart); // "<"
+            chTitle = content.Mid(indexStart, indexEnd-indexStart).Trim();
 
-            // submanga don't use explicite restrictions for chapter number
-            // assume a chapter number, when description is a number without any spaces...
-            if(chNumber.Find(wxT(" ")) < 0 && (chNumber.IsSameAs (wxT("0")) || wxAtoi(chNumber) != 0))
-            {
-                FormatChapterNumberStyle(&chNumber);
-            }
+            indexStart = content.find(wxT(">"), indexEnd) + 1; // ">"
+            indexEnd = content.find(wxT("<"), indexStart); // "</"
+            chNumber = content.Mid(indexStart, indexEnd-indexStart);
 
-            indexStart = indexEnd + 4;
-            indexStart = content.find(wxT("w\">"), indexStart) + 3; // "el=\"nofollow\">"
+            FormatChapterNumberStyle(&chNumber);
+
+            indexStart = content.find(wxT("</td><td><a"), indexEnd) + 11; // "</td><td><a href="
+            indexStart = content.find(wxT(">"), indexStart) + 1; // ">"
             indexEnd = content.find(wxT("<"), indexStart); // "</a>"
             chScangroup = content.Mid(indexStart, indexEnd-indexStart);
 
             // NOTE: submanga uses global chapter numbering, where the chapter numbers are unique (there aren't volumes anyway)
             // -> ignore volume prefix
 
-            chapterList.Add(new MCEntry(HtmlUnescapeString(chNumber + wxT(" by [") + chScangroup + wxT("]")), chLink));
+            chapterList.Add(new MCEntry(HtmlUnescapeString(chNumber + wxT(" - ") + chTitle + wxT(" by [") + chScangroup + wxT("]")), chLink));
 
             //wxYield();
         }
