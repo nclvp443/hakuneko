@@ -243,39 +243,57 @@ wxString KissAnimeCom::CFCookie()
     cr.SetUrl(baseURL);
     cr.SetHeader(true);
     cr.SetReferer(referrerURL);
-    cr.SetAgent(wxT("Android"));
+    //cr.SetAgent(wxT("Android"));
     wxString response;
     wxStringOutputStream sos(&response);
     cr.SetOutputStream(&sos);
     cr.ExecuteRequest();
 
-    if(!response.Contains(wxT("chk_jschl")))
-    {
-        return wxEmptyString;
+// get cookies
+indexStart = response.find(wxT("Cookie: ")) + 8;
+indexEnd = response.find(wxT(";"), indexStart) + 1;
+wxString cookies = response.Mid(indexStart, indexEnd-indexStart) + wxT("test_enable_cookie=cookie_value");
+
+// get chk_jschl url
+indexStart = response.find(wxT("action=\"")) + 8;
+indexEnd = response.find(wxT("\""), indexStart);
+wxString jschl_chk = baseURL + response.Mid(indexStart, indexEnd-indexStart);
+
+// get jschl_vc
+indexStart = response.find(wxT("name=\"jschl_vc\" value=\"")) + 23;
+indexEnd = response.find(wxT("\""), indexStart);
+wxString jschl_vc = response.Mid(indexStart, indexEnd-indexStart);
+
+// get pass
+indexStart = response.find(wxT("name=\"pass\" value=\"")) + 19;
+indexEnd = response.find(wxT("\""), indexStart);
+wxString pass = response.Mid(indexStart, indexEnd-indexStart);
+
+// get jschl_answer by solving the equation...
+indexStart = response.find(wxT("getElementById('cf-content')")) + 28;
+indexStart = response.find(wxT("setTimeout(function(){"), indexStart) + 22;
+indexEnd = response.find(wxT("}, 8000);"), indexStart);
+wxString temp = response.Mid(indexStart, indexEnd-indexStart).Trim(false);
+wxString jschl_script = wxEmptyString;
+while(temp.Contains(wxT(";")))
+{
+    if(!temp.StartsWith(wxT("t")) && !temp.StartsWith(wxT("a ")) && !temp.StartsWith(wxT("f")) && !temp.StartsWith(wxT("r")) && !temp.StartsWith(wxT(";"))) {
+        jschl_script += temp.BeforeFirst(';').Trim(false) + wxT(";");
     }
+    temp = temp.AfterFirst(';').Trim(false);
+}
+jschl_script.Replace(wxT("a.value = "), wxT("console.log("));
+jschl_script.Replace(wxT("t.length"), wxT("13)"));
+// TODO: run the script in nodejs
+wxString jschl_answer = wxEmptyString;
+wxMessageBox(jschl_chk + wxT("?jschl_vc=") + jschl_vc + wxT("&pass=") + pass + wxT("&jschl_answer=") + jschl_script + wxT("\n\n") + cookies);
 
-    indexStart = response.find(wxT("a.value = ")) + 10;
-    indexEnd = response.find(wxT(";"), indexStart);
-    wxString equation = response.Mid(indexStart, indexEnd-indexStart);
-    indexStart = equation.find(wxT("+"));
-    indexEnd = equation.find(wxT("*"));
-    wxInt32 result = wxAtoi(equation.Mid(indexStart+1, indexEnd-indexStart-1)) * wxAtoi(equation.Mid(indexEnd+1)) + wxAtoi(equation.Mid(0, indexStart)) + 13; // 13 = strlen("kissanime.com")
-    indexStart = response.find(wxT("jschl_vc")) + 17;
-    indexEnd = response.find(wxT("\""), indexStart);
-    wxString token = response.Mid(indexStart, indexEnd-indexStart);
-
-    // TODO: complete the determination of cookies (currently halted)
-    // CF-IUAM protection for kissanime was turned of during development
-
-    //response = wxEmptyString;
-    cr.SetUrl(wxString::Format(baseURL + wxT("/cdn-cgi/l/chk_jschl?jschl_vc=") + token + wxT("&jschl_answer=%i"), result));
-    cr.ExecuteRequest();
-
+/*
     indexStart = response.find(wxT("cf_clearance="));
     indexEnd = response.find(wxT(";"), indexStart) + 1;
-    wxString cookies = response.Mid(indexStart, indexEnd-indexStart);
-    wxPrintf(cookies);
+*/
 
-    //wxPrintf(wxT("\n++++++++++++++++++++++++++++++++++\n\n") + response);
+// always use this cookie when requesting pages: usingHTML5V1=true
+
     return wxEmptyString;
 }
