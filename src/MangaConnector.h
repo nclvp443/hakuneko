@@ -10,6 +10,7 @@
 #include <openssl/sha.h>
 #include "Logger.h"
 #include "CurlRequest.h"
+#include "Base64.h"
 
 enum CONNECTOR_TYPE
 {

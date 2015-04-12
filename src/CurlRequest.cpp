@@ -57,12 +57,15 @@ void fix_utf8(char* buffer, size_t bytes)
     }
 }
 
-CurlRequest::CurlRequest()
+CurlRequest::CurlRequest(bool Follow)
 {
     curl = curl_easy_init();
     if(curl)
     {
-        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+        if(Follow)
+        {
+            curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+        }
         curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 15);
         //curl_easy_setopt(curl, CURLOPT_TIMEOUT, 30);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
@@ -159,11 +162,14 @@ void CurlRequest::SetGetData(wxString Data)
 
 void CurlRequest::SetPostData(wxString Data)
 {
-    if(curl && Data != wxEmptyString)
+    if(curl)
     {
         curl_easy_setopt(curl, CURLOPT_POST, 1);
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, (const char*)Data.mb_str(wxConvUTF8));
-        //curl_easy_setopt(curl, CURLOPT_POSTFIELDS, (const char*)memcpy(new wxByte[Data.Len()], Data.mb_str(wxConvUTF8).data(), Data.Len()));
+        if(Data != wxEmptyString)
+        {
+            curl_easy_setopt(curl,  CURLOPT_COPYPOSTFIELDS, (const char*)Data.mb_str(wxConvUTF8));
+            //curl_easy_setopt(curl, CURLOPT_POSTFIELDS, (const char*)memcpy(new wxByte[Data.Len()], Data.mb_str(wxConvUTF8).data(), Data.Len()));
+        }
     }
 }
 

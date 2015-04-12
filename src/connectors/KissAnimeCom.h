@@ -14,7 +14,13 @@ class KissAnimeCom : public MangaConnector
     public: /*override*/ wxString GetImageLink(wxString PageLink);
 
     private: void Activate(wxString Link);
-    private: wxString CFCookie();
+    // initialize the global cookies variable, required for all requests
+    private: void CFCookie();
+    // run a javascript using NodeJS service and return the result
+    private: wxString JSRiddle(wxString Script);
+
+    private: wxString agent;
+    private: wxString cookies;
 };
 
 #endif // KISSANIME_H

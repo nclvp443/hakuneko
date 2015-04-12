@@ -8,7 +8,7 @@
 
 class CurlRequest
 {
-    public: CurlRequest();
+    public: CurlRequest(bool Follow=true);
     public: ~CurlRequest();
 
     public: void SetUrl(wxString Url);
