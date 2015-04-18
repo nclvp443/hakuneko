@@ -21,6 +21,7 @@
 #include <wx/mstream.h>
 #include <wx/timer.h>
 #include <wx/image.h>
+#include <wx/msgdlg.h>
 #include <wx/textdlg.h>
 #include <wx/aboutdlg.h>
 #include <wx/progdlg.h>
@@ -195,7 +196,7 @@ class MangaDownloaderFrame: public wxFrame
         //private: MangaDownloaderConfiguration Configuration;
         private: wxFileName ConfigurationFile;
         private: wxBitmap* ResourceImages;
-        private: MangaConnectorCollection MCC;
+        private: MangaConnectorCollection MCC; // Calls constructor, which will take some time...
         private: wxArrayMCEntry CurrentMangaList;
         private: wxArrayMCEntry CurrentChapterList;
         private: wxString ChapterPattern;

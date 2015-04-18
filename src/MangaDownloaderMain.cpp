@@ -1,5 +1,4 @@
 #include "MangaDownloaderMain.h"
-#include <wx/msgdlg.h>
 
 //(*InternalHeaders(MangaDownloaderFrame)
 #include <wx/settings.h>
@@ -77,11 +76,9 @@ static int CompareStringCaseInsensitive(const wxString& First, const wxString& S
     return First.CmpNoCase(Second);
 }
 
-MangaDownloaderFrame::MangaDownloaderFrame(wxWindow* parent,wxWindowID id)
+MangaDownloaderFrame::MangaDownloaderFrame(wxWindow* parent, wxWindowID id)
 {
-
     AbortDownload = false;
-    MCC = MangaConnectorCollection();
 
     //(*Initialize(MangaDownloaderFrame)
     wxFlexGridSizer* FlexGridSizerFilter;
