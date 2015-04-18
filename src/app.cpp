@@ -5,9 +5,7 @@ IMPLEMENT_APP(MangaDownloaderApp);
 bool MangaDownloaderApp::OnInit()
 {
     wxInitAllImageHandlers();
-    wxProgressDialog Progress(wxT("HakuNeko"), wxT("Initializing Connectors, Resources, GUI, ..."), 0);
     Frame = new MangaDownloaderFrame(NULL);
-    Progress.Close();
     Frame->Show();
     SetTopWindow(Frame);
 

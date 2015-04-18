@@ -24,11 +24,9 @@ long_line_column=72
 
 [files]
 current_page=2
-FILE_NAME_0=75;None;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2FCHANGELOG;0;4
-FILE_NAME_1=0;C;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaDownloaderMain.h;0;4
-FILE_NAME_2=3046;C++;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaDownloaderMain.cpp;0;4
-FILE_NAME_3=74;C;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2Fconnectors%2FKissAnimeCom.h;0;4
-FILE_NAME_4=1181;C++;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2Fconnectors%2FKissAnimeCom.cpp;0;4
+FILE_NAME_0=107;None;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2FCHANGELOG;0;4
+FILE_NAME_1=7350;C;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaDownloaderMain.h;0;4
+FILE_NAME_2=16644;C++;0;EUTF-8;0;1;0;%2Fhome%2Fronny%2FDocuments%2Fdevelopment%2Fhakuneko%2Fsrc%2FMangaDownloaderMain.cpp;0;4
 
 [VTE]
 last_dir=/home/ronny/Documents/development/hakuneko

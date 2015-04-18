@@ -1,8 +1,11 @@
 hakuneko 1.3.7
 
  * Added support for Mangahead
+ * Added support for mangahere (spanish)
+ * Removed Submanga
  * Fixed Kissanime connector
  * updated about dialog box
+ * Added progress dialog during start
 
 hakuneko 1.3.6
 

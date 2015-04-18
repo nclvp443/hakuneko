@@ -78,8 +78,12 @@ static int CompareStringCaseInsensitive(const wxString& First, const wxString& S
 
 MangaDownloaderFrame::MangaDownloaderFrame(wxWindow* parent, wxWindowID id)
 {
+    wxProgressDialog Progress(wxT("HakuNeko"), wxT("Initialiting HakuNeko, please wait ..."), 10);
+    Progress.Update(1, wxT("Initializing Manga Connectors ..."));
     AbortDownload = false;
+    MCC = new MangaConnectorCollection();
 
+    Progress.Update(3, wxT("Initializing GUI Components ..."));
     //(*Initialize(MangaDownloaderFrame)
     wxFlexGridSizer* FlexGridSizerFilter;
     wxFlexGridSizer* FlexGridSizerControls;
@@ -112,7 +116,7 @@ MangaDownloaderFrame::MangaDownloaderFrame(wxWindow* parent, wxWindowID id)
     FlexGridSizerFilter->AddGrowableCol(0);
     FlexGridSizerFilter->AddGrowableCol(3);
     ComboBoxSource = new wxComboBox(this, ID_COMBOBOX2, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, 0, wxCB_READONLY, wxDefaultValidator, _T("ID_COMBOBOX2"));
-    ComboBoxSource->Append(MCC.GetConnectorLabels());
+    ComboBoxSource->Append(MCC->GetConnectorLabels());
     FlexGridSizerFilter->Add(ComboBoxSource, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     BitmapButtonUpdate = new wxBitmapButton(this, ID_BITMAPBUTTON1, wxNullBitmap, wxDefaultPosition, wxDefaultSize, wxNO_BORDER, wxDefaultValidator, _T("ID_BITMAPBUTTON1"));
     BitmapButtonUpdate->SetToolTip(_("Synchronize all local manga lists with internet"));
@@ -188,6 +192,7 @@ MangaDownloaderFrame::MangaDownloaderFrame(wxWindow* parent, wxWindowID id)
     MenuJobContext.Append(ID_JOBMENUITEM_REMOVEALL, wxT("Remove All Jobs"));
     MenuJobContext.Connect(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MangaDownloaderFrame::OnMenuJobContextClick, NULL, this);
 
+    Progress.Update(4, wxT("Initializing GUI Events ..."));
     Connect(ID_BITMAPBUTTON3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&MangaDownloaderFrame::OnButtonBrowseClick);
     Connect(ID_COMBOBOX2,wxEVT_COMMAND_COMBOBOX_SELECTED,(wxObjectEventFunction)&MangaDownloaderFrame::OnChoiceSourceSelect);
     Connect(ID_BITMAPBUTTON1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&MangaDownloaderFrame::OnButtonUpdateClick);
@@ -209,6 +214,7 @@ MangaDownloaderFrame::MangaDownloaderFrame(wxWindow* parent, wxWindowID id)
     //*)
     Connect(wxEVT_RIGHT_DOWN,(wxObjectEventFunction)&MangaDownloaderFrame::OnMainWindowRClick);
 
+    Progress.Update(5, wxT("Initializing Resources ..."));
     LoadResources();
     //FlexGridSizerContainer->Fit(this); // will be done by SetSizeHints()
     FlexGridSizerContainer->SetSizeHints(this); // fit window minwidth, in case combobox->minwidth increased by LoadConfiguration()
@@ -221,11 +227,14 @@ MangaDownloaderFrame::MangaDownloaderFrame(wxWindow* parent, wxWindowID id)
     CompressChapters = false;
     DeleteCompletedJobs = true;
 
+    Progress.Update(6, wxT("Initializing Configuration ..."));
     InitConfigurationFile();
     // LoadConfiguration() may show the window immediately, so call it last...
     // it also may change initial minwidth of comboboxes
     LoadConfiguration();
+    Progress.Update(7, wxT("Initializing Logger ..."));
     Logger::Init();
+    Progress.Update(8, wxT("Checking for Updates ..."));
     UpdateCheck();
 
     MenuMain = new wxMenu(_("Main Menu"));
@@ -239,13 +248,15 @@ MangaDownloaderFrame::MangaDownloaderFrame(wxWindow* parent, wxWindowID id)
     MenuMain->Append(ID_MenuHelp, _("Help (Online)"));
     MenuMain->Append(ID_MenuAbout, _("About"));
     MenuMain->Connect(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MangaDownloaderFrame::OnMenuMainClick, NULL, this);
+
+    Progress.Close();
 }
 
 MangaDownloaderFrame::~MangaDownloaderFrame()
 {
     //(*Destroy(MangaDownloaderFrame)
     //*)
-
+    wxDELETE(MCC);
     wxDELETEA(ResourceImages);
 }
 
@@ -727,7 +738,7 @@ void MangaDownloaderFrame::LoadMangaList(wxString Pattern)
 
     if(ComboBoxSource->GetSelection() > -1)
     {
-        CurrentMangaList = MCC.GetMangaList(ComboBoxSource->GetValue());
+        CurrentMangaList = MCC->GetMangaList(ComboBoxSource->GetValue());
         wxArrayMCEntry temp;
         long n = 0; // counter for pattern match results
 
@@ -812,7 +823,7 @@ void MangaDownloaderFrame::LoadChapterList(wxString Pattern)
 
     if(ComboBoxSource->GetSelection() > -1 && mangaIndex > -1)
     {
-        wxArrayMCEntry temp = MCC.GetChapterList(connectorLabel, CurrentMangaList[mangaIndex]);
+        wxArrayMCEntry temp = MCC->GetChapterList(connectorLabel, CurrentMangaList[mangaIndex]);
         CurrentChapterList.Clear();
         long n = 0; // counter for pattern match results
 
@@ -827,7 +838,7 @@ void MangaDownloaderFrame::LoadChapterList(wxString Pattern)
 
                 ListCtrlChapters->InsertItem(n, CurrentChapterList[n]->Label, 0);
 
-                if(MCC.ContainsJob(MCC.GenerateJobID(CurrentChapterList[n])))
+                if(MCC->ContainsJob(MCC->GenerateJobID(CurrentChapterList[n])))
                 {
                     SetChapterCheckedState(n, true, false); // job is already in joblist
                 }
@@ -904,7 +915,7 @@ void MangaDownloaderFrame::ColorifyChapterList()
             size_t checkedChapterCount = 0;
             for(long c=0; c<(long)CurrentChapterList.GetCount(); c++)
             {
-                if(MCC.ContainsJob(MCC.GenerateJobID(CurrentChapterList[c])))
+                if(MCC->ContainsJob(MCC->GenerateJobID(CurrentChapterList[c])))
                 {
                     checkedChapterCount++;
                 }
@@ -999,7 +1010,7 @@ void MangaDownloaderFrame::OnButtonUpdateClick(wxCommandEvent& event)
         wxLongLong start = wxGetLocalTimeMillis();
 
         DisableControls();
-        MCC.UpdateMangaLists();
+        MCC->UpdateMangaLists();
         LoadMangaList(ComboBoxSearchPattern->GetValue());
         EnableControls(true);
 
@@ -1200,7 +1211,7 @@ void MangaDownloaderFrame::OnCheckBoxChaptersClick(wxCommandEvent& event)
     ListCtrlJobs->Thaw();
     ListCtrlChapters->Thaw();
 
-    StatusBar->SetStatusText(wxString::Format(wxT("Selected Chapters: %u"), MCC.GetJobCount()), 2);
+    StatusBar->SetStatusText(wxString::Format(wxT("Selected Chapters: %u"), MCC->GetJobCount()), 2);
 
     StatusBar->SetStatusText(wxEmptyString);
     wxEndBusyCursor();
@@ -1237,7 +1248,7 @@ void MangaDownloaderFrame::OnListCtrlChaptersItemSelect(wxListEvent& event)
         }
         CheckBoxChapters->SetValue(AllChaptersChecked);
 
-        StatusBar->SetStatusText(wxString::Format(wxT("Selected Chapters: %u"), MCC.GetJobCount()), 2);
+        StatusBar->SetStatusText(wxString::Format(wxT("Selected Chapters: %u"), MCC->GetJobCount()), 2);
     }
 }
 
@@ -1271,8 +1282,8 @@ void MangaDownloaderFrame::SetChapterCheckedState(long ChapterIndex, bool State,
             ListCtrlChapters->SetItemImage(ChapterIndex, 1);
             if(UpdateJobList)
             {
-                MCJob job = MCC.CreateJob(connectorLabel, CurrentMangaList[mangaIndex], CurrentChapterList[ChapterIndex]);
-                if(MCC.AddJob(job))
+                MCJob job = MCC->CreateJob(connectorLabel, CurrentMangaList[mangaIndex], CurrentChapterList[ChapterIndex]);
+                if(MCC->AddJob(job))
                 {
                     long index = ListCtrlJobs->GetItemCount();
                     wxString jobID = wxString::Format(wxT("%lu"), job.ID);
@@ -1297,8 +1308,8 @@ void MangaDownloaderFrame::SetChapterCheckedState(long ChapterIndex, bool State,
             ListCtrlChapters->SetItemImage(ChapterIndex, 0);
             if(UpdateJobList)
             {
-                unsigned long job = MCC.GenerateJobID(CurrentChapterList[ChapterIndex]);
-                MCC.RemoveJob(job);
+                unsigned long job = MCC->GenerateJobID(CurrentChapterList[ChapterIndex]);
+                MCC->RemoveJob(job);
 
                 wxString jobID = wxString::Format(wxT("%lu"), job);
                 // it works correct even if find returns -1
@@ -1320,7 +1331,7 @@ void MangaDownloaderFrame::OnButtonDownloadClick(wxCommandEvent& event)
     {
         DisableControls(true);
 
-        wxArrayString errorLog = MCC.DownloadJobs(baseDirectory, StatusBar, &AbortDownload, CompressChapters);
+        wxArrayString errorLog = MCC->DownloadJobs(baseDirectory, StatusBar, &AbortDownload, CompressChapters);
 /*
         for(unsigned int i=0; i<errorLog.Count(); i++)
         {
@@ -1334,14 +1345,14 @@ void MangaDownloaderFrame::OnButtonDownloadClick(wxCommandEvent& event)
             LogFrame->Show();
         }
 
-        wxArrayJobID completed = MCC.GetCompletedJobIDs();
+        wxArrayJobID completed = MCC->GetCompletedJobIDs();
         if(DeleteCompletedJobs && completed.GetCount() > 0 && wxMessageBox(wxT("Remove completed jobs from download list?"), wxT("Operation Complete"), wxYES_NO) == wxYES)
         {
             // remove jobs from joblist
             ListCtrlJobs->Freeze();
             for(size_t i=0; i<completed.GetCount(); i++)
             {
-                MCC.RemoveJob(completed[i]);
+                MCC->RemoveJob(completed[i]);
                 wxString jobID = wxString::Format(wxT("%lu"), completed[i]);
                 // it works correct even if find returns -1
                 ListCtrlJobs->DeleteItem(ListCtrlJobs->FindItem(-1, jobID));
@@ -1353,7 +1364,7 @@ void MangaDownloaderFrame::OnButtonDownloadClick(wxCommandEvent& event)
             ListCtrlChapters->Freeze();
             for(long i=0; i<(long)CurrentChapterList.GetCount(); i++)
             {
-                if(GetChapterCheckedState(i) && !MCC.ContainsJob(MCC.GenerateJobID(CurrentChapterList[i])))
+                if(GetChapterCheckedState(i) && !MCC->ContainsJob(MCC->GenerateJobID(CurrentChapterList[i])))
                 {
                     SetChapterCheckedState(i, false, false);
                     if(AllChaptersChecked)
@@ -1370,14 +1381,14 @@ void MangaDownloaderFrame::OnButtonDownloadClick(wxCommandEvent& event)
             }
 
             // update job count in statusbar
-            StatusBar->SetStatusText(wxString::Format(wxT("Selected Chapters: %u"), MCC.GetJobCount()), 2);
+            StatusBar->SetStatusText(wxString::Format(wxT("Selected Chapters: %u"), MCC->GetJobCount()), 2);
         }
         else
         {
             // mark all completed jobs as not completed
             for(size_t i=0; i<completed.GetCount(); i++)
             {
-                MCC.SetJobDownloadCompleted(completed[i], false);
+                MCC->SetJobDownloadCompleted(completed[i], false);
             }
         }
 
@@ -1573,7 +1584,7 @@ void MangaDownloaderFrame::OnMenuJobContextClick(wxCommandEvent& event)
 
     if(event.GetId() == ID_JOBMENUITEM_REMOVEALL)
     {
-        MCC.RemoveAllJobs();
+        MCC->RemoveAllJobs();
         ListCtrlJobs->DeleteAllItems();
         CheckBoxChapters->SetValue(false);
         // instead of reloading chapters we set all chapter checked state to false
@@ -1597,7 +1608,7 @@ void MangaDownloaderFrame::OnMenuJobContextClick(wxCommandEvent& event)
             jobItem.SetColumn(0);
             ListCtrlJobs->GetItem(jobItem);
             jobItem.GetText().ToULong(&jobID);
-            MCC.RemoveJob(jobID);
+            MCC->RemoveJob(jobID);
             ListCtrlJobs->DeleteItem(i);
             i--;
             i = ListCtrlJobs->GetNextItem(i, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
@@ -1607,7 +1618,7 @@ void MangaDownloaderFrame::OnMenuJobContextClick(wxCommandEvent& event)
         bool AllChaptersChecked = CheckBoxChapters->IsChecked();
         for(long i=0; i<(long)CurrentChapterList.GetCount(); i++)
         {
-            if(GetChapterCheckedState(i) && !MCC.ContainsJob(MCC.GenerateJobID(CurrentChapterList[i])))
+            if(GetChapterCheckedState(i) && !MCC->ContainsJob(MCC->GenerateJobID(CurrentChapterList[i])))
             {
                 SetChapterCheckedState(i, false, false);
                 if(AllChaptersChecked)
@@ -1622,7 +1633,7 @@ void MangaDownloaderFrame::OnMenuJobContextClick(wxCommandEvent& event)
     ListCtrlChapters->Thaw();
     ListCtrlJobs->Thaw();
 
-    StatusBar->SetStatusText(wxString::Format(wxT("Selected Chapters: %u"), MCC.GetJobCount()), 2);
+    StatusBar->SetStatusText(wxString::Format(wxT("Selected Chapters: %u"), MCC->GetJobCount()), 2);
     StatusBar->SetStatusText(wxEmptyString);
     wxEndBusyCursor();
 }
@@ -1991,11 +2002,11 @@ void MangaDownloaderFrame::ErrorDetectionTest()
             dbg_joblist_length = ListCtrlJobs->GetItemCount();
 
             // test if jobs in joblist are equal to those in MCC
-            if((long)MCC.GetJobCount() > dbg_joblist_length)
+            if((long)MCC->GetJobCount() > dbg_joblist_length)
             {
                 dbg_log_file.AddLine(wxT("ERROR: MCCJobCount > JobListCount"));
             }
-            if((long)MCC.GetJobCount() < dbg_joblist_length)
+            if((long)MCC->GetJobCount() < dbg_joblist_length)
             {
                 dbg_log_file.AddLine(wxT("ERROR: MCCJobCount < JobListCount"));
             }
@@ -2008,7 +2019,7 @@ void MangaDownloaderFrame::ErrorDetectionTest()
                 ListCtrlJobs->GetItem(dbg_job_item);
                 dbg_job_item.GetText().ToULong(&dbg_job_id);
 
-                if(!MCC.ContainsJob(dbg_job_id))
+                if(!MCC->ContainsJob(dbg_job_id))
                 {
                     dbg_log_file.AddLine(wxT("ERROR: Missing MCC Job ") + dbg_job_item.GetText());
                 }

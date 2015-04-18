@@ -196,7 +196,7 @@ class MangaDownloaderFrame: public wxFrame
         //private: MangaDownloaderConfiguration Configuration;
         private: wxFileName ConfigurationFile;
         private: wxBitmap* ResourceImages;
-        private: MangaConnectorCollection MCC; // Calls constructor, which will take some time...
+        private: MangaConnectorCollection* MCC;
         private: wxArrayMCEntry CurrentMangaList;
         private: wxArrayMCEntry CurrentChapterList;
         private: wxString ChapterPattern;
