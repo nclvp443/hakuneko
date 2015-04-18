@@ -7,10 +7,10 @@ MangaConnectorCollection::MangaConnectorCollection()
     MangaConnectors.Add(new MangahereEs());
     MangaConnectors.Add(new MangafoxMe());
     MangaConnectors.Add(new BatotoNet());
+    MangaConnectors.Add(new MangaheadCom());
     //MangaConnectors.Add(new SubmangaCom());
     //MangaConnectors.Add(new MeinmangaCom());
     MangaConnectors.Add(new KissAnimeCom());
-    MangaConnectors.Add(new MangaheadCom());
     #ifdef __WXDEBUG__
     MangaConnectors.Add(new VirtualManga());
     #endif

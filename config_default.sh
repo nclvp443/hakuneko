@@ -14,9 +14,9 @@ PKGDESCRIPTION="Manga Downloader based on wxGTK
  .
  * MangaReader
  * MangaHere
+ * MangeHere (es)
  * MangaFox
  * Batoto
- * Submanga
  * MangaHead
  * KissAnime"
 
