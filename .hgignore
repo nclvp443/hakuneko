@@ -17,3 +17,4 @@ obj/*
 deb/*
 build/linux/bin/*
 build/winnt/bin/*
+res/parsers/*.js

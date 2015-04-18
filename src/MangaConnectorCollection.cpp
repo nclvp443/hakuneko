@@ -4,9 +4,10 @@ MangaConnectorCollection::MangaConnectorCollection()
 {
     MangaConnectors.Add(new MangareaderNet());
     MangaConnectors.Add(new MangahereCom());
+    MangaConnectors.Add(new MangahereEs());
     MangaConnectors.Add(new MangafoxMe());
     MangaConnectors.Add(new BatotoNet());
-    MangaConnectors.Add(new SubmangaCom());
+    //MangaConnectors.Add(new SubmangaCom());
     //MangaConnectors.Add(new MeinmangaCom());
     MangaConnectors.Add(new KissAnimeCom());
     MangaConnectors.Add(new MangaheadCom());

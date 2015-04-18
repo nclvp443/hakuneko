@@ -79,6 +79,7 @@ static int CompareStringCaseInsensitive(const wxString& First, const wxString& S
 
 MangaDownloaderFrame::MangaDownloaderFrame(wxWindow* parent,wxWindowID id)
 {
+
     AbortDownload = false;
     MCC = MangaConnectorCollection();
 

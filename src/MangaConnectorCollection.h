@@ -7,6 +7,7 @@
 #include "connectors/MangareaderNet.h"
 #include "connectors/MangafoxMe.h"
 #include "connectors/MangahereCom.h"
+#include "connectors/MangahereEs.h"
 #include "connectors/BatotoNet.h"
 #include "connectors/SubmangaCom.h"
 #include "connectors/MeinmangaCom.h"
